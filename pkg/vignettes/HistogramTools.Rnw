@@ -49,7 +49,7 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 % closing $ needed here
 
 %% almost as usual
-\author{Murray Stokely\\Google, Inc.}
+\author{Murray Stokely}
 \title{HistogramTools for Distributions of Large Data Sets}
 \date{Version \Sexpr{ht.version} as of \Sexpr{prettyDate}}
 \begin{document}
@@ -59,12 +59,14 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 \abstract{
   \noindent
   Histograms are a common graphical representation of the distribution
-  of a data set.  The \pkg{HistogramTools} R package augments the
+  of a data set.  They are particularly useful for collecting very
+  large data sets into a binned form for easier data storage and
+  analysis.  The \pkg{HistogramTools} R package augments the
   built-in support for histograms with a number of methods that are
   useful for analyzing large data sets.  Specifically, methods are
   included for
   serializing histograms into a compact Protocol Buffer representation
-  for sharing between distributed tasks, and routines for merging and
+  for sharing between distributed tasks, and routines for
   manipulating the resulting aggregate histograms.
 }
 % \Keywords{histograms, distributions, R, mapreduce, protocol buffers, RProtoBuf}
@@ -103,7 +105,7 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 
 %% end of declarations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Histograms}
+\section{Introduction}
 
 Histograms have been used for over a century
 \citep{pearson1895contributions} as a compact graphical
@@ -138,6 +140,13 @@ questions at hand?
 
 %Histograms are increasingly used in leage scale distributed systems research.  Especially with the MapReduce paradigm where many thousands of tasks may analyze a big data set and collect distributions of interest  Exampels from search clusters, distributed filesystems, etc. [cite]
 
+
+\section{Parallel Data Collection Patterns}
+
+Many large datasets in fields such as particle physics and information
+processing are stored in binned or histogram form in order to reduce
+the data storage requirements \cite{scott2009multivariate}.
+
 There are two common patterns for generating histograms of large data
 sets with MapReduce.  In the first method, each mapper task can
 generate a histogram over a subset of the data that is has been
@@ -150,7 +159,7 @@ then sum up all of the values with the same key and output to a data store.
 
 In both of these two methods, the mapper tasks must choose identical
 bucket boundaries even though they are analyzing disjoint parts of the
-input set that may be skewed in different ways, or we must implement a
+input set that may be skewed in different ways, or we must implement
 multiple phases.
 
 \begin{figure}[h]
@@ -314,7 +323,114 @@ ApproxQuantile(hist, .5)
 ApproxQuantile(hist, c(.05, .95))
 @
 
-\section{Trimming Sparse Buckets}
+\section{Error estimates in CDFs approximated from histograms}
+
+How good is our bucketing scheme for the various types of histograms
+we are collecting and using to generate approximate CDFs?  What is the
+histogram that has the worst error bounds, and should we modify the
+binning strategy to reduce those error bounds?
+
+<<echo=FALSE,print=FALSE>>=
+PlotCDFWithErrors <- function(x, h) {
+  ## Want to make a plot which visually shows the error inherent with
+  ## estimating a CDF from a histogram.
+
+  ## The real ECDF line
+  plot(ecdf(x))
+
+  yranges <- c(0, cumsum(h$counts)) / sum(h$counts)
+  yranges
+  rect(head(h$breaks, -1), head(yranges, -1), tail(h$breaks, -1), tail(yranges, -1), col="yellow")
+}
+
+PlotAll <- function(x, h) {
+  plot(x, main="x")
+  plot(h)
+  PlotCDFWithErrors(x,h)
+}
+@
+
+\subsection{Distributions, Histograms, and ECDFs}
+
+Our data analysis pipelines start with a number of large data sets over which histograms are computed.  We then convert these into approximate CDFs for plotting and data analysis.  The following three examples (one in each row) display this process.  The first column represents raw data, the second column is a histogram, and the third column is an approximate CDF based on the histograms with yellow boxes representing the error range for the true CDF based on the original full distribution.  The first row is simply x <- 1:100, the second row is runif(100), and the third row is rexp(100).
+
+<<fig1,fig=TRUE,echo=FALSE,print=FALSE,height=8,width=8>>=
+par(mfrow=c(3,3))
+x<-1:100
+PlotAll(x, hist(x, plot=FALSE))
+
+x<-runif(100)
+PlotAll(x, hist(x, plot=FALSE))
+
+x<-rexp(100)
+PlotAll(x, hist(x, plot=FALSE))
+@
+
+The histograms above were generated using the default computed
+breakpoints of R, which uses a modified Sturges algorithm.  However,
+for our actual data analysis tasks we generate our own bucket widths
+in advance so that all of our histograms have comparable and
+consistent bucket boundaries.  For the same distribution, we obviously
+have control over the histogram bins, and using more fine-grained bins
+produces a more accurate representation of the underlying
+distribution.  The next figure shows the same rexp(100) data set with
+coarse and fine-grained histogram buckets and the associated
+approximate ECDFs.
+
+% lets try some new distributions and histograms
+<<fig2,fig=TRUE,echo=TRUE,print=FALSE,height=8,width=8>>=
+par(mfrow=c(2,3))
+x<-rexp(100)
+PlotAll(x, hist(x, plot=FALSE))
+
+PlotAll(x, hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE))
+@
+
+\subsection{Error Estimates}
+
+A natural question is, are we using a good initial choice of buckets?
+Which of the 100,000 histograms that we generated last week had the
+greatest potential error, and how might we change the bucketing to
+reduce that error?
+
+\subsubsection{Kolmogorov-Smirnof}
+
+%Mean Square Error measures the accuracy of an estimator of f in a single point, MISE Mean Integrated Squared Error is the global metric.  But we don't know f for the underlying distribution, since we only have the histogram, so we can't compute these metrics, right?
+
+The yellow boxes on the rightmost ECDF plots show the worst case error
+range of the true ECDF of the underlying distribution.  The true CDF
+must lie within those yellow boxes, so the widest bound area wise
+would be the best?
+
+<<echo=TRUE>>=
+SumBoxAreas <- function(x1, y1, x2, y2) {
+  return(sum((x2-x1)*(y2-y1)))
+}
+
+x<-rexp(100)
+h <- hist(x, plot=FALSE)
+# convert to density histogram - e.g. normalize to 1.
+h$counts <- h$counts / sum(h$counts)
+yranges <- c(0, cumsum(h$counts)) / sum(h$counts)
+h$breaks <- h$breaks / sum(h$breaks)
+SumBoxAreas(head(h$breaks, -1), head(yranges, -1), tail(h$breaks, -1), tail(yranges, -1))
+
+h <- hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE)
+# convert to density histogram - e.g. normalize to 1.
+h$counts <- h$counts / sum(h$counts)
+yranges <- c(0, cumsum(h$counts)) / sum(h$counts)
+h$breaks <- h$breaks / sum(h$breaks)
+SumBoxAreas(head(h$breaks, -1), head(yranges, -1), tail(h$breaks, -1), tail(yranges, -1))
+@
+
+So, using this metric, the second lower example with more granular
+histogram bins produces an ECDF with reduced worst case error bounds
+compared to the one with default buckets, as expected.
+
+
+\section{Histogram Bin Manipulation}
+
+\subsection{Trimming Sparse Buckets}
 
 If we are generating histograms with a large number of fine-grained
 bucket boundaries, then we out resulting histogram may have a large
@@ -330,7 +446,7 @@ length(hist.trimmed$counts)
 sum(hist.trimmed$counts)
 @
 
-\section{Merging Buckets}
+\subsection{Merging Histograms}
 
 If two histograms have the same bucket boundaries, it is possible to
 merge them toegether by aggregating the counts values with the merge function.
@@ -341,6 +457,9 @@ hist.2 <- hist(c(1,2,2,4), plot=FALSE)
 hist.merged <- merge(hist.1, hist.2)
 @
 
+\subsection{Downsampling: Merging Buckets}
+
+TODO
 
 \section{Extensions}
 
