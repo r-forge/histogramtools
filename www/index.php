@@ -43,7 +43,28 @@ echo $contents; } ?>
 
 <!-- end of project description -->
 
-<p> No content added. </p>
+<h1>Installation</h1>
+
+<p>Eventually, you will be able to install with just:</p>
+<pre>
+R
+> install.packages("HistogramTools", repos = "http://R-Forge.R-project.org").
+</pre>
+
+<h1>Development</h1>
+
+<p>You can check out the latest source code for this R package
+  with:</p>
+
+<pre>
+$ svn checkout svn://svn.r-forge.r-project.org/svnroot/histogramtools
+</pre>
+
+<h1>Links</h1>
+<ul>
+<li><a href="http://r-forge.r-project.org/projects/rprotobuf/">RProtoBuf on R-Forge</a></li>
+<li><a href="https://github.com/jeroenooms/RProtoBufUtils">RProtoBufUtils by Joeroen Ooms on GitHub</a></li>
+</ul>
 
 <p> The <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. </p>
 
