@@ -1,0 +1,7 @@
+package HistogramTools;
+
+message HistogramState {
+  repeated double breaks = 1;
+  repeated int32 counts = 2;
+  optional string name = 3;
+}

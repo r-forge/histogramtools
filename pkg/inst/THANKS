@@ -1,0 +1,3 @@
+Tim Hesterberg    For review and several insightful comments.
+Karl Millar	  For the run-length encoding implementation improvements and general improvements.
+Francois Labelle  For forcing the ideas behind the better quantiles implementation.

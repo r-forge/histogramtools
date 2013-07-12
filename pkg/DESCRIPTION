@@ -1,0 +1,12 @@
+Package: HistogramTools
+Type: Package
+Title: Utility Functions for R Histograms
+Version: 0.1
+Date: 2012-11-10
+Author: Murray Stokely <mstokely@google.com>
+Maintainer: Murray Stokely <mstokely@google.com>
+Suggests: RProtoBuf
+Depends: methods, Hmisc
+Imports: RProtoBuf
+Description: This package provides a number of utility functions useful for manipulating large histograms.  It provides protocol buffer representations of the default R histogram class to allow histograms over large data sets to be computed and manipulated in a MapReduce environment.
+License: Apache License 2.0
