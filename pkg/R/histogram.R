@@ -43,13 +43,12 @@ as.Message <- function(x, ...) {
   UseMethod("as.Message")
 }
 
-as.histogram.Message <- function(x, main="HistogramTools.HistogramState",
+as.histogram.Message <- function(x,
                                  ...) {
   # Converts a Protocol Buffer into an R Histogram.
   #
   # Args:
   #   x: An RProtoBuf Message of type HistogramTools.HistogramState.
-  #   main: The name to set for this histogram (e.g. used in plots).
   #
   # Returns:
   #   An S3 histogram class suitable for plotting.
@@ -62,8 +61,16 @@ as.histogram.Message <- function(x, main="HistogramTools.HistogramState",
     hist$counts <- x$counts
     hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
     hist$mids <- (head(hist$breaks, -1) + tail(hist$breaks, -1)) / 2
-    hist$xname <- main
-    hist$equidist <- length(unique(diff(hist$breaks))) == 1
+    if (x$has("name")) {
+      hist$xname <- x$name
+    } else {
+      hist$xname <- "HistogramTools.HistogramState"
+    }
+    # If we had integer breakpoints we could just use
+    # hist$equidist <- length(unique(diff(hist$breaks))) == 1
+    hist$equidist <- all.equal(diff(hist$breaks),
+                               rep(diff(hist$breaks)[1],
+                                   length(hist$breaks) - 1))
     class(hist) <- "histogram"
     return(hist)
   } else {
