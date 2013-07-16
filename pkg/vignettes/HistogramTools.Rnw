@@ -3,6 +3,7 @@
 
 %% JSS stuff we can remove for JSS version.
 \usepackage[authoryear,round,longnamesfirst]{natbib}
+
 \bibpunct{(}{)}{;}{a}{}{,}
 \bibliographystyle{jss}
 %% page layout
@@ -33,7 +34,7 @@
 %   \citeyear{key} ==>>             1990
 
 %%
-\newcommand{\code}[1]{\textrm{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\pkg}[1]{\textbf{#1}}
 \usepackage{Sweave}
 \usepackage{listings}             % Include the listings-package
@@ -162,7 +163,7 @@ bucket boundaries even though they are analyzing disjoint parts of the
 input set that may be skewed in different ways, or we must implement
 multiple phases.
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \begin{center}
 \includegraphics{histogram-mapreduce-diag1.pdf}
 \end{center}
@@ -211,18 +212,34 @@ manipulated in R.
 \section{Efficient Representations of Histograms}
 
 Consider an example histogram of 100 random data points.
+Figure~\ref{fig:exhist} shows the graphical representation and list
+structure of R histogram objects.
 
-<<fig=TRUE,echo=TRUE>>=
+<<exhist,fig=TRUE,include=FALSE,echo=TRUE>>=
 myhist <- hist(runif(100))
 @
+
+\begin{figure}[h]
+\begin{minipage}{.4\textwidth}
+\begin{center}
+\includegraphics[width=2.5in,height=2.5in]{HistogramTools-exhist}
+\end{center}
+%\captionof{figure}{Example Histogram}
+%\label{fig:exhist}
+\end{minipage}\hfill \begin{minipage}{.5\textwidth}
+\begin{tiny}
+<<echo=FALSE,print=TRUE>>=
+myhist
+@
+\end{tiny}
+\end{minipage}
+\caption{Example Histogram}
+\label{fig:exhist}
+\end{figure}
 
 This histogram compactly represents the full distribution.
 Histogram objects in R are lists with 6 components: breaks, counts,
 density, mids, name, and equidist.
-
-<<echo=TRUE,print=TRUE>>=
-myhist
-@
 
 If we are working in a parallel environment and need to distribute
 such a histogram to other tasks running in a compute cluster, we will
@@ -250,11 +267,11 @@ mechanism for serializing structured data \citep{Pike:2005:IDP:1239655.1239658,p
 buffer objects directly within R.
 
 Of the six elements stored in an R histogram object, we only need to
-store 3 in our serialization format since the other 3 can be
+store three in our serialization format since the other three can be
 re-computed.  This leads to the following simple protocol buffer
 definition of the breaks, counts, and name of a histogram:
 
-<<echo=FALSE,print=TRUE>>=
+<<echo=FALSE>>=
 invisible(cat(paste(readLines(system.file("proto/histogram.proto",
                                 package="HistogramTools")), "\n")))
 @
@@ -272,9 +289,9 @@ hist.msg <- as.Message(myhist)
 
 Our histogram protocol buffer has a human-readable ASCII representation:
 
-<<echo=TRUE,print=TRUE>>=
+<<echo=TRUE>>=
 cat(as.character(hist.msg))
-@ 
+@
 
 But it is most useful when serialized to a compact binary representation:
 
@@ -296,13 +313,22 @@ for later analysis by other tools.  If we want to recreate the
 original R histogram object from the serialized protocol buffer we can
 use the \code{as.histogram} method.
 
-<<fig=TRUE,echo=TRUE,print=TRUE>>=
+<<echo=TRUE,print=TRUE>>=
 length(raw.bytes)
 uncompressed.bytes <- memDecompress(raw.bytes, "gzip")
 length(uncompressed.bytes)
 new.hist.proto <- HistogramTools.HistogramState$read(uncompressed.bytes)
+@
+
+The resulting histogram that has been converted to a protocol buffer,
+serialized, compressed, then uncompressed, parsed, and converted back
+to a histogram is the same as our original.
+
+<<fig=TRUE,echo=TRUE,height=4,width=8>>=
+par(mfrow=c(1,2))
+plot(myhist)
 plot(as.histogram(new.hist.proto))
-@ 
+@
 
 \section{Quantiles and Cumulative Distribution Functions}
 
