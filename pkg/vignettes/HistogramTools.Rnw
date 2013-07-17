@@ -266,8 +266,8 @@ mechanism for serializing structured data \citep{Pike:2005:IDP:1239655.1239658,p
 \citep{rprotobuf} provides an interface for manipulating protocol
 buffer objects directly within R.
 
-Of the six elements stored in an R histogram object, we only need to
-store three in our serialization format since the other three can be
+Of the \Sexpr{length(myhist)} elements stored in an R histogram object, we only need to
+store three in our serialization format since the others can be
 re-computed.  This leads to the following simple protocol buffer
 definition of the breaks, counts, and name of a histogram:
 
@@ -302,9 +302,9 @@ length(hist.msg$serialize(NULL))
 This protocol buffer representation is by default not compressed
 however, so we can do better:
 
-<<echo=TRUE,print=TRUE>>=
+<<echo=TRUE>>=
 raw.bytes <- memCompress(hist.msg$serialize(NULL), "gzip")
-length(raw.bytes)
+print(length(raw.bytes))
 @
 
 We can then send this compressed binary representation of the
@@ -313,9 +313,10 @@ for later analysis by other tools.  If we want to recreate the
 original R histogram object from the serialized protocol buffer we can
 use the \code{as.histogram} method.
 
-<<echo=TRUE,print=TRUE>>=
-length(raw.bytes)
+<<echo=TRUE>>=
 uncompressed.bytes <- memDecompress(raw.bytes, "gzip")
+@ 
+<<echo=TRUE,print=TRUE>>=
 length(uncompressed.bytes)
 new.hist.proto <- HistogramTools.HistogramState$read(uncompressed.bytes)
 @
@@ -332,6 +333,7 @@ plot(as.histogram(new.hist.proto))
 
 \section{Quantiles and Cumulative Distribution Functions}
 
+When histograms are used as a binned data storage mechanism to reduce 
 Often if our buckets were chosen wisely in advance it may be preferred
 to generate an approximate cumulative distribution function from a
 histogram.
@@ -341,8 +343,10 @@ with this, but note that they will only be accurate with very granular
 histogram buckets.  They would never be appropriate with histogram
 buckets chosen by the default algorithm in R.
 
-<<echo=TRUE,print=TRUE>>=
+<<echo=TRUE>>=
 hist <- hist(c(1,2,3), breaks=c(0,1,2,3,4,5,6,7,8,9), plot=FALSE)
+@ 
+<<echo=TRUE,print=TRUE>>=
 Count(hist)
 ApproxMean(hist)
 ApproxQuantile(hist, .5)
@@ -378,9 +382,18 @@ PlotAll <- function(x, h) {
 
 \subsection{Distributions, Histograms, and ECDFs}
 
-Our data analysis pipelines start with a number of large data sets over which histograms are computed.  We then convert these into approximate CDFs for plotting and data analysis.  The following three examples (one in each row) display this process.  The first column represents raw data, the second column is a histogram, and the third column is an approximate CDF based on the histograms with yellow boxes representing the error range for the true CDF based on the original full distribution.  The first row is simply x <- 1:100, the second row is runif(100), and the third row is rexp(100).
+A very large data set may need to be binned into histogram form during
+the data collection process.  We may then want to convert the
+histograms into approximate CDFs for plotting and data analysis.  The
+three examples (one in each row) in Figure~\ref{fig:hist2ecdf} display
+this process.  The first column represents raw data, the second column
+is a histogram, and the third column is an approximate CDF based on
+the histograms with yellow boxes representing the error range for the
+true CDF based on the original full distribution.  The first row is
+simply \code{x <- 1:100}, the second row is \code{runif(100)}, and
+the third row is \code{rexp(100)}.
 
-<<fig1,fig=TRUE,echo=FALSE,print=FALSE,height=8,width=8>>=
+<<hist2ecdf,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,height=8,width=8>>=
 par(mfrow=c(3,3))
 x<-1:100
 PlotAll(x, hist(x, plot=FALSE))
@@ -392,16 +405,25 @@ x<-rexp(100)
 PlotAll(x, hist(x, plot=FALSE))
 @
 
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=6in,height=6in]{HistogramTools-hist2ecdf}
+\end{center}
+\caption{Raw data (column 1), histograms (column 2), approximate ECDFs
+  (column 3)}
+\label{fig:hist2ecdf}
+\end{figure}
+
 The histograms above were generated using the default computed
-breakpoints of R, which uses a modified Sturges algorithm.  However,
-for our actual data analysis tasks we generate our own bucket widths
-in advance so that all of our histograms have comparable and
-consistent bucket boundaries.  For the same distribution, we obviously
-have control over the histogram bins, and using more fine-grained bins
-produces a more accurate representation of the underlying
-distribution.  The next figure shows the same rexp(100) data set with
-coarse and fine-grained histogram buckets and the associated
-approximate ECDFs.
+breakpoints of R, which uses a modified Sturges algorithm
+\cite{sturges1926choice}.  However, for our actual data analysis tasks
+we generate our own bucket widths in advance so that all of our
+histograms have comparable and consistent bucket boundaries.  For the
+same distribution, we obviously have control over the histogram bins,
+and using more fine-grained bins produces a more accurate
+representation of the underlying distribution.  The next figure shows
+the same \code{rexp(100)} data set with coarse and fine-grained histogram
+buckets and the associated approximate ECDFs.
 
 % lets try some new distributions and histograms
 <<fig2,fig=TRUE,echo=TRUE,print=FALSE,height=8,width=8>>=
@@ -461,37 +483,73 @@ compared to the one with default buckets, as expected.
 If we are generating histograms with a large number of fine-grained
 bucket boundaries, then we out resulting histogram may have a large
 number of empty consecutive buckets on the left or right side of the
-histogram.  The TrimHistogram function can be used to remove them.
+histogram.  The \code{TrimHistogram} function can be used to remove
+them as illustrated in Figure~\ref{fig:trimhist}.
+
+<<echo=TRUE,print=FALSE>>=
+hist.1 <- hist(c(1,2,3), breaks=c(0,1,2,3,4,5,6,7,8,9), plot=FALSE)
+hist.trimmed <- TrimHistogram(hist.1)
+@ 
 
 <<echo=TRUE,print=TRUE>>=
-hist.1 <- hist(c(1,2,3), breaks=c(0,1,2,3,4,5,6,7,8,9), plot=FALSE)
 length(hist.1$counts)
 sum(hist.1$counts)
-hist.trimmed <- TrimHistogram(hist.1)
 length(hist.trimmed$counts)
 sum(hist.trimmed$counts)
 @
 
+<<trimhist,fig=TRUE,echo=TRUE,include=FALSE,width=8,height=4>>=
+par(mfrow=c(1,2))
+plot(hist.1)
+plot(TrimHistogram(hist.1))
+@
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=5in,height=2.5in]{HistogramTools-trimhist}
+\end{center}
+\caption{Effect of the \code{TrimHistogram} function.}
+\label{fig:trimhist}
+\end{figure}
+
 \subsection{Merging Histograms}
 
 If two histograms have the same bucket boundaries, it is possible to
-merge them toegether by aggregating the counts values with the merge function.
+merge them together by aggregating the counts values with the \code{merge}
+function illustrated in Figure~\ref{fig:mergehist}.
 
-<<echo=TRUE,print=TRUE>>=
+<<echo=TRUE,print=FALSE>>=
 hist.1 <- hist(c(1,2,3,4), plot=FALSE)
 hist.2 <- hist(c(1,2,2,4), plot=FALSE)
 hist.merged <- merge(hist.1, hist.2)
 @
 
+<<mergehist,fig=TRUE,echo=FALSE,include=FALSE,width=8,height=4>>=
+par(mfrow=c(1,3))
+plot(hist.1)
+plot(hist.2)
+plot(hist.merged,main="Merged Histogram")
+@
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=5in,height=2.5in]{HistogramTools-mergehist}
+\end{center}
+\caption{Effect of the \code{MergeHistogram} function.}
+\label{fig:mergehist}
+\end{figure}
+
+
+
 \subsection{Downsampling: Merging Buckets}
 
 TODO
 
-\section{Extensions}
-
-\subsection{Exemplar Histograms}
-
-TODO
+% TODO
+% \section{Extensions}
+%\subsection{Exemplar Histograms}
+% TODO
+%
 
 %Sharing Histograms Between Tools
 %In a big data analysis task, we may combine many different tools and languages.  For example, high-performance C++ or Java code might process millions of records to generate histograms and then serialize them (using e.g. Protocol buffers or Thrift) to a data store.
@@ -508,14 +566,14 @@ TODO
 %rows:  R serialize, Rprotobuf naive implementation, RProtobuf C++ optimized implementation
 
 
-TODO Table example performance analysis.
-<<label=tab1,echo=FALSE,results=tex>>=
-require(xtable)
-foo <- data.frame(a=c(1,2,3,4),b=c(5,6,7,8))
-print(xtable(foo, caption="Example Caption", center="centering", file="", label="tab:one",floating=FALSE))
-@
-
-Now we have an example reference to Table\ref{tab:one}.
+%TODO Table example performance analysis.
+% label=tab1,echo=FALSE,results=tex>>=
+%require(xtable)
+%foo <- data.frame(a=c(1,2,3,4),b=c(5,6,7,8))
+%print(xtable(foo, caption="Example Caption", center="centering", file="", label="tab:one",floating=FALSE))
+%@
+%
+%Now we have an example reference to Table\ref{tab:one}.
 
 
 %% include your article here, just as usual
