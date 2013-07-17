@@ -539,11 +539,29 @@ plot(hist.merged,main="Merged Histogram")
 \label{fig:mergehist}
 \end{figure}
 
-
-
 \subsection{Downsampling: Merging Buckets}
 
-TODO
+If data was binned into too many buckets, it is possible to merge
+adjacent buckets with the \code{downsample} function illustrated in Figure~\ref{fig:downsamplehist}.
+
+<<echo=TRUE,print=FALSE>>=
+overbinned <- hist(c(rexp(100), 1+rexp(100)), breaks=seq(0,10,by=.01), plot=FALSE)
+better.hist <- downsample(overbinned, adj=20)
+@
+
+<<downsamplehist,fig=TRUE,echo=FALSE,include=FALSE,width=8,height=4>>=
+par(mfrow=c(1,2))
+plot(overbinned)
+plot(better.hist)
+@
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=5in,height=2.5in]{HistogramTools-downsamplehist}
+\end{center}
+\caption{Effect of the \code{downsample} function.}
+\label{fig:downsamplehist}
+\end{figure}
 
 % TODO
 % \section{Extensions}
