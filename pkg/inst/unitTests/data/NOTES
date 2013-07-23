@@ -1,0 +1,7 @@
+DTrace output on FreeBSD collected while building the kernel ("make
+buildkernel") with the following short DTrace script running (note
+that the default compiler on FreeBSD, clang, mmaps in the input files
+so the C compiler is noticeably absent from the list of read
+activity.)
+
+dtrace -n 'syscall::read:return { @[execname] = quantize(arg0); @["TOTAL"] = quantize(arg0); }'
