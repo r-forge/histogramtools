@@ -18,12 +18,3 @@ TestApproxQuantile <- function() {
   # The midpoint of the last bucket is our approximation of 100%tile.
   checkEquals(unname(ApproxQuantile(x, 1)), max(x$mids))
 }
-
-TestLargeApproxQuantile <- function() {
-  example.file <- file(GetResourceFilename(
-    "google3/analysis/common/r/ghistogram/test/examplemessage.ascii"))
-  file.age.proto <- readASCII(stats.HistogramState, example.file)
-  age.hist <- as.histogram(file.age.proto)
-
-  checkTrue(ApproxQuantile(age.hist, .5) < ApproxQuantile(age.hist, .51))
-}
