@@ -22,8 +22,8 @@
     warning("Trimming buckets from histogram.")
     x <- SubsetHistogram(x, maxbreak=max(breaks))
   }
-  
-  i <- which(allreads$breaks %in% breaks)
+
+  i <- which(x$breaks %in% breaks)
   bucket.grouping <- rep(head(breaks, -1), diff(i))
   tmp.df <- aggregate(x$counts, by=list(breaks=bucket.grouping), FUN)
 
