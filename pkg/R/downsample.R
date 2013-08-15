@@ -14,7 +14,28 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
-# TODO(mstokely): Support breaks as a vector of new breaks to be used.
+.DownSampleToBreakList <- function(x, breaks, FUN=sum) {
+  stopifnot(is.numeric(breaks), length(breaks) > 1)
+  stopifnot(all(breaks) %in% x$breaks)
+
+  if (max(breaks) < max(x$breaks)) {
+    warning("Trimming buckets from histogram.")
+    x <- SubsetHistogram(x, maxbreak=max(breaks))
+  }
+  
+  i <- which(allreads$breaks %in% breaks)
+  bucket.grouping <- rep(head(breaks, -1), diff(i))
+  tmp.df <- aggregate(x$counts, by=list(breaks=bucket.grouping), FUN)
+
+  x$counts <- tmp.df$x
+  x$breaks <- c(tmp.df$breaks, tail(x$breaks, 1))
+  # The other named list elements of the histogram class :
+  x$density <- x$counts / (sum(x$counts) * diff(x$breaks))
+  x$mids <- (head(x$breaks, -1) + tail(x$breaks, -1)) / 2
+  x$equidist <- length(unique(diff(x$breaks))) == 1
+  return(x)
+}
+
 downsample <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
   # Downsamples a histogram by merging adjacent buckets.
   #
@@ -25,14 +46,18 @@ downsample <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
   # Args:
   #   x: An S3 histogram object
   #   adj.buckets: The number of adjacent buckets to merge.
-  #   breaks: The total number of breaks to downsample to.
+  #   breaks: a vector giving the breakpoints between cells, or a
+  #     single number giving number of cells.
   #   FUN: The function used to merge buckets.
   #
   # Returns:
   #   An S3 histogram class suitable for plotting.
   stopifnot(inherits(x, "histogram"))
   if (is.null(adj.buckets)) {
-    stopifnot(is.numeric(breaks), length(breaks) == 1)
+    stopifnot(is.numeric(breaks), length(breaks) > 0)
+    if (length(breaks) > 1) {
+      return(.DownSampleToBreakList(x, breaks, FUN))
+    }
     stopifnot(breaks < length(x$breaks))
     # How many new buckets will we have.
     new.bucket.count <- breaks
@@ -58,7 +83,6 @@ downsample <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
   x$breaks <- c(tmp.df$breaks, tail(x$breaks, 1))
   # The other named list elements of the histogram class :
   x$density <- x$counts / (sum(x$counts) * diff(x$breaks))
-  x$intensities <- x$density
   x$mids <- (head(x$breaks, -1) + tail(x$breaks, -1)) / 2
   x$equidist <- length(unique(diff(x$breaks))) == 1
   return(x)
