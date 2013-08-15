@@ -22,7 +22,7 @@ SubsetHistogram creates a histogram by zooming in on a portion of a
 larger histogram and discarding tail buckets.
 }
 \usage{
-  SubsetHistogram(x, minbreak=NULL, maxbreak=NULL) {
+  SubsetHistogram(x, minbreak=NULL, maxbreak=NULL)
 }
 \arguments{
   \item{x}{An S3 histogram object.}
