@@ -41,7 +41,7 @@ returned unmodified.
 \keyword{methods}
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-\code{\link{histogram-package}}
+\code{\link{histogramtools-package}}
 \code{\link{hist}}
 }
 \examples{

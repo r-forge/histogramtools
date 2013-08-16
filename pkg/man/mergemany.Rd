@@ -34,7 +34,7 @@ This function provides a way to efficiently aggregate large numbers of histogram
 \keyword{methods}
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-\code{\link{histogram-package}}
+\code{\link{histogramtools-package}}
 \code{\link{hist}}
 }
 \examples{

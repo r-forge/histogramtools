@@ -25,7 +25,7 @@ manipulating large histograms.}
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-  \code{\link{histogram-package}}
+  \code{\link{histogramtools-package}}
   \code{\link{as.histogram}}
 \code{\link{RProtoBuf}}
 }

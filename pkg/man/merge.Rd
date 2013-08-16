@@ -32,7 +32,7 @@ Merge two histograms that have the same breaks into a combined histogram.
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
 \code{\link{MergeManyHistograms}}
-\code{\link{histogram-package}}
+\code{\link{histogramtools-package}}
 \code{\link{hist}}
 }
 \examples{
