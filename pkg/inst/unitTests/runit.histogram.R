@@ -36,6 +36,12 @@ TestMergeBucketsHistograms <- function() {
   hist.4 <- MergeBuckets(hist.1, breaks=c(0, 3, 6, 9))
   checkEquals(hist.4$breaks, c(0, 3, 6, 9))
   checkEquals(hist.4$counts, c(3, 0, 0))
+
+  # Now specify a variant on hist.1
+  hist.5 <- hist(c(1,2,3), breaks=0:10, plot=FALSE)
+  hist.6 <- MergeBuckets(hist.5, adj=2)
+  checkEquals(hist.6$breaks, c(0, 2, 4, 5, 8, 10))
+  checkEquals(hist.6$counts, c(3, 1, 0, 0, 0))
 }
 
 TestMergeManyHistograms <- function() {
