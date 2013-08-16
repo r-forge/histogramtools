@@ -14,7 +14,7 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
-.DownSampleToBreakList <- function(x, breaks, FUN=sum) {
+.MergeBucketsToBreakList <- function(x, breaks, FUN=sum) {
   stopifnot(is.numeric(breaks), length(breaks) > 1)
   stopifnot(all(breaks) %in% x$breaks)
 
@@ -36,8 +36,8 @@
   return(x)
 }
 
-downsample <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
-  # Downsamples a histogram by merging adjacent buckets.
+downsample <- MergeBuckets <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
+  # Merge adjacent buckets of a Histogram.
   #
   # This only makes sense where the new bucket boundaries are a subset
   # of the previous bucket boundaries.  Only one of adj.buckets or
@@ -56,7 +56,7 @@ downsample <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
   if (is.null(adj.buckets)) {
     stopifnot(is.numeric(breaks), length(breaks) > 0)
     if (length(breaks) > 1) {
-      return(.DownSampleToBreakList(x, breaks, FUN))
+      return(.MergeBucketsToBreakList(x, breaks, FUN))
     }
     stopifnot(breaks < length(x$breaks))
     # How many new buckets will we have.

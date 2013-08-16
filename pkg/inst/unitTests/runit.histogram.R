@@ -22,18 +22,18 @@ TestMergeHistograms <- function() {
   checkEquals(hist.merged$counts, c(5, 1, 2))
 }
 
-TestDownsampleHistograms <- function() {
+TestMergeBucketsHistograms <- function() {
   hist.1 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
-  hist.2 <- downsample(hist.1, adj=2)
+  hist.2 <- MergeBuckets(hist.1, adj=2)
   checkEquals(hist.2$breaks, c(0,2,4,6,8,9))
   checkEquals(hist.2$counts, c(2,1,0,0,0))
 
-  hist.3 <- downsample(hist.1, breaks=3)
+  hist.3 <- MergeBuckets(hist.1, breaks=3)
   checkEquals(hist.3$breaks, c(0,3,6,9))
   checkEquals(hist.3$counts, c(3,0,0))
 
   # Now specify explicit subset of bucket boundaries.
-  hist.4 <- downsample(hist.1, breaks=c(0, 3, 6, 9))
+  hist.4 <- MergeBuckets(hist.1, breaks=c(0, 3, 6, 9))
   checkEquals(hist.4$breaks, c(0, 3, 6, 9))
   checkEquals(hist.4$counts, c(3, 0, 0))
 }
