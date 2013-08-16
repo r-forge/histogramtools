@@ -15,6 +15,21 @@
 # Author: mstokely@google.com (Murray Stokely)
 
 .MergeBucketsToBreakList <- function(x, breaks, FUN=sum) {
+  # Merge adjacent buckets of a Histogram given a subset of the original breaks.
+  #
+  # This function combines adjacent buckets such that the returned
+  # histogram has 'breaks' as breakpoints which must be a subset of
+  # the original breakpoints.
+  #
+  # Args:
+  #   x:         An S3 histogram object
+  #   breaks:    a vector giving the breakpoints between cells.
+  #   FUN:       The function used to merge buckets.  Using anything other than
+  #              sum here would break the density so use with care.
+  #
+  # Returns:
+  #   An S3 histogram class suitable for plotting.
+
   stopifnot(is.numeric(breaks), length(breaks) > 1)
   stopifnot(all(breaks) %in% x$breaks)
 
@@ -48,7 +63,8 @@ downsample <- MergeBuckets <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum
   #   adj.buckets: The number of adjacent buckets to merge.
   #   breaks: a vector giving the breakpoints between cells, or a
   #     single number giving number of cells.
-  #   FUN: The function used to merge buckets.
+  #   FUN: The function used to merge buckets.  Using anything other than
+  #     sum here would break the density so use with care.
   #
   # Returns:
   #   An S3 histogram class suitable for plotting.
