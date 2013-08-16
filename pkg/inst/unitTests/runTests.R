@@ -15,7 +15,7 @@ if(require("RUnit", quietly = TRUE)) {
         cat("Now have RUnit Test Suite 'testSuite' for package '", pkg,
             "' :\n", sep='')
         str(testSuite)
-        cat('', "Consider doing",
+        cat("\nConsider doing",
             "\t  tests <- runTestSuite(testSuite)", "\nand later",
             "\t  printTextProtocol(tests)", '', sep="\n")
     } else { ## run from shell / Rscript / R CMD Batch / ...
