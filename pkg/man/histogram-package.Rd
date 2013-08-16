@@ -1,8 +1,9 @@
 % Copyright 2011 Google Inc. All Rights Reserved.
 % Author: mstokely@google.com (Murray Stokely)
-\name{histogram-package}
-\alias{histogram-package}
+\name{histogramtools-package}
+\alias{histogramtools-package}
 \alias{histogram}
+\alias{histogramtools}
 \docType{package}
 \title{HistogramTools package}
 
@@ -70,7 +71,7 @@ Murray Stokely <mstokely@google.com>
   # We can parse the raw bytes as a protocol buffer
   new.hist.proto <- HistogramTools.HistogramState$read(raw.bytes)
   new.hist.proto
-  
+
   # Then convert back to a native R histogram.
   new.hist <- as.histogram(new.hist.proto)
 
