@@ -40,6 +40,6 @@ SubsetHistogram <- function(x, minbreak=NULL, maxbreak=NULL) {
   }
   x$density <- x$counts / (sum(x$counts) * diff(x$breaks))
   x$mids <- (head(x$breaks, -1) + tail(x$breaks, -1)) / 2
-  x$equidist <- .BreaksAreEquidistant(hist$breaks)
+  x$equidist <- .BreaksAreEquidistant(x$breaks)
   return(x)
 }
