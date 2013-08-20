@@ -75,10 +75,11 @@ PlotMDCC <- function(h) {
   diffs <- MaxEcdf(h$mids) - MinEcdf(h$mids)
   mdcc <- max(diffs)
   index.of.max <- min(which(diffs == mdcc))
-  rect(knots(MinEcdf)[index.of.max - 1],
-       MinEcdf(knots(MinEcdf)[index.of.max - 1]),
-       knots(MinEcdf)[index.of.max],
-       MaxEcdf(knots(MinEcdf)[index.of.max]),
+  width <- diff(range(knots(MinEcdf))) * .02
+  rect(knots(MinEcdf)[index.of.max] - width,
+       MinEcdf(h$mids[index.of.max]),
+       knots(MinEcdf)[index.of.max] + width,
+       MaxEcdf(h$mids[index.of.max]),
        col="yellow")
 }
 
