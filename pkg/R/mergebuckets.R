@@ -47,7 +47,7 @@
   # The other named list elements of the histogram class :
   x$density <- x$counts / (sum(x$counts) * diff(x$breaks))
   x$mids <- (head(x$breaks, -1) + tail(x$breaks, -1)) / 2
-  x$equidist <- length(unique(diff(x$breaks))) == 1
+  x$equidist <- .BreaksAreEquidistant(x$breaks)
   return(x)
 }
 
@@ -100,6 +100,6 @@ MergeBuckets <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
   # The other named list elements of the histogram class :
   x$density <- x$counts / (sum(x$counts) * diff(x$breaks))
   x$mids <- (head(x$breaks, -1) + tail(x$breaks, -1)) / 2
-  x$equidist <- length(unique(diff(x$breaks))) == 1
+  x$equidist <- .BreaksAreEquidistant(x$breaks)
   return(x)
 }
