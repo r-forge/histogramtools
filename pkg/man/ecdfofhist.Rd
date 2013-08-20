@@ -22,11 +22,16 @@ Computes an approximate empirical cumulative distribution function of an underly
 data set given a binned histogram representation of that dataset.
 }
 \usage{
-HistToEcdf(hist)
+HistToEcdf(h, method="constant", f=0)
 }
 \arguments{
-  \item{hist}{An S3 histogram object representing a pre-binned dataset
+  \item{h}{An S3 histogram object representing a pre-binned dataset
     on which we'd like to calculate an ECDF.}
+  \item{method}{specifies the interpolation method to be used in call to
+    \code{approxfun()}.  Choices are "linear" or "constant".}
+  \item{f}{‘method="constant"’ a number between 0 and 1 inclusive,
+    indicating a compromise between left- and right-continuous
+     step functions.  See ?approxfun}
 }
 \details{
   This function approximates the e.c.d.f. (empirical cumulative
@@ -37,6 +42,7 @@ HistToEcdf(hist)
 \seealso{
 \code{\link{histogramtools-package}}
 \code{\link{ecdf}}
+\code{\link{approxfun}}
 \code{\link{hist}}
 }
 \examples{
