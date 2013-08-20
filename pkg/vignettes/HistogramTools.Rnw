@@ -540,19 +540,19 @@ simultaneously with the \code{MergeManyHistograms} function.
   hist.merged
 @ 
 
-\subsection{Downsampling: Merging Buckets}
+\subsection{Merging Buckets}
 
 If data was binned into too many buckets, it is possible to merge
-adjacent buckets with the \code{downsample} function illustrated in Figure~\ref{fig:downsamplehist}.
+adjacent buckets with the \code{MergeBuckets} function illustrated in Figure~\ref{fig:downsamplehist}.
 
 <<echo=TRUE,print=FALSE>>=
 overbinned <- hist(c(rexp(100), 1+rexp(100)), breaks=seq(0,10,by=.01), plot=FALSE)
-better.hist <- downsample(overbinned, adj=20)
+better.hist <- MergeBuckets(overbinned, adj=20)
 @
 
 Occasionally the breaks in a histogram may be too granular such that
 it hides the larger picture of the distribution or makes plotting
-difficult with too many buckets.  The \code{downsample} function takes
+difficult with too many buckets.  The \code{MergeBuckets} function takes
 a histogram and a parameter for the number of adjacent buckets to
 merge together and returns a new histogram with different bucket
 boundaries as illustrated in Figure~\ref{fig:downsamplehist}.
@@ -565,7 +565,7 @@ plot(better.hist)
 
 <<echo=TRUE,print=FALSE>>=
 hist.1 <- hist(c(1,2,3,4), plot=FALSE)
-hist.2 <- downsample(hist.1, adj.buckets=2)
+hist.2 <- MergeBuckets(hist.1, adj.buckets=2)
 @
 
 <<downsamplehist,fig=TRUE,echo=FALSE,include=FALSE,width=5.3,height=4>>=
@@ -578,7 +578,7 @@ plot(hist.2)
 \begin{center}
 \includegraphics[width=3.3in,height=2.5in]{HistogramTools-downsamplehist}
 \end{center}
-\caption{Effect of the \code{downsample} function.}
+\caption{Effect of the \code{MergeBuckets} function.}
 \label{fig:downsamplehist}
 \end{figure}
 
@@ -603,7 +603,7 @@ hist.2
 %\begin{center}
 %\includegraphics[width=5in,height=2.5in]{HistogramTools-downsamplehist}
 %\end{center}
-%\caption{Effect of the \code{downsample} function.}
+%\caption{Effect of the \code{MergeBuckets} function.}
 %\label{fig:downsamplehist}
 %\end{figure}
 
