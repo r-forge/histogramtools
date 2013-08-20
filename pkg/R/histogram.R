@@ -14,37 +14,6 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
-# Private functions
-
-.is.wholenumber <-
-  function(x, tol = .Machine$double.eps^0.5) return (abs(x - round(x)) < tol)
-
-.positive.rle <- function(x) {
-  # Implement the special RLE used by stats::HistogramState.
-  # Specifically, find runs of N zeros and replace them with
-  # -N in the list of bucket counts.  Based on base::rle
-  #
-  # Args:
-  #   x:  A numeric vector of integral bucket counts.
-  # Returns:
-  #   A numeric vector with runs of N zeros represented by -N.
-
-  stopifnot(!is.null(x))
-  stopifnot(is.numeric(x))
-  stopifnot(all(.is.wholenumber(x)))
-  if (!is.vector(x) && !is.list(x))
-    stop("'x' must be an atomic vector")
-  n <- length(x)
-  if (n == 0L)
-    return(x)
-  is.run <- !(x[-1L] == x[-n] & x[-1L] == 0)
-  indices <- c(which(is.run | is.na(is.run)), n)
-  values <- x[indices]
-  lengths = diff(c(0L, indices))
-  values[which(lengths > 1)] = -1 * lengths[which(lengths > 1)]
-  return(values)
-}
-
 # S3 Generics
 
 as.histogram <- function(x, ...) {
