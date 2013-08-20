@@ -32,6 +32,7 @@ MergeManyHistograms <- function(x, main=paste("Merge of", length(x), "histograms
   hist <- list(breaks=x[[1]]$breaks,
                counts=sum.cnts,
                mids=x[[1]]$mids,
+               xname=main,
                equidist=x[[1]]$equidist)
   hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
 
