@@ -48,8 +48,7 @@ as.histogram.Message <- function(x, ...) {
                "HistogramTools.HistogramState supported"))
   }
   hist <- list()
-  hist$breaks <- x$breaks
-  hist$counts <- x$counts
+  hist <- x[c("breaks", "counts")]
   # TODO(mstokely): consider
   # hist$density <- with(hist, counts / (sum(counts) * diff(breaks)))
   hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
