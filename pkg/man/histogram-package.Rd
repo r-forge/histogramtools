@@ -30,11 +30,14 @@ Date: \tab 2012-11-11\cr
 Index:
 \preformatted{
 merge.histogram       Merge two histogram objects that have identical breaks.
-downsample            Downsample a histogram by combining adjacent buckets.
+MergeManyHistograms   Merge a list of Histograms together with identical breaks.
+MergeBuckets          Merge adjacent buckets of a histogram.
 ApproxQuantile        Approximate the quantiles of the underlying distribution.
 ApproxMean            Approximate the mean of the underlying distribution.
 Count                 Count of all samples in a histogram.
+SubsetHistogram       Subset a histogram by removing some of the buckets.
 TrimHistogram         Remove empty buckets from the tails of a histogram.
+ReadHistogramsFromDtraceOutputFile  Read a list of Histograms from the output of the DTrace tool.
 }
 }
 \author{
