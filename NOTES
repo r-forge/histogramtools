@@ -1,0 +1,2 @@
+R CMD check pkg
+R CMD BATCH pkg/tests/doRUnit.R
