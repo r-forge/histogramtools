@@ -75,12 +75,7 @@ ReadHistogramsFromDtraceOutputFile <- function(filename) {
   count.leftoffset <- regexpr("count", headerline, fixed=T)[1]
   bins <- as.numeric(sub("(^.*)\\|.*", "\\1", tail(textlines, -2)))
   counts <- as.numeric(sub("^.{59}(.*)", "\\1", tail(textlines, -2)))
-  hist <- list(breaks = bins,
-               counts = head(counts, -1),  # remove the last bin, always 0.
-               xname = title)
-  hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
-  hist$mids <- (head(hist$breaks, -1) + tail(hist$breaks, -1)) / 2
-  hist$equidist <- .BreaksAreEquidistant(hist$breaks)
-  class(hist) <- "histogram"
-  return(hist)
+  return(.BuildHistogram(breaks = bins,
+                         counts = head(counts, -1),  # remove the last bin, always 0.
+                         xname = title))
 }

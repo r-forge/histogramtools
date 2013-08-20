@@ -22,6 +22,20 @@
   all(abs(diffs - diffs[1]) < .Machine$double.eps^0.5 * max(diffs))
 }
 
+.BuildHistogram <- function(breaks, counts, xname="") {
+  stopifnot(is.numeric(breaks), is.numeric(counts))
+  stopifnot(length(breaks) > 1)
+  stopifnot(length(breaks) == (length(counts) + 1))
+  hist <- list(breaks = breaks,
+               counts = counts,
+               density = counts / (sum(counts) * diff(breaks)),
+               mids = (head(breaks, -1) + tail(breaks, -1)) / 2,
+               xname = xname,
+               equidist = .BreaksAreEquidistant(breaks))
+  class(hist) <- "histogram"
+  return(hist)
+}
+
 # S3 Generics
 
 as.histogram <- function(x, ...) {
@@ -47,19 +61,12 @@ as.histogram.Message <- function(x, ...) {
     stop(paste("Unknown protocol message type", x@type, "only",
                "HistogramTools.HistogramState supported"))
   }
-  hist <- list(breaks = x$breaks,
-               counts= x$counts)
-  # TODO(mstokely): consider
-  # hist$density <- with(hist, counts / (sum(counts) * diff(breaks)))
-  hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
-  hist$mids <- (head(hist$breaks, -1) + tail(hist$breaks, -1)) / 2
+  hist <- .BuildHistogram(breaks = x$breaks, counts = x$counts)
   if (x$has("name")) {
     hist$xname <- x$name
   } else {
     hist$xname <- "HistogramTools.HistogramState"
   }
-  hist$equidist <- .BreaksAreEquidistant(hist$breaks)
-  class(hist) <- "histogram"
   return(hist)
 }
 
