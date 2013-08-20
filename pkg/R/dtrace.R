@@ -14,8 +14,19 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
-#foo <- ReadHistogramsFromDtraceOutputFile("~/dtrace-read-hist-outs")
 ReadHistogramsFromDtraceOutputFile <- function(filename) {
+  # Read the output of the dtrace tool and return a list of R histograms.
+  #
+  # The dtrace tool can output histograms of system quantities in a textual
+  # representation.  This function parses those into R histogram objects for
+  # further statistical analysis.
+  #
+  # Args:
+  #   filename: The text output file of dtrace that includes distributions.
+  #
+  # Returns:
+  #   A list of S3 histogram objects suitable for plotting.
+
   stopifnot(is.character(filename), length(filename) == 1)
   stopifnot(file.exists(filename))
   dtrace.text <- readLines(filename)
@@ -24,21 +35,34 @@ ReadHistogramsFromDtraceOutputFile <- function(filename) {
   # lengths for each
   lengths <- diff(c(which(dividers), length(dtrace.text)))
 
-  # Subtract one so we pick up the binary label before the
+  # Subtract one so we pick up the binary label before the divider.
   hist.indices <- data.frame(start=(which(dividers)-1), length=(lengths-1))
 
   myh <- sapply(1:nrow(hist.indices), function(x) {
     dtrace.text[hist.indices[x,]$start:(hist.indices[x,]$start +
                                         hist.indices[x,]$length)] })
 
-  myhists <- lapply(myh, BuildSingleHistogramFromDtraceOutput)
+  myhists <- lapply(myh, .BuildSingleHistogramFromDtraceOutput)
   return(myhists)
 }
 
-BuildSingleHistogramFromDtraceOutput <- function(textlines) {
+.BuildSingleHistogramFromDtraceOutput <- function(textlines) {
+  # Build a single histogram from a portion of the text output of dtrace.
+  #
+  # The ReadHistogramsFromDtraceOutputFile() function breaks up the text
+  # output of dtrace into individual chunks corresponding to different
+  # distributions and then calls this function on each subset to generate
+  # a single histogram.
+  #
+  # Args:
+  #   textlines: A character vector of the portion of dtrace output for one hist
+  #
+  # Returns:
+  #   An S3 histogram object suitable for plotting.
+
   stopifnot(is.character(textlines), length(textlines) > 3)
   stopifnot(grepl("-- Distribution --", textlines[2]))
-  textlines <- textlines[textlines != ""]
+  textlines <- textlines[nzchar(textlines)]
   title <- textlines[1]
   headerline <- textlines[2]
   value.rightoffset <- regexpr("value", headerline, fixed=T)[1] + nchar("value")
