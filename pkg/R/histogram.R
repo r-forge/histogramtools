@@ -14,6 +14,14 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
+.BreaksAreEquidistant <- function(breaks) {
+  # Check if breaks are equally spaced.
+  # If we had integer breakpoints we could just use
+  # hist$equidist <- length(unique(diff(hist$breaks))) == 1
+  diffs <- diff(breaks)
+  all(abs(diffs - diffs[1]) < .Machine$double.eps^0.5 * max(diffs))
+}
+
 # S3 Generics
 
 as.histogram <- function(x, ...) {
@@ -25,8 +33,7 @@ as.Message <- function(x, ...) {
   UseMethod("as.Message")
 }
 
-as.histogram.Message <- function(x,
-                                 ...) {
+as.histogram.Message <- function(x, ...) {
   # Converts a Protocol Buffer into an R Histogram.
   #
   # Args:
@@ -36,29 +43,25 @@ as.histogram.Message <- function(x,
   #   An S3 histogram class suitable for plotting.
   stopifnot(inherits(x, "Message"))
 
-  if (x@type == "HistogramTools.HistogramState") {
-    hist <- list()
-    hist$breaks <- x$breaks
-    ## Don't count the RLE.
-    hist$counts <- x$counts
-    hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
-    hist$mids <- (head(hist$breaks, -1) + tail(hist$breaks, -1)) / 2
-    if (x$has("name")) {
-      hist$xname <- x$name
-    } else {
-      hist$xname <- "HistogramTools.HistogramState"
-    }
-    # If we had integer breakpoints we could just use
-    # hist$equidist <- length(unique(diff(hist$breaks))) == 1
-    hist$equidist <- all.equal(diff(hist$breaks),
-                               rep(diff(hist$breaks)[1],
-                                   length(hist$breaks) - 1))
-    class(hist) <- "histogram"
-    return(hist)
-  } else {
+  if (x@type != "HistogramTools.HistogramState") {
     stop(paste("Unknown protocol message type", x@type, "only",
                "HistogramTools.HistogramState supported"))
   }
+  hist <- list()
+  hist$breaks <- x$breaks
+  hist$counts <- x$counts
+  # TODO(mstokely): consider
+  # hist$density <- with(hist, counts / (sum(counts) * diff(breaks)))
+  hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
+  hist$mids <- (head(hist$breaks, -1) + tail(hist$breaks, -1)) / 2
+  if (x$has("name")) {
+    hist$xname <- x$name
+  } else {
+    hist$xname <- "HistogramTools.HistogramState"
+  }
+  hist$equidist <- .BreaksAreEquidistant(hist$breaks)
+  class(hist) <- "histogram"
+  return(hist)
 }
 
 as.Message.histogram <- function(x) {
@@ -77,26 +80,15 @@ as.Message.histogram <- function(x) {
   hist.msg <- new(hist.class)
 
   hist.msg$counts <- x$counts
-  # Use the optional RLE scheme. Just setting x$counts also work but results in
-  # a larger protocol message.
-  #  hist.msg$buckets <- .positive.rle(x$counts)
-  #  hist.msg$sum <- sum(x$counts)
-
   hist.msg$breaks <- x$breaks
   hist.msg$name <- x$xname
   return(hist.msg)
 }
 
-## It's not actually compressed in any way, just encoded, so the
-## protocol buffer data can be gzipped smaller.
-## foo 
-## length(bar$serialize(NULL))
-## length(memCompress(bar$serialize(NULL)))
-
 setOldClass("histogram")
 setAs("histogram", "Message", as.Message.histogram)
 
-# Merge is S3 generic in base R, but made S4 generic in RProtoBuf.
+# 'merge' is S3 generic in base R, but made S4 generic in RProtoBuf.
 
 merge.histogram <- function(x, y, main=paste("Merge of", x$xname,
                                              "and", y$xname), ...) {
