@@ -18,7 +18,7 @@
   # Merge adjacent buckets of a Histogram given a subset of the original breaks.
   #
   # This function combines adjacent buckets such that the returned
-  # histogram has 'breaks' as breakpoints which must be a subset of
+  # histogram has 'breaks' as breakpoints; breaks must be a subset of
   # the original breakpoints.
   #
   # Args:
@@ -51,7 +51,7 @@
   return(x)
 }
 
-downsample <- MergeBuckets <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
+MergeBuckets <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
   # Merge adjacent buckets of a Histogram.
   #
   # This only makes sense where the new bucket boundaries are a subset
