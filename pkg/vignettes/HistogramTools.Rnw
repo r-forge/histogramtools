@@ -361,22 +361,17 @@ histogram that has the worst error bounds, and should we modify the
 binning strategy to reduce those error bounds?
 
 <<echo=FALSE,print=FALSE>>=
-PlotCDFWithErrors <- function(x, h) {
-  ## Want to make a plot which visually shows the error inherent with
-  ## estimating a CDF from a histogram.
-
-  ## The real ECDF line
-  plot(ecdf(x))
-
-  yranges <- c(0, cumsum(h$counts)) / sum(h$counts)
-  yranges
-  rect(head(h$breaks, -1), head(yranges, -1), tail(h$breaks, -1), tail(yranges, -1), col="yellow")
-}
-
 PlotAll <- function(x, h) {
   plot(x, main="x")
   plot(h)
-  PlotCDFWithErrors(x,h)
+  PlotEcdfInformationLossOfHist(h)
+}
+
+PlotAll.4 <- function(x, h) {
+  plot(x, main="x")
+  plot(h)
+  PlotEcdfInformationLossOfHist(h)
+  PlotMDCC(h)
 }
 @
 
@@ -421,18 +416,28 @@ we generate our own bucket widths in advance so that all of our
 histograms have comparable and consistent bucket boundaries.  For the
 same distribution, we obviously have control over the histogram bins,
 and using more fine-grained bins produces a more accurate
-representation of the underlying distribution.  The next figure shows
+representation of the underlying distribution.  Figure~\ref{fig:hist3ecdf} shows
 the same \code{rexp(100)} data set with coarse and fine-grained histogram
 buckets and the associated approximate ECDFs.
 
 % lets try some new distributions and histograms
-<<fig2,fig=TRUE,echo=TRUE,print=FALSE,height=8,width=8>>=
-par(mfrow=c(2,3))
+<<hist3ecdf,fig=TRUE,echo=TRUE,print=FALSE,include=FALSE,height=8,width=12>>=
+par(mfrow=c(2,4))
 x<-rexp(100)
-PlotAll(x, hist(x, plot=FALSE))
-
-PlotAll(x, hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE))
+PlotAll.4(x, hist(x, plot=FALSE))
+PlotAll.4(x, hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE))
 @
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=6in,height=4in]{HistogramTools-hist3ecdf}
+\end{center}
+\caption{Raw data (column 1), histograms (column 2), approximate ECDFs
+  w/ information loss
+  (column 3), and w/ MDCC information loss (column 4)}
+\label{fig:hist3ecdf}
+\end{figure}
+
 
 \subsection{Error Estimates}
 
@@ -454,12 +459,20 @@ distance to compute the error due to our binning.
 sup \int \|F_b(x) - F(x)\|dx,
 \end{displaymath}
 
+We can also alternatively use simply the maximum displacement of the
+cumulative curves (MDCC), which is the Kolmogorov-Smirnov distance
+between the largest and smallest empirical cumulative distribution
+functions that could be represented by the binned data in the provided
+histogram.
+
 <<echo=TRUE>>=
 x<-rexp(100)
 h1 <- hist(x, plot=FALSE)
 h2 <- hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE)
 WorstCaseCDFInformationLoss(h1)
 WorstCaseCDFInformationLoss(h2)
+MDCC(h1)
+MDCC(h2)
 @
 
 So, using this metric, the second lower example with more granular
