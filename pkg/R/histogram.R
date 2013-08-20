@@ -47,8 +47,8 @@ as.histogram.Message <- function(x, ...) {
     stop(paste("Unknown protocol message type", x@type, "only",
                "HistogramTools.HistogramState supported"))
   }
-  hist <- list()
-  hist <- x[c("breaks", "counts")]
+  hist <- list(breaks = x$breaks,
+               counts= x$counts)
   # TODO(mstokely): consider
   # hist$density <- with(hist, counts / (sum(counts) * diff(breaks)))
   hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
