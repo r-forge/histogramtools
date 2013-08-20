@@ -14,8 +14,20 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
-EcdfOfHist <- function(h, method="constant", f=0) {
-  # Generate an ECDF out of a histogram.
+HistToEcdf <- function(h, method="constant", f=0) {
+  # Compute an empirical cumulative distribution function from a histogram.
+  #
+  # Args:
+  #   h:  An S3 histogram object.
+  #   method: specifies the interpolation method to be used in call to
+  #      approxfun().  Choices are ‘"linear"’ or ‘"constant"’.
+  #   f: for ‘method="constant"’ a number between 0 and 1 inclusive,
+  #      indicating a compromise between left- and right-continuous
+  #      step functions.  See ?approxfun
+  #
+  # Returns:
+  #   An empirical cumulative distribution function (see ?ecdf)
+
   n <- sum(h$counts)
   # We don't want to use h$mids here, because we want at least
   # to get the correct answers at the breakpoints.

@@ -14,15 +14,15 @@
 %
 % Author: mstokely@google.com (Murray Stokely)
 
-\name{EcdfOfHist}
-\alias{ecdfofhist}
+\name{HistToEcdf}
+\alias{HistToEcdf}
 \title{Empirical Cumulative Distribution Function From a Histogram.}
 \description{
 Computes an approximate empirical cumulative distribution function of an underlying
 data set given a binned histogram representation of that dataset.
 }
 \usage{
-EcdfOfHist(hist)
+HistToEcdf(hist)
 }
 \arguments{
   \item{hist}{An S3 histogram object representing a pre-binned dataset
@@ -41,5 +41,5 @@ EcdfOfHist(hist)
 }
 \examples{
 h <- hist(runif(100), plot=FALSE)
-plot(EcdfOfHist(h))
+plot(HistToEcdf(h))
 }
