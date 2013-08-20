@@ -14,42 +14,88 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
-# Integrated maximum Kolmogorov-Smirnov distance between worst-case
-# empirical cumulative distribution functions that could be
-# represented by the binned data in the provided histogram.
-#
-# Return value between 0 (no information loss) and 1 (total information loss).
+# TODO(mstokely): Add documentation and examples in the vignette.
+
 WorstCaseCDFInformationLoss <- function(h) {
-# TODO(mstokely): Better name for this.
-#
-# Another thing people do with histograms is the Maximum Displacement
-# of the Cumulative Curves (e.g. in
-# http://research.microsoft.com/pubs/72885/fiveyearstudy.pdf )
-# but I like this metric better and the vignette will compare them.
-  min.ecdf <- EcdfOfHist(h, f=0)
-  max.ecdf <- EcdfOfHist(h, f=1)
-  total.width <- max(knots(max.ecdf)) - min(knots(min.ecdf))
+  # Integrated maximum Kolmogorov-Smirnov distance between the largest
+  # and smallest empirical cumulative distribution functions that
+  # could be represented by the binned data in the provided histogram.
+  #
+  # TODO(mstokely): Better name for this.
+
+  MinEcdf <- HistToEcdf(h, f=0)
+  MaxEcdf <- HistToEcdf(h, f=1)
+  total.width <- max(knots(MaxEcdf)) - min(knots(MinEcdf))
   total.height <- 1
   total.area <- total.width * total.height
 
-  areas.of.cdf.uncertainty <- (tail(knots(min.ecdf), -1) - head(knots(min.ecdf), -1)) *
-    (sapply(tail(knots(min.ecdf), -1), max.ecdf) - sapply(head(knots(min.ecdf), -1), min.ecdf))
+  areas.of.cdf.uncertainty <- (tail(knots(MinEcdf), -1) -
+                               head(knots(MinEcdf), -1)) *
+                                 (MaxEcdf(tail(knots(MinEcdf), -1)) -
+                                  MinEcdf(head(knots(MinEcdf), -1)))
 
   return(sum(areas.of.cdf.uncertainty) / total.area)
 }
 
-# Visual representation of the uncertainty of CDFs generated from
-# binned histogram datasets.
-PlotEcdfInformationLossOfHist <- function(h) {
-  min.ecdf <- EcdfOfHist(h, f=0)
-  max.ecdf <- EcdfOfHist(h, f=1)
-  plot(max.ecdf)
-  rect(head(knots(min.ecdf), -1),
-       sapply(head(knots(min.ecdf), -1), min.ecdf),
-       tail(knots(min.ecdf), -1),
-       sapply(tail(knots(min.ecdf), -1), max.ecdf),
+MDCC <- function(h) {
+  # Maximum Displacement of the Cumulative Curves
+  #
+  # Kolmogorov-Smirnov distance between the largest and smallest
+  # empirical cumulative distribution functions that could be
+  # represented by the binned data in the provided histogram.
+  #
+  # See e.g. http://research.microsoft.com/pubs/72885/fiveyearstudy.pdf
+  #
+  # Args:
+  #   h:  An R histogram object.
+  # Return Value:
+  #   A number between 0 and 1 giving the MDCC.
+
+  MinEcdf <- HistToEcdf(h, f=0)
+  MaxEcdf <- HistToEcdf(h, f=1)
+
+  # The knots() of these ECDFs are our histogram break points.
+  # So we evaluate the differences at the histogram mid points.
+  return(max(MaxEcdf(h$mids) - MinEcdf(h$mids)))
+}
+
+PlotMDCC <- function(h) {
+  # Plot a CDF from the given histogram along with a yellow box
+  # indicating the area of the CDF with the greatest amount of
+  # uncertainty representing the part of the distribution
+  # corresponding to the MDCC.
+  #
+  # Args:
+  #   h: An S3 histogram object.
+
+  MinEcdf <- HistToEcdf(h, f=0)
+  MaxEcdf <- HistToEcdf(h, f=1)
+  plot(MaxEcdf)
+
+  diffs <- MaxEcdf(h$mids) - MinEcdf(h$mids)
+  mdcc <- max(diffs)
+  index.of.max <- min(which(diffs == mdcc))
+  rect(knots(MinEcdf)[index.of.max - 1],
+       MinEcdf(knots(MinEcdf)[index.of.max - 1]),
+       knots(MinEcdf)[index.of.max],
+       MaxEcdf(knots(MinEcdf)[index.of.max]),
        col="yellow")
 }
 
+PlotEcdfInformationLossOfHist <- function(h) {
+  # Plot a CDF from the given histogram with a yellow boxes
+  # covering all possible ranges for the e.c.d.f of the underlying
+  # distribution from which the binned histogram was created.
+  #
+  # Args:
+  #   h: An S3 histogram object.
 
-# TODO(mstokely): Implement MDCC metric also
+  MinEcdf <- HistToEcdf(h, f=0)
+  MaxEcdf <- HistToEcdf(h, f=1)
+  plot(MaxEcdf)
+  rect(head(knots(MinEcdf), -1),
+       MinEcdf(head(knots(MinEcdf), -1)),
+       tail(knots(MinEcdf), -1),
+       MaxEcdf(tail(knots(MinEcdf), -1)),
+       col="yellow")
+}
