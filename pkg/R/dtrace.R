@@ -35,12 +35,11 @@ ReadHistogramsFromDtraceOutputFile <- function(filename) {
   # lengths for each
   lengths <- diff(c(which(dividers), length(dtrace.text)))
 
-  # Subtract one so we pick up the binary label before the divider.
-  hist.indices <- data.frame(start=(which(dividers)-1), length=(lengths-1))
-
-  myh <- sapply(1:nrow(hist.indices), function(x) {
-    dtrace.text[hist.indices[x,]$start:(hist.indices[x,]$start +
-                                        hist.indices[x,]$length)] })
+  start <- which(dividers) - 1
+  lengths1 <- lengths - 1
+  myh <- sapply(1:length(start), function(i) {
+    dtrace.text[start[i] + 0:lengths1[i]]
+  })
 
   myhists <- lapply(myh, .BuildSingleHistogramFromDtraceOutput)
   return(myhists)
@@ -52,7 +51,14 @@ ReadHistogramsFromDtraceOutputFile <- function(filename) {
   # The ReadHistogramsFromDtraceOutputFile() function breaks up the text
   # output of dtrace into individual chunks corresponding to different
   # distributions and then calls this function on each subset to generate
-  # a single histogram.
+  # a single histogram.  textlines is of the form:
+  #
+  #[1] "  tcsh                                              "
+  #[2] "           value  ------------- Distribution ------------- count    "
+  #[3] "               0 |                                         0        "
+  #[4] "               1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 4        "
+  #[5] "               2 |                                         0        "
+  #[6] ""
   #
   # Args:
   #   textlines: A character vector of the portion of dtrace output for one hist
@@ -67,18 +73,14 @@ ReadHistogramsFromDtraceOutputFile <- function(filename) {
   headerline <- textlines[2]
   value.rightoffset <- regexpr("value", headerline, fixed=T)[1] + nchar("value")
   count.leftoffset <- regexpr("count", headerline, fixed=T)[1]
-  bins <- unname(sapply(textlines[3:length(textlines)], function(x) as.numeric(sub("(^.*)\\|.*", "\\1", x))))
-  counts <- unname(sapply(textlines[3:length(textlines)], function(x) as.numeric(sub("^.{59}(.*)", "\\1", x))))
-
-  hist <- list()
-  hist$breaks <- bins
-  hist$counts <- head(counts, -1)  # remove the last bin, always 0.
+  bins <- as.numeric(sub("(^.*)\\|.*", "\\1", tail(textlines, -2)))
+  counts <- as.numeric(sub("^.{59}(.*)", "\\1", tail(textlines, -2)))
+  hist <- list(breaks = bins,
+               counts = head(counts, -1),  # remove the last bin, always 0.
+               xname = title)
   hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
   hist$mids <- (head(hist$breaks, -1) + tail(hist$breaks, -1)) / 2
-  hist$xname <- title
-  hist$equidist <- all.equal(diff(hist$breaks),
-                             rep(diff(hist$breaks)[1],
-                                 length(hist$breaks) - 1))
+  hist$equidist <- .BreaksAreEquidistant(hist$breaks)
   class(hist) <- "histogram"
   return(hist)
 }
