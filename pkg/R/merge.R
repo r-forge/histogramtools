@@ -14,8 +14,9 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
-MergeManyHistograms <- function(x, main=paste("Merge of", length(x), "histograms")) {
-  # Merges many histogram objects that have the same bins.
+AddManyHistograms <- function(x, main=paste("Merge of", length(x),
+                                   "histograms")) {
+  # Adds many histogram objects together that have the same bins.
   #
   # Args:
   #   x: A list of S3 histogram objects
@@ -25,15 +26,15 @@ MergeManyHistograms <- function(x, main=paste("Merge of", length(x), "histograms
   #   An S3 histogram class suitable for plotting.
   stopifnot(all(sapply(x, inherits, "histogram")))
   br <- unname(lapply(x, function(y) y$breaks))
-  stopifnot(all(sapply(head(seq_along(br),-1), function(y) identical(br[y], br[y+1]))))
-  # All have identical breaks.
+  stopifnot(all(sapply(br, identical, y = br[[1]])))
+  # Now we know that all histograms have identical breaks.
   cnts <- unname(lapply(x, function(y) y$counts))
   sum.cnts <- Reduce("+", cnts)
-  hist <- list(breaks=x[[1]]$breaks,
-               counts=sum.cnts,
-               mids=x[[1]]$mids,
-               xname=main,
-               equidist=x[[1]]$equidist)
+  hist <- list(breaks = x[[1]]$breaks,
+               counts = sum.cnts,
+               mids = x[[1]]$mids,
+               xname = main,
+               equidist = x[[1]]$equidist)
   hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
 
   class(hist) <- "histogram"
