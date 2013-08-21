@@ -367,13 +367,7 @@ PlotAll <- function(x, h) {
   plot(x, main="x")
   plot(h)
   PlotEcdfInformationLossOfHist(h)
-}
-
-PlotAll.4 <- function(x, h) {
-  plot(x, main="x")
-  plot(h)
-  PlotEcdfInformationLossOfHist(h)
-  PlotMDCC(h)
+  PlotMDCC(h, 0.3)
 }
 @
 
@@ -383,31 +377,31 @@ A very large data set may need to be binned into histogram form during
 the data collection process.  We may then want to convert the
 histograms into approximate CDFs for plotting and data analysis.  The
 three examples (one in each row) in Figure~\ref{fig:hist2ecdf} display
-this process.  The first column represents raw data, the second column
-is a histogram, and the third column is an approximate CDF based on
-the histograms with yellow boxes representing the error range for the
-true CDF based on the original full distribution.  The first row is
-simply \code{x <- 1:100}, the second row is \code{runif(100)}, and
-the third row is \code{rexp(100)}.
+this process.  The first column represents raw data (sorted), the second column
+is a histogram, the third column is a CDF of the binned data overlaid with yellow boxes
+representing the areas of uncertainty where the CDF of the underlying
+distribution may lie, and the fourth column is a CDF of the binned
+data with an arrow showing the maximum Komogorov-Smirnov distance
+between possible distributions that would have the same binned
+representation.  The first row is simply \code{runif(100)}, the second row is \code{rexp(100)}, and
+the third row is \code{rexp(100)} with more fine-grained histogram buckets.
 
 <<hist2ecdf,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,height=8,width=8>>=
-par(mfrow=c(3,3))
-x <- 1:100
-PlotAll(x, hist(x, plot=FALSE))
-
+par(mfrow=c(3,4))
 x <- runif(100)
-PlotAll(x, hist(x, plot=FALSE))
+PlotAll(sort(x), hist(x, plot=FALSE))
 
 x <- rexp(100)
-PlotAll(x, hist(x, plot=FALSE))
+PlotAll(sort(x), hist(x, plot=FALSE))
+PlotAll(sort(x), hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE))
 @
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=6in,height=6in]{HistogramTools-hist2ecdf}
 \end{center}
-\caption{Raw data (column 1), histograms (column 2), approximate ECDFs
-  (column 3)}
+\caption{Sorted raw data (column 1), histograms (column 2),
+  Approximate ECDFs of binned data (column 3 and 4)}
 \label{fig:hist2ecdf}
 \end{figure}
 
@@ -418,28 +412,7 @@ we generate our own bucket widths in advance so that all of our
 histograms have comparable and consistent bucket boundaries.  For the
 same distribution, we obviously have control over the histogram bins,
 and using more fine-grained bins produces a more accurate
-representation of the underlying distribution.  Figure~\ref{fig:hist3ecdf} shows
-the same \code{rexp(100)} data set with coarse and fine-grained histogram
-buckets and the associated approximate ECDFs.
-
-% lets try some new distributions and histograms
-<<hist3ecdf,fig=TRUE,echo=TRUE,print=FALSE,include=FALSE,height=8,width=12>>=
-par(mfrow=c(2,4))
-x <- rexp(100)
-PlotAll.4(x, hist(x, plot=FALSE))
-PlotAll.4(x, hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE))
-@
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=6in,height=4in]{HistogramTools-hist3ecdf}
-\end{center}
-\caption{Raw data (column 1), histograms (column 2), approximate ECDFs
-  w/ information loss
-  (column 3), and w/ MDCC information loss (column 4)}
-\label{fig:hist3ecdf}
-\end{figure}
-
+representation of the underlying distribution.
 
 \subsection{Error Estimates}
 
@@ -454,8 +427,12 @@ reduce that error?
 
 If $F(x)$ is the true empirical CDF of the underying data, and
 $F_b(x)$ is any estimate of the empirical CDF based on the binned
-data, then we can use an integrated version of the Kolmogorov-Smirnov
-distance to compute the error due to our binning.
+data, then we can compute an error estimate by integrating the
+difference between the largest and smallest CDFs that could be
+represented by the binned data.  
+
+% we can use an integrated version of the Kolmogorov-Smirnov
+% distance to compute the error due to our binning.
 
 \begin{displaymath}
 sup \int \|F_b(x) - F(x)\|dx,
