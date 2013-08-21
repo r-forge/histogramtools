@@ -74,11 +74,10 @@ PlotMDCC <- function(h) {
   diffs <- MaxEcdf(h$mids) - MinEcdf(h$mids)
   mdcc <- max(diffs)
   index.of.max <- min(which(diffs == mdcc))
-  width <- diff(range(knots(MinEcdf))) * .02
-  arrows(knots(MinEcdf)[index.of.max],
-         MinEcdf(h$mids[index.of.max]),
-         knots(MinEcdf)[index.of.max],
-         MaxEcdf(h$mids[index.of.max]),
+  height <- MaxEcdf(h$mids[index.of.max]) - MinEcdf(h$mids[index.of.max])
+  arrows(knots(MinEcdf)[index.of.max], MinEcdf(h$mids[index.of.max]),
+         knots(MinEcdf)[index.of.max], MaxEcdf(h$mids[index.of.max]),
+         length=0.25*(5*height),        # (5*height) chosen on aesthetics
          code=3, col="red")
 }
 
