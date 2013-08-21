@@ -44,6 +44,7 @@
 <<echo=FALSE,print=FALSE>>=
 library("HistogramTools")
 options("width"=65)
+set.seed(0)
 ht.version <- packageDescription("HistogramTools")$Version
 prettyDate <- format(Sys.Date(), "%B %e, %Y")
 @ 
@@ -238,7 +239,7 @@ myhist
 \end{figure}
 
 This histogram compactly represents the full distribution.
-Histogram objects in R are lists with 6 components: breaks, counts,
+Histogram objects in R are lists with \Sexpr{length(myhist)} components: breaks, counts,
 density, mids, name, and equidist.
 
 If we are working in a parallel environment and need to distribute
@@ -333,9 +334,10 @@ plot(as.histogram(new.hist.proto))
 
 \section{Quantiles and Cumulative Distribution Functions}
 
-When histograms are used as a binned data storage mechanism to reduce 
-Often if our buckets were chosen wisely in advance it may be preferred
-to generate an approximate cumulative distribution function from a
+When histograms are used as a binned data storage mechanism to reduce
+data storage cost, information about the underlying distribution is
+lost.  We can however approximate the quantiles and cumulative
+distribution function for the underying distribution form the
 histogram.
 
 The Count, ApproxMean, and ApproxQuantile functions are meant to help
@@ -390,13 +392,13 @@ the third row is \code{rexp(100)}.
 
 <<hist2ecdf,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,height=8,width=8>>=
 par(mfrow=c(3,3))
-x<-1:100
+x <- 1:100
 PlotAll(x, hist(x, plot=FALSE))
 
-x<-runif(100)
+x <- runif(100)
 PlotAll(x, hist(x, plot=FALSE))
 
-x<-rexp(100)
+x <- rexp(100)
 PlotAll(x, hist(x, plot=FALSE))
 @
 
@@ -423,7 +425,7 @@ buckets and the associated approximate ECDFs.
 % lets try some new distributions and histograms
 <<hist3ecdf,fig=TRUE,echo=TRUE,print=FALSE,include=FALSE,height=8,width=12>>=
 par(mfrow=c(2,4))
-x<-rexp(100)
+x <- rexp(100)
 PlotAll.4(x, hist(x, plot=FALSE))
 PlotAll.4(x, hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE))
 @
@@ -466,7 +468,7 @@ functions that could be represented by the binned data in the provided
 histogram.
 
 <<echo=TRUE>>=
-x<-rexp(100)
+x <- rexp(100)
 h1 <- hist(x, plot=FALSE)
 h2 <- hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE)
 WorstCaseCDFInformationLoss(h1)
@@ -481,10 +483,10 @@ compared to the one with default buckets, as expected.
 
 \section{Histogram Bin Manipulation}
 
-\subsection{Trimming Sparse Buckets}
+\subsection{Trimming Empty Buckets from the Tails}
 
 If we are generating histograms with a large number of fine-grained
-bucket boundaries, then we out resulting histogram may have a large
+bucket boundaries, then our resulting histograms may have a large
 number of empty consecutive buckets on the left or right side of the
 histogram.  The \code{TrimHistogram} function can be used to remove
 them as illustrated in Figure~\ref{fig:trimhist}.
@@ -517,9 +519,11 @@ plot(TrimHistogram(hist.1))
 
 \subsection{Adding/Merging Histograms}
 
-If two histograms have the same bucket boundaries, it is possible to
-add them together by aggregating the counts values with the \code{AddHistograms}
-function illustrated in Figure~\ref{fig:mergehist}.
+If two histograms (for different datasets) have the same bucket
+boundaries, it is possible to add them together to obtain the
+histogram for the combined dataset by aggregating the counts values
+with the \code{AddHistograms} function illustrated in
+Figure~\ref{fig:mergehist}.
 
 <<echo=TRUE,print=FALSE>>=
 hist.1 <- hist(c(1,2,3,4), plot=FALSE)
