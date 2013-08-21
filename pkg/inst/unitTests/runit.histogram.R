@@ -14,12 +14,21 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
-TestMergeHistograms <- function() {
+TestAddHistograms <- function() {
   hist.1 <- hist(c(1, 2, 3, 4), plot=FALSE)
   hist.2 <- hist(c(1, 2, 2, 4), plot=FALSE)
-  hist.merged <- merge(hist.1, hist.2)
-  checkEquals(hist.merged$breaks, c(1, 2, 3, 4))
-  checkEquals(hist.merged$counts, c(5, 1, 2))
+  hist.sum <- AddHistograms(hist.1, hist.2)
+  checkEquals(hist.sum$breaks, c(1, 2, 3, 4))
+  checkEquals(hist.sum$counts, c(5, 1, 2))
+}
+
+TestAddManyHistograms <- function() {
+  hist.1 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
+  hist.2 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
+  hist.3 <- hist(c(4,5,6), breaks=0:9, plot=FALSE)
+  hist.sum <- AddManyHistograms(list(hist.1, hist.2, hist.3))
+  checkEquals(hist.sum$breaks, 0:9)
+  checkEquals(hist.sum$counts, c(2, 2, 2, 1, 1, 1, 0, 0, 0))
 }
 
 TestMergeBucketsHistograms <- function() {
@@ -42,13 +51,4 @@ TestMergeBucketsHistograms <- function() {
   hist.6 <- MergeBuckets(hist.5, adj=2)
   checkEquals(hist.6$breaks, c(0, 2, 4, 6, 8, 10))
   checkEquals(hist.6$counts, c(2, 1, 0, 0, 0))
-}
-
-TestMergeManyHistograms <- function() {
-  hist.1 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
-  hist.2 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
-  hist.3 <- hist(c(4,5,6), breaks=0:9, plot=FALSE)
-  hist.merged <- MergeManyHistograms(list(hist.1, hist.2, hist.3))
-  checkEquals(hist.merged$breaks, 0:9)
-  checkEquals(hist.merged$counts, c(2, 2, 2, 1, 1, 1, 0, 0, 0))
 }
