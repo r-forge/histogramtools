@@ -36,6 +36,31 @@
   return(hist)
 }
 
+AddHistograms <- function(x, y, main=paste("Merge of", x$xname,
+                                  "and", y$xname)) {
+  # Adds two histogram objects that have the same bins.
+  #
+  # Args:
+  #   x: An S3 histogram object
+  #   y: An S3 histogram object with the same bins as x.
+  #   main:  The name to set for the merged histogram (e.g. used in plots).
+  #
+  # Returns:
+  #   An S3 histogram class suitable for plotting.
+  stopifnot(inherits(x, "histogram"), inherits(y, "histogram"))
+  # Must have the same breakpoints
+  stopifnot(identical(x$breaks, y$breaks))
+  hist <- list(breaks=x$breaks,
+               counts=(x$counts + y$counts),
+               mids=x$mids,
+               xname=main,
+               equidist=x$equidist)
+  hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
+
+  class(hist) <- "histogram"
+  return(hist)
+}
+
 # S3 Generics
 
 as.histogram <- function(x, ...) {
@@ -93,33 +118,3 @@ as.Message.histogram <- function(x) {
 
 setOldClass("histogram")
 setAs("histogram", "Message", as.Message.histogram)
-
-# 'merge' is S3 generic in base R, but made S4 generic in RProtoBuf.
-
-merge.histogram <- function(x, y, main=paste("Merge of", x$xname,
-                                             "and", y$xname), ...) {
-  # Merges two histogram objects that have the same bins.
-  #
-  # Args:
-  #   x: An S3 histogram object
-  #   y: An S3 histogram object with the same bins as x.
-  #   main:  The name to set for the merged histogram (e.g. used in plots).
-  #
-  # Returns:
-  #   An S3 histogram class suitable for plotting.
-  stopifnot(inherits(x, "histogram"), inherits(y, "histogram"))
-  # Must have the same breakpoints
-  stopifnot(identical(x$breaks, y$breaks))
-  hist <- list(breaks=x$breaks,
-               counts=(x$counts + y$counts),
-               mids=x$mids,
-               xname=main,
-               equidist=x$equidist)
-  hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
-
-  class(hist) <- "histogram"
-  return(hist)
-}
-
-setMethod("merge", c( x = "histogram", y = "histogram"),
-          merge.histogram)
