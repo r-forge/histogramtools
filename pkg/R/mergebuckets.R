@@ -14,6 +14,8 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
+# TODO(mstokely): Consider: MergeAllEmptyBuckets() to compress empty buckets.
+
 .MergeBucketsToBreakList <- function(x, breaks, FUN=sum) {
   # Merge adjacent buckets of a Histogram given a subset of the original breaks.
   #
