@@ -14,11 +14,11 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
-.TrimRightZeroBuckets <- function(orig.hist) {
-  # Trims the sparse buckets in the right-tail of a histogram.
+.TrimRightZeroBuckets <- function(x) {
+  # Trims the empty buckets in the right-tail of a histogram.
   #
   # Args:
-  #   orig.hist: An S3 histogram object.
+  #   x: An S3 histogram object.
   # Returns:
   #   A new S3 histogram object with any empty buckets in the
   #   right-tail removed.
@@ -27,56 +27,64 @@
   # Override breaks, counts, and midpoints to trim off the rightmost
   # zero buckets.
 
-  if (all(orig.hist$counts == 0)) {
+  if (all(x$counts == 0)) {
     warning("All buckets of histogram zero, returning unmodified.")
-    return(orig.hist)
+    return(x)
   }
-  biggest.nonzero <- max(which(orig.hist$counts > 0))
-  if (biggest.nonzero == length(orig.hist$counts)) {
+  biggest.nonzero <- max(which(x$counts > 0))
+  if (biggest.nonzero == length(x$counts)) {
     # Last bucket is non-zero.
-    return(orig.hist)
+    return(x)
   }
   # Since histogram objects are named lists, we can use within
   # to override the necessary elements.
-  new.hist <- within(unclass(orig.hist), {
+  new.hist <- within(unclass(x), {
     breaks <- head(breaks, biggest.nonzero + 1)
     counts <- head(counts, biggest.nonzero)
     mids <- head(mids, biggest.nonzero)
     density <- head(density, biggest.nonzero)
   })
-  attributes(new.hist) <- attributes(orig.hist)
+  attributes(new.hist) <- attributes(x)
   return(new.hist)
 }
 
-.TrimLeftZeroBuckets <- function(orig.hist) {
-  # Trims the sparse buckets in the left-tail of a histogram.
+.TrimLeftZeroBuckets <- function(x) {
+  # Trims the empty buckets in the left-tail of a histogram.
   #
   # Args:
-  #   orig.hist: An S3 histogram object.
+  #   x: An S3 histogram object.
   # Returns:
   #   A new S3 histogram object with any empty buckets in the
   #   left-tail removed.
 
-  if (all(orig.hist$counts == 0)) {
+  if (all(x$counts == 0)) {
     warning("All buckets of histogram zero, returning unmodified.")
-    return(orig.hist)
+    return(x)
   }
-  smallest.nonzero <- min(which(orig.hist$counts > 0))
+  smallest.nonzero <- min(which(x$counts > 0))
   if (smallest.nonzero == 1) {
     # First bucket is non-zero.
-    return(orig.hist)
+    return(x)
   }
-  new.hist <- within(unclass(orig.hist), {
+  new.hist <- within(unclass(x), {
     breaks <- tail(breaks, length(breaks) - smallest.nonzero + 1)
     counts <- tail(counts, length(counts) - smallest.nonzero + 1)
     mids <- tail(mids, length(mids) - smallest.nonzero + 1)
     density <- tail(density, length(density) - smallest.nonzero + 1)
   })
-  attributes(new.hist) <- attributes(orig.hist)
+  attributes(new.hist) <- attributes(x)
   return(new.hist)
 }
 
 TrimHistogram <- function(x, left=TRUE, right=TRUE) {
+  # Trims empty buckets from the left and right tails of a histogram.
+  #
+  # Args:
+  #   x:     An R histogram object.
+  #   left:  boolean, if TRUE, remove empty buckets from left tail of histogram.
+  #   right: boolean, if TRUE, remove empty buckets from right tail of histogram.
+  # Returns:
+  #   x:  An R histogram object, possibly with fewer buckets.
   stopifnot(inherits(x, "histogram"))
   tmp.hist <- x
   if (left) {
