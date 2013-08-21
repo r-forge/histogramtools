@@ -22,6 +22,7 @@ WorstCaseCDFInformationLoss <- function(h) {
   # could be represented by the binned data in the provided histogram.
   #
   # TODO(mstokely): Better name for this.
+  # Tim suggests 'WorstCaseCDFIntegratedError' which is better
 
   MinEcdf <- HistToEcdf(h, f=0)
   MaxEcdf <- HistToEcdf(h, f=1)
@@ -77,8 +78,8 @@ PlotMDCC <- function(h) {
   height <- MaxEcdf(h$mids[index.of.max]) - MinEcdf(h$mids[index.of.max])
   arrows(knots(MinEcdf)[index.of.max], MinEcdf(h$mids[index.of.max]),
          knots(MinEcdf)[index.of.max], MaxEcdf(h$mids[index.of.max]),
-         length=0.25*(5*height),        # (5*height) chosen on aesthetics
-         code=3, col="red")
+         length=0.25*(4*height),        # (4*height) chosen on aesthetics
+         code=3, col="red", lwd=3)
 }
 
 PlotEcdfInformationLossOfHist <- function(h) {
