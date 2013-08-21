@@ -14,15 +14,15 @@
 %
 % Author: mstokely@google.com (Murray Stokely)
 
-\name{MergeManyHistograms}
-\alias{MergeManyHistograms}
-\title{Merge many histograms by summing the buckets.}
+\name{AddManyHistograms}
+\alias{AddManyHistograms}
+\title{Add many histograms by summing the buckets.}
 \description{
-MergeManyHistogram provides an efficient way to aggregate a large number
+AddManyHistograms provides an efficient way to aggregate a large number
 of histograms with identical bucket boundaries.
 }
 \usage{
- MergeManyHistograms(x, main=paste("Merge of", length(x), "histograms"))
+ AddManyHistograms(x, main=paste("Merge of", length(x), "histograms"))
 }
 \arguments{
   \item{x}{A list of S3 histogram objects.}
@@ -41,6 +41,6 @@ This function provides a way to efficiently aggregate large numbers of histogram
   hist.1 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
   hist.2 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
   hist.3 <- hist(c(4,5,6), breaks=0:9, plot=FALSE)
-  hist.merged <- MergeManyHistograms(list(hist.1, hist.2, hist.3))
-  hist.merged
+  hist.sum <- AddManyHistograms(list(hist.1, hist.2, hist.3))
+  hist.sum
 }
