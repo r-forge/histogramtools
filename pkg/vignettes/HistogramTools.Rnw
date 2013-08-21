@@ -515,43 +515,43 @@ plot(TrimHistogram(hist.1))
 \label{fig:trimhist}
 \end{figure}
 
-\subsection{Merging Histograms}
+\subsection{Adding/Merging Histograms}
 
 If two histograms have the same bucket boundaries, it is possible to
-merge them together by aggregating the counts values with the \code{merge}
+add them together by aggregating the counts values with the \code{AddHistograms}
 function illustrated in Figure~\ref{fig:mergehist}.
 
 <<echo=TRUE,print=FALSE>>=
 hist.1 <- hist(c(1,2,3,4), plot=FALSE)
 hist.2 <- hist(c(1,2,2,4), plot=FALSE)
-hist.merged <- merge(hist.1, hist.2)
+hist.sum <- AddHistograms(hist.1, hist.2)
 @
 
 <<mergehist,fig=TRUE,echo=FALSE,include=FALSE,width=8,height=4>>=
 par(mfrow=c(1,3))
 plot(hist.1)
 plot(hist.2)
-plot(hist.merged,main="Merged Histogram")
+plot(hist.sum,main="Aggregated Histogram")
 @
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=5in,height=2.5in]{HistogramTools-mergehist}
 \end{center}
-\caption{Effect of the \code{MergeHistogram} function.}
+\caption{Effect of the \code{AddHistograms} function.}
 \label{fig:mergehist}
 \end{figure}
 
-We can also efficiently merge large numbers of histograms together
-simultaneously with the \code{MergeManyHistograms} function.
+We can also efficiently aggregate large numbers of histograms together
+simultaneously with the \code{AddManyHistograms} function.
 
 <<<echo=TRUE,print=FALSE>>=
   hist.1 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
   hist.2 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
   hist.3 <- hist(c(4,5,6), breaks=0:9, plot=FALSE)
-  hist.merged <- MergeManyHistograms(list(hist.1, hist.2, hist.3))
-  hist.merged
-@ 
+  hist.sum <- AddManyHistograms(list(hist.1, hist.2, hist.3))
+  hist.sum
+@
 
 \subsection{Merging Buckets}
 
@@ -597,8 +597,8 @@ plot(hist.2)
 
 \subsection{Subsetting Histograms}
 
-In addition to merging adjacent buckets with \code{merge} and
-\code{MergeManyHistograms} and trimming empty buckets from the tails
+In addition to merging adjacent buckets with \code{MergeBuckets} and
+trimming empty buckets from the tails
 of our histograms with \code{TrimHistogram} we can also cut off
 portions of our histogram and return a subset of the original
 histogram with \code{SubsetHistogram}

@@ -24,13 +24,14 @@ Approximate the quantiles of the underlying distribution for which only
 a histogram is available.
 }
 \usage{
-ApproxQuantile(x, probs)
+ApproxQuantile(x, probs, ...)
 ApproxMean(x)
 Count(x)
 }
 \arguments{
   \item{x}{An S3 histogram object created with the histogram package.}
   \item{probs}{Numeric vector of probabilities with values in [0,1].}
+  \item{...}{Any other arguments to pass to \code{wtd.quantile}.}
 }
 \details{
 Many data analysis pipelines write out histogram protocol buffers with
