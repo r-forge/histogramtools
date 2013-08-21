@@ -60,10 +60,9 @@ MDCC <- function(h) {
 }
 
 PlotMDCC <- function(h) {
-  # Plot a CDF from the given histogram along with a yellow box
-  # indicating the area of the CDF with the greatest amount of
-  # uncertainty representing the part of the distribution
-  # corresponding to the MDCC.
+  # Plot a CDF from the given histogram along with a red arrow
+  # indicating the point of maximum distance between the possible CDFs
+  # of the underlying unbinned distribution corresponding to the MDCC.
   #
   # Args:
   #   h: An S3 histogram object.
@@ -76,11 +75,11 @@ PlotMDCC <- function(h) {
   mdcc <- max(diffs)
   index.of.max <- min(which(diffs == mdcc))
   width <- diff(range(knots(MinEcdf))) * .02
-  rect(knots(MinEcdf)[index.of.max] - width,
-       MinEcdf(h$mids[index.of.max]),
-       knots(MinEcdf)[index.of.max] + width,
-       MaxEcdf(h$mids[index.of.max]),
-       col="yellow")
+  arrows(knots(MinEcdf)[index.of.max],
+         MinEcdf(h$mids[index.of.max]),
+         knots(MinEcdf)[index.of.max],
+         MaxEcdf(h$mids[index.of.max]),
+         code=3, col="red")
 }
 
 PlotEcdfInformationLossOfHist <- function(h) {
