@@ -52,7 +52,7 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 % closing $ needed here
 
 %% almost as usual
-%\author{Murray Stokely}
+\author{Murray Stokely}
 \title{HistogramTools for Distributions of Large Data Sets}
 \date{Version \Sexpr{ht.version} as of \Sexpr{prettyDate}}
 \begin{document}
@@ -375,7 +375,8 @@ set consructed by assuming the data points in each bucket of the
 histogram are all infinitesimally close to the right bucket boundary. Then
 $F(X)$ is the true empericial CDF of the underlying data, $F(X_b)$ is
 any estimate of the empirical CDF based on the binned data, and
-$F(X_{min}) \lt F(X) \lt F(X_{max})$. 
+$F(X_{min}) \le F(X) \le F(X_{max})$. 
+
 %If $F(x)$ is the true empirical CDF of the underying data, and
 %$F_b(x)$ is any estimate of the empirical CDF based on the binned
 %data, then we can compute an error estimate by integrating the
@@ -400,18 +401,25 @@ $F(X)$ of the unbinned data and an ecdf calculated from the binned data.
 PlotAll <- function(x, h) {
   plot(x, main="x")
   plot(h)
-  PlotMDCC(h, 0.3)
-  PlotWADCC(h, 0.3)
-  PlotWorstCaseCDFIntegratedError(h)
+  PlotKSDCC(h, 0.3)
+  PlotEMDCC(h)
 }
 @
 
-\subsection{Maximum Displacement of the Cumulative Curves}
+\subsection{Kolmogorov-Smirnov Distance of the Cumulative Curves}
 
-The maximum displacement of the cumulative curves (MDCC), is the
-Kolmogorov-Smirnov distance between the largest and smallest empirical
-cumulative distribution functions that could be represented by the
-binned data in the provided histogram.
+The two-sample Kolmogorov-Smirnov distance between the largest and
+smallest empirical cumulative distribution functions that could be
+represented by the binned data provides a concise metric of the
+information loss due to binning in our histogram.  This metric is more
+formally defined as
+
+\begin{displaymath}
+\sup_{x} \left | F_{max}(x) - F_{min}(x) \right |
+\end{displaymath}
+
+This function is also occasionally called the maximum displacement of
+the cumulative curves (MDCC).
 
 <<echo=TRUE,print=FALSE>>=
 x <- rexp(1000)
@@ -419,23 +427,32 @@ h <- hist(x, breaks=c(0,1,2,3,4,8,16,32), plot=FALSE)
 x.min <- rep(head(h$breaks, -1), h$counts)
 x.max <- rep(tail(h$breaks, -1), h$counts)
 ks.test(x.min, x.max, exact=F)
-MDCC(h)
+KSDCC(h)
 @
 
-The \code{MDCC} function accepts a histogram, generates the largest
+The \code{KSDCC} function accepts a histogram, generates the largest
 and smallest empirical cumulative distribution functions that could be
 represented by that histogram, and then calculates the
 Kolmogorov-Smirnov distance between the two CDFs.  This is most useful
 for very large datasets where expanding the binned data into
 \code{x.min} and \code{x.max} explicitly to calculate \code{ks.test}
-directly would not be feasible.  Figure~\ref{fig:MDCC} illustrates
+directly would not be feasible.  Figure~\ref{fig:KSDCC} illustrates
 geometrically what value is being returned.
 
 <<hist1mdcc,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,height=4,width=8>>=
-par(mfrow=c(1,3))
+par(mfrow=c(2,3))
+
+x <- rexp(100)
+h1 <- hist(x, plot=FALSE)
+h2 <- hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE)
+
 plot(sort(x), main="sort(x)")
-plot(h)
-PlotMDCC(h, 0.2, main="CDF with MDCC (KS Distance)")
+plot(h1)
+PlotKSDCC(h1, 0.2, main="CDF with KSDCC")
+
+plot(sort(x), main="sort(x)")
+plot(h2)
+PlotKSDCC(h2, 0.2, main="CDF with KSDCC")
 @
 
 \begin{figure}[h!]
@@ -443,8 +460,8 @@ PlotMDCC(h, 0.2, main="CDF with MDCC (KS Distance)")
 \includegraphics[width=6in,height=3in]{HistogramTools-hist1mdcc}
 \end{center}
 \caption{Sorted raw data (column 1), Histograms (column 2), CDF with
-  MDCC / KS distance (column 3)}
-\label{fig:MDCC}
+  KSDCC (column 3)}
+\label{fig:KSDCC}
 \end{figure}
 
 \subsection{Earth Mover's Distance of the Cumulative Curves}
@@ -479,7 +496,7 @@ PlotMDCC(h, 0.2, main="CDF with MDCC (KS Distance)")
 % distance to compute the error due to our binning.
 
 The ``Earth Mover's Distance'' is like the Kolmogorov-Smirnof
-statistic, but using an integral to capture the difference across all
+statistic, but uses an integral to capture the difference across all
 points of the curve rather than just the maximum difference.  This is
 also known as Mallows distance, or Wasserstein distance with $p=1$.
 
@@ -499,67 +516,38 @@ through the yellow boxes.  The area of the yellow boxes is the Earth
 Mover's Distance.
 
 <<hist1emdcc,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,height=4,width=8>>=
-par(mfrow=c(1,3))
+par(mfrow=c(2,3))
 plot(sort(x), main="sort(x)")
-plot(h)
-PlotEMDCC(h, 0.2, main="CDF with EMDCC (Earth Mover's Distance)")
+plot(h1)
+PlotEMDCC(h1, main="CDF with EMDCC")
+
+plot(sort(x), main="sort(x)")
+plot(h2)
+PlotEMDCC(h2, main="CDF with EMDCC")
 @
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=6in,height=3in]{HistogramTools-hist1mdcc}
+\includegraphics[width=6in,height=3in]{HistogramTools-hist1emdcc}
 \end{center}
 \caption{Sorted raw data (column 1), Histograms (column 2), CDF with
   EMDCC (column 3)}
-\label{fig:EDCC}
+\label{fig:EMDCC}
 \end{figure}
 
 <<echo=TRUE>>=
 x <- rexp(100)
 h1 <- hist(x, plot=FALSE)
 h2 <- hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE)
-MDCC(h1)
-MDCC(h2)
-WADCC(h1)
-WADCC(h2)
-WorstCaseCDFIntegratedError(h1)
-WorstCaseCDFIntegratedError(h2)
+KSDCC(h1)
+KSDCC(h2)
+EMDCC(h1)
+EMDCC(h2)
 @
 
 So, using this metric, the second lower example with more granular
 histogram bins produces an ECDF with reduced worst case error bounds
 compared to the one with default buckets, as expected.
-
-\subsection{Weighted Average Displacement of the Cumulative Curves}
-
-The Weighted Average Displacement of the Cumulative Curves (WADCC)
-metric is the weighted average difference between the largest and
-smallest empirical cumulative distribution functions that could be
-represented by the binned data in the provided histogram.  Unlike the
-\code{MDCC} metric this is based on the distance between the curves at
-all points across the distribution, not only the greatest distance
-between the curves.  Figure~\ref{fig:WADCC} illustrates
-geometrically what value is being returned.
-
-<<echo=TRUE,print=FALSE>>=
-WADCC(h)
-@
-
-<<hist1wadcc,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,height=4,width=8>>=
-par(mfrow=c(1,3))
-plot(sort(x), main="sort(x)")
-plot(h)
-PlotWADCC(h, 0.1, main="CDF with WADCC")
-@
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=6in,height=3in]{HistogramTools-hist1wadcc}
-\end{center}
-\caption{Sorted raw data (column 1), Histograms (column 2), CDF with
-  WADCC (column 3)}
-\label{fig:WADCC}
-\end{figure}
 
 \section{Histogram Bin Manipulation}
 
