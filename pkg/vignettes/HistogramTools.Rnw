@@ -1,4 +1,5 @@
 \documentclass{article}
+\usepackage{amsfonts}
 %% %\VignetteIndexEntry{HistogramTools-intro}
 
 %% JSS stuff we can remove for JSS version.
@@ -51,7 +52,7 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 % closing $ needed here
 
 %% almost as usual
-\author{Murray Stokely}
+%\author{Murray Stokely}
 \title{HistogramTools for Distributions of Large Data Sets}
 \date{Version \Sexpr{ht.version} as of \Sexpr{prettyDate}}
 \begin{document}
@@ -68,8 +69,10 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
   useful for analyzing large data sets.  Specifically, methods are
   included for
   serializing histograms into a compact Protocol Buffer representation
-  for sharing between distributed tasks, and routines for
-  manipulating the resulting aggregate histograms.
+  for sharing between distributed tasks, functions for
+  manipulating the resulting aggregate histograms, and functions for
+  measuring and visualizing the information loss associated with
+  histogram representations of a dataset.
 }
 % \Keywords{histograms, distributions, R, mapreduce, protocol buffers, RProtoBuf}
 % \Plainkeywords{histograms, distributions, R, mapreduce, protocol
@@ -147,7 +150,7 @@ questions at hand?
 
 Many large datasets in fields such as particle physics and information
 processing are stored in binned or histogram form in order to reduce
-the data storage requirements \cite{scott2009multivariate}.
+the data storage requirements \citep{scott2009multivariate}.
 
 There are two common patterns for generating histograms of large data
 sets with MapReduce.  In the first method, each mapper task can
@@ -357,85 +360,168 @@ ApproxQuantile(hist, c(.05, .95))
 
 \section{Error estimates in CDFs approximated from histograms}
 
-How good is our bucketing scheme for the various types of histograms
-we are collecting and using to generate approximate CDFs?  What is the
-histogram that has the worst error bounds, and should we modify the
-binning strategy to reduce those error bounds?
+When constructing cumulative distribution functions from binned
+histogram data sets there will inherently be some amount of
+information loss since the exact quantities of the underlying
+distribution are unknown.  We can however come up with an upper bound
+for the error by looking at two extreme cases.  For a given histogram
+$h$ with bucket counts $C_i$ for $1 \le i \le n$ and bucket boundaries
+$B_i$ for $1 \le i \le n+1$, we construct two data sets.  Let $X$ be
+the (unknown) underlying data set for which we now only have the
+binned representation $h$.  Let $X_{min}$ be the data set constructed
+by assuming the data points in each bucket of the histogram are all
+present at the left-most bucket boundary.  Let $X_{max}$ be the data
+set consructed by assuming the data points in each bucket of the
+histogram are all present at the right-most bucket boundary. Then
+$F(X)$ is the true empericial CDF of the underlying data, $F(X_b)$ is
+any estimate of the empirical CDF based on the binned data.
+
+%If $F(x)$ is the true empirical CDF of the underying data, and
+%$F_b(x)$ is any estimate of the empirical CDF based on the binned
+%data, then we can compute an error estimate by integrating the
+%difference between the largest and smallest CDFs that could be
+%represented by the binned data.  
+
+\begin{displaymath}
+X_{min} = \left ( (B_i)_{k=1}^{C_i} : 1 \le i \le n \right ) \\
+X_{max} = \left ( (B_{i+1})_{k=1}^{C_i} : 1 \le i \le n \right )
+\end{displaymath}
+% x1 <- rep(head(h$breaks, -1), h$counts)
+% x2 <- rep(tail(h$breaks, -1), h$counts)
+
+We provide three different distance metrics which capture the
+difference between empirical cumulative distribution functions made
+from htese two distributions which serve as upper-bounds for the
+amount of error between any true empirical distribution function of
+the unbinned data and an ecdf calculated from the binned data.
 
 <<echo=FALSE,print=FALSE>>=
 PlotAll <- function(x, h) {
   plot(x, main="x")
   plot(h)
-  PlotEcdfInformationLossOfHist(h)
   PlotMDCC(h, 0.3)
+  PlotWADCC(h, 0.3)
+  PlotWorstCaseCDFIntegratedError(h)
 }
 @
 
-\subsection{Distributions, Histograms, and ECDFs}
+\subsection{Maximum Displacement of the Cumulative Curves}
 
-A very large data set may need to be binned into histogram form during
-the data collection process.  We may then want to convert the
-histograms into approximate CDFs for plotting and data analysis.  The
-three examples (one in each row) in Figure~\ref{fig:hist2ecdf} display
-this process.  The first column represents raw data (sorted), the second column
-is a histogram, the third column is a CDF of the binned data overlaid with yellow boxes
-representing the areas of uncertainty where the CDF of the underlying
-distribution may lie, and the fourth column is a CDF of the binned
-data with an arrow showing the maximum Komogorov-Smirnov distance
-between possible distributions that would have the same binned
-representation.  The first row is simply \code{runif(100)}, the second row is \code{rexp(100)}, and
-the third row is \code{rexp(100)} with more fine-grained histogram buckets.
+The maximum displacement of the cumulative curves (MDCC), is the
+Kolmogorov-Smirnov distance between the largest and smallest empirical
+cumulative distribution functions that could be represented by the
+binned data in the provided histogram.
 
-<<hist2ecdf,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,height=8,width=8>>=
-par(mfrow=c(3,4))
-x <- runif(100)
-PlotAll(sort(x), hist(x, plot=FALSE))
+<<echo=TRUE,print=FALSE>>=
+x <- rexp(1000)
+h <- hist(x, breaks=c(0,1,2,3,4,8,16,32), plot=FALSE)
+x.min <- rep(head(h$breaks, -1), h$counts)
+x.max <- rep(tail(h$breaks, -1), h$counts)
+ks.test(x.min, x.max, exact=F)
+MDCC(h)
+@
 
-x <- rexp(100)
-PlotAll(sort(x), hist(x, plot=FALSE))
-PlotAll(sort(x), hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE))
+The \code{MDCC} function accepts a histogram, generates the largest
+and smallest empirical cumulative distribution functions that could be
+represented by that histogram, and then calculates the
+Kolmogorov-Smirnov distance between the two CDFs.  This is most useful
+for very large datasets where expanding the binned data into
+\code{x.min} and \code{x.max} explicitly to calculate \code{ks.test}
+directly would not be feasible.  Figure~\ref{fig:MDCC} illustrates
+geometrically what value is being returned.
+
+<<hist1mdcc,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,height=4,width=8>>=
+par(mfrow=c(1,3))
+plot(sort(x), main="sort(x)")
+plot(h)
+PlotMDCC(h, 0.2, main="CDF with MDCC (KS Distance)")
 @
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=6in,height=6in]{HistogramTools-hist2ecdf}
+\includegraphics[width=6in,height=3in]{HistogramTools-hist1mdcc}
 \end{center}
-\caption{Sorted raw data (column 1), histograms (column 2),
-  Approximate ECDFs of binned data (column 3 and 4)}
-\label{fig:hist2ecdf}
+\caption{Sorted raw data (column 1), Histograms (column 2), CDF with
+  MDCC / KS distance (column 3)}
+\label{fig:MDCC}
 \end{figure}
 
-The histograms above were generated using the default computed
-breakpoints of R, which uses a modified Sturges algorithm
-\cite{sturges1926choice}.  However, for our actual data analysis tasks
-we generate our own bucket widths in advance so that all of our
-histograms have comparable and consistent bucket boundaries.  For the
-same distribution, we obviously have control over the histogram bins,
-and using more fine-grained bins produces a more accurate
-representation of the underlying distribution.
+\subsection{Weighted Average Displacement of the Cumulative Curves}
 
-\subsection{Error Estimates}
+The Weighted Average Displacement of the Cumulative Curves (WADCC)
+metric is the weighted average difference between the largest and
+smallest empirical cumulative distribution functions that could be
+represented by the binned data in the provided histogram.  Unlike the
+\code{MDCC} metric this is based on the distance between the curves at
+all points across the distribution, not only the greatest distance
+between the curves.  Figure~\ref{fig:WADCC} illustrates
+geometrically what value is being returned.
 
-A natural question is, are we using a good initial choice of buckets?
-Which of the 100,000 histograms that we generated last week had the
-greatest potential error, and how might we change the bucketing to
-reduce that error?
+<<echo=TRUE,print=FALSE>>=
+WADCC(h)
+@
 
-\subsubsection{Kolmogorov-Smirnof}
+<<hist1wadcc,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,height=4,width=8>>=
+par(mfrow=c(1,3))
+plot(sort(x), main="sort(x)")
+plot(h)
+PlotWADCC(h, 0.1, main="CDF with WADCC")
+@
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=6in,height=3in]{HistogramTools-hist1wadcc}
+\end{center}
+\caption{Sorted raw data (column 1), Histograms (column 2), CDF with
+  WADCC (column 3)}
+\label{fig:WADCC}
+\end{figure}
+
+\subsection{Integrated Error of the Cumulative Curves}
+% The histograms above were generated using the default computed
+%breakpoints of R, which uses a modified algorithm from
+%\cite{sturges1926choice}.  However, for our actual data analysis tasks
+%we generate our own bucket widths in advance so that all of our
+%histograms have comparable and consistent bucket boundaries.  For the
+%same distribution, we obviously have control over the histogram bins,
+%and using more fine-grained bins produces a more accurate
+%representation of the underlying distribution.
+
+% TODO kind of like iceberg histograms, but not quite. there are
+% references from the database community for what we do and why.
+
+%A natural question is, are we using a good initial choice of buckets?
+%Which of the 100,000 histograms that we generated last week had the
+%greatest potential error, and how might we change the bucketing to
+%reduce that error?
+
+%\subsubsection{Kolmogorov-Smirnof}
 
 %Mean Square Error measures the accuracy of an estimator of f in a single point, MISE Mean Integrated Squared Error is the global metric.  But we don't know f for the underlying distribution, since we only have the histogram, so we can't compute these metrics, right?
 
-If $F(x)$ is the true empirical CDF of the underying data, and
-$F_b(x)$ is any estimate of the empirical CDF based on the binned
-data, then we can compute an error estimate by integrating the
-difference between the largest and smallest CDFs that could be
-represented by the binned data.  
+%If $F(x)$ is the true empirical CDF of the underying data, and
+%$F_b(x)$ is any estimate of the empirical CDF based on the binned
+%data, then we can compute an error estimate by integrating the
+%difference between the largest and smallest CDFs that could be
+%represented by the binned data.  
 
 % we can use an integrated version of the Kolmogorov-Smirnov
 % distance to compute the error due to our binning.
 
+The Integrated Error of the Cumulative Curves (IECC), is an integrated
+version of the Komthe distance
+
+% we can use an integrated version of the Kolmogorov-Smirnov
+% distance to compute the error due to our binning.
+
+between the largest and smallest empirical cumulative distribution 
+
+Kolmogorov-Smirnov distance between the largest and smallest empirical
+cumulative distribution functions that could be represented by the
+binned data in the provided histogram.
+
 \begin{displaymath}
-sup \int \|F_b(x) - F(x)\|dx,
+\sup_{F_b,F} \int_{\mathbb{R}} |F_b(x) - F(x)|dx,
 \end{displaymath}
 
 We can also alternatively use simply the maximum displacement of the
@@ -448,10 +534,12 @@ histogram.
 x <- rexp(100)
 h1 <- hist(x, plot=FALSE)
 h2 <- hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE)
-WorstCaseCDFInformationLoss(h1)
-WorstCaseCDFInformationLoss(h2)
 MDCC(h1)
 MDCC(h2)
+WADCC(h1)
+WADCC(h2)
+WorstCaseCDFIntegratedError(h1)
+WorstCaseCDFIntegratedError(h2)
 @
 
 So, using this metric, the second lower example with more granular

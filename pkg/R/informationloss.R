@@ -16,13 +16,12 @@
 
 # TODO(mstokely): Add documentation and examples in the vignette.
 
-WorstCaseCDFInformationLoss <- function(h) {
+IECC <- WorstCaseCDFIntegratedError <- function(h) {
   # Integrated maximum Kolmogorov-Smirnov distance between the largest
   # and smallest empirical cumulative distribution functions that
   # could be represented by the binned data in the provided histogram.
   #
-  # TODO(mstokely): Better name for this.
-  # Tim suggests 'WorstCaseCDFIntegratedError' which is better
+  # TODO(mstokely): Better name for this?  IECC for consistency?
 
   MinEcdf <- HistToEcdf(h, f=0)
   MaxEcdf <- HistToEcdf(h, f=1)
@@ -60,7 +59,23 @@ MDCC <- function(h) {
   return(max(MaxEcdf(h$mids) - MinEcdf(h$mids)))
 }
 
-PlotMDCC <- function(h, arrow.size.scale=1) {
+WADCC <- function(h) {
+  # Weighted Average Displacement of the Cumulative Curves
+  #
+  # The weighted average displacement between the largest and smallest
+  # empirical cumulative distribution functions that could be
+  # represented by the binned data in the provided histogram.
+
+  MinEcdf <- HistToEcdf(h, f=0)
+  MaxEcdf <- HistToEcdf(h, f=1)
+
+  # Equivalently, with Hmisc:
+  # wtd.mean(abs(MaxEcdf(h$mids) - MinEcdf(h$mids)), h$counts)
+
+  return(sum(abs(MaxEcdf(h$mids) - MinEcdf(h$mids)) * h$counts)/ sum(h$counts))
+}
+
+PlotMDCC <- function(h, arrow.size.scale=1, main=NULL) {
   # Plot a CDF from the given histogram along with a red arrow
   # indicating the point of maximum distance between the possible CDFs
   # of the underlying unbinned distribution corresponding to the MDCC.
@@ -71,7 +86,11 @@ PlotMDCC <- function(h, arrow.size.scale=1) {
 
   MinEcdf <- HistToEcdf(h, f=0)
   MaxEcdf <- HistToEcdf(h, f=1)
-  plot(MaxEcdf)
+  if (!is.null(main)) {
+    plot(MaxEcdf, main=main)
+  } else {
+    plot(MaxEcdf)
+  }
 
   diffs <- MaxEcdf(h$mids) - MinEcdf(h$mids)
   mdcc <- max(diffs)
@@ -83,7 +102,31 @@ PlotMDCC <- function(h, arrow.size.scale=1) {
          code=3, col="red", lwd=3)
 }
 
-PlotEcdfInformationLossOfHist <- function(h) {
+PlotWADCC <- function(h, arrow.size.scale=1, main=NULL) {
+  # Plot a CDF from the given histogram along with red arrows
+  # indicating the points of distance between the possible CDFs
+  # of the underlying unbinned distribution corresponding that are used
+  # in the WADCC.
+  #
+  # Args:
+  #   h: An S3 histogram object.
+  #   arrow.size.scale: An optional value to scale the size of the arrow head
+
+  MinEcdf <- HistToEcdf(h, f=0)
+  MaxEcdf <- HistToEcdf(h, f=1)
+  if (!is.null(main)) {
+    plot(MaxEcdf, main=main)
+  } else {
+    plot(MaxEcdf)
+  }
+
+  height <- max(MaxEcdf(h$mids) - MinEcdf(h$mids))
+  arrows(h$mids, MinEcdf(h$mids), h$mids, MaxEcdf(h$mids),
+         length=0.25*(4*height)*arrow.size.scale,     # (4*height) chosen on aesthetics
+         code=3, col="red", lwd=3)
+}
+
+PlotWorstCaseCDFIntegratedError <- function(h, main=NULL) {
   # Plot a CDF from the given histogram with a yellow boxes
   # covering all possible ranges for the e.c.d.f of the underlying
   # distribution from which the binned histogram was created.
@@ -93,7 +136,11 @@ PlotEcdfInformationLossOfHist <- function(h) {
 
   MinEcdf <- HistToEcdf(h, f=0)
   MaxEcdf <- HistToEcdf(h, f=1)
-  plot(MaxEcdf)
+  if (!is.null(main)) {
+    plot(MaxEcdf, main=main)
+  } else {
+    plot(MaxEcdf)
+  }
   rect(head(knots(MinEcdf), -1),
        MinEcdf(head(knots(MinEcdf), -1)),
        tail(knots(MinEcdf), -1),
