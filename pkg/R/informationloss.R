@@ -14,31 +14,9 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
-# TODO(mstokely): Add documentation and examples in the vignette.
-
-IECC <- WorstCaseCDFIntegratedError <- function(h) {
-  # Integrated maximum Kolmogorov-Smirnov distance between the largest
-  # and smallest empirical cumulative distribution functions that
-  # could be represented by the binned data in the provided histogram.
-  #
-  # TODO(mstokely): Better name for this?  IECC for consistency?
-
-  MinEcdf <- HistToEcdf(h, f=0)
-  MaxEcdf <- HistToEcdf(h, f=1)
-  total.width <- max(knots(MaxEcdf)) - min(knots(MinEcdf))
-  total.height <- 1
-  total.area <- total.width * total.height
-
-  areas.of.cdf.uncertainty <- (tail(knots(MinEcdf), -1) -
-                               head(knots(MinEcdf), -1)) *
-                                 (MaxEcdf(tail(knots(MinEcdf), -1)) -
-                                  MinEcdf(head(knots(MinEcdf), -1)))
-
-  return(sum(areas.of.cdf.uncertainty) / total.area)
-}
-
-MDCC <- function(h) {
-  # Maximum Displacement of the Cumulative Curves
+KSDCC <- function(h) {
+  # Kolmogorv-Smirnov Distance of the Cumulative Curves
+  # (aka Maximum Displacement of the Cumulative Curves)
   #
   # Kolmogorov-Smirnov distance between the largest and smallest
   # empirical cumulative distribution functions that could be
@@ -59,31 +37,50 @@ MDCC <- function(h) {
   return(max(MaxEcdf(h$mids) - MinEcdf(h$mids)))
 }
 
-WADCC <- function(h) {
-  # Weighted Average Displacement of the Cumulative Curves
+EMDCC <- function(h) {
+  # Earth Mover's Distance of the Cumulative Curves
   #
-  # The weighted average displacement between the largest and smallest
-  # empirical cumulative distribution functions that could be
-  # represented by the binned data in the provided histogram.
+  # The "Earth Mover's Distance" is like the Kolmogorov-Smirnof
+  # statistic, but using an integral to capture the difference across all
+  # points of the curve rather than just the maximum difference.  This is
+  # also known as Mallows distance, or Wasserstein distance with p=1.
+  #
+  # We calculate this difference between the empirical cumulative
+  # distribution functions of the largest and smallest possible data
+  # sets that could be represented by the binned data in the provided
+  # histogram.
+  #
+  # See e.g. http://en.wikipedia.org/wiki/Earth_mover's_distance
+  #
+  # Args:
+  #   h:  An R histogram object.
+  # Return Value:
+  #   A number between 0 and 1 giving the EMDCC.
 
   MinEcdf <- HistToEcdf(h, f=0)
   MaxEcdf <- HistToEcdf(h, f=1)
+  total.width <- max(knots(MaxEcdf)) - min(knots(MinEcdf))
+  total.height <- 1
+  total.area <- total.width * total.height
 
-  # Equivalently, with Hmisc:
-  # wtd.mean(abs(MaxEcdf(h$mids) - MinEcdf(h$mids)), h$counts)
+  areas.of.cdf.uncertainty <- (tail(knots(MinEcdf), -1) -
+                               head(knots(MinEcdf), -1)) *
+                                 (MaxEcdf(tail(knots(MinEcdf), -1)) -
+                                  MinEcdf(head(knots(MinEcdf), -1)))
 
-  return(sum(abs(MaxEcdf(h$mids) - MinEcdf(h$mids)) * h$counts)/ sum(h$counts))
+  return(sum(areas.of.cdf.uncertainty) / total.area)
 }
 
-PlotMDCC <- function(h, arrow.size.scale=1, main=NULL) {
+PlotKSDCC <- function(h, arrow.size.scale=1, main=NULL) {
   # Plot a CDF from the given histogram along with a red arrow
   # indicating the point of maximum distance between the possible CDFs
-  # of the underlying unbinned distribution corresponding to the MDCC.
+  # of the underlying unbinned distribution corresponding to the KSDCC.
   #
   # Args:
   #   h: An S3 histogram object.
   #   arrow.size.scale: An optional value to scale the size of the arrow head
-
+  #   main: A title for the plot.
+  
   MinEcdf <- HistToEcdf(h, f=0)
   MaxEcdf <- HistToEcdf(h, f=1)
   if (!is.null(main)) {
@@ -102,37 +99,14 @@ PlotMDCC <- function(h, arrow.size.scale=1, main=NULL) {
          code=3, col="red", lwd=3)
 }
 
-PlotWADCC <- function(h, arrow.size.scale=1, main=NULL) {
-  # Plot a CDF from the given histogram along with red arrows
-  # indicating the points of distance between the possible CDFs
-  # of the underlying unbinned distribution corresponding that are used
-  # in the WADCC.
-  #
-  # Args:
-  #   h: An S3 histogram object.
-  #   arrow.size.scale: An optional value to scale the size of the arrow head
-
-  MinEcdf <- HistToEcdf(h, f=0)
-  MaxEcdf <- HistToEcdf(h, f=1)
-  if (!is.null(main)) {
-    plot(MaxEcdf, main=main)
-  } else {
-    plot(MaxEcdf)
-  }
-
-  height <- max(MaxEcdf(h$mids) - MinEcdf(h$mids))
-  arrows(h$mids, MinEcdf(h$mids), h$mids, MaxEcdf(h$mids),
-         length=0.25*(4*height)*arrow.size.scale,     # (4*height) chosen on aesthetics
-         code=3, col="red", lwd=3)
-}
-
-PlotWorstCaseCDFIntegratedError <- function(h, main=NULL) {
+PlotEMDCC <- function(h, main=NULL) {
   # Plot a CDF from the given histogram with a yellow boxes
   # covering all possible ranges for the e.c.d.f of the underlying
   # distribution from which the binned histogram was created.
   #
   # Args:
   #   h: An S3 histogram object.
+  #   main: A title for the plot.
 
   MinEcdf <- HistToEcdf(h, f=0)
   MaxEcdf <- HistToEcdf(h, f=1)
