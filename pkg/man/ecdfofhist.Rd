@@ -29,7 +29,7 @@ HistToEcdf(h, method="constant", f=0)
     on which we'd like to calculate an ECDF.}
   \item{method}{specifies the interpolation method to be used in call to
     \code{approxfun()}.  Choices are "linear" or "constant".}
-  \item{f}{‘method="constant"’ a number between 0 and 1 inclusive,
+  \item{f}{if 'method="constant"' a number between 0 and 1 inclusive,
     indicating a compromise between left- and right-continuous
      step functions.  See ?approxfun}
 }

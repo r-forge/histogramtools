@@ -17,6 +17,8 @@
 \name{InformationLoss}
 \alias{KSDCC}
 \alias{EMDCC}
+\alias{PlotKSDCC}
+\alias{PlotEMDCC}
 \title{Information Loss Metrics for Histograms}
 \description{
 Computes a metric between 0 and 1 of the amount of information lost
@@ -34,7 +36,7 @@ PlotEMDCC(h, main=NULL)
   \item{arrow.size.scale}{specifies a size scaling factor for the arrow
     illustrating the point of Kolmogorov-Smirnov distance between the
     two e.c.d.fs}
-  \item{main}{‘method="constant"’ a number between 0 and 1 inclusive,
+  \item{main}{if 'method="constant"' a number between 0 and 1 inclusive,
     indicating a compromise between left- and right-continuous
      step functions.  See ?approxfun}
 }
@@ -74,7 +76,7 @@ KSDCC(h)
 
 x.min <- rep(head(h$breaks, -1), h$counts)
 x.max <- rep(tail(h$breaks, -1), h$counts)
-ks.test(x.min, x.max, exact=F)
+ks.test(x.min, x.max, exact=FALSE)
 
 \dontrun{
 PlotKSDCC(h)
