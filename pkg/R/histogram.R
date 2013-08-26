@@ -36,25 +36,65 @@
   return(hist)
 }
 
-AddHistograms <- function(x, y, main=paste("Merge of", x$xname,
-                                  "and", y$xname)) {
+.NewHistogramName <- function(x) {
+  if(length(x) == 2) {
+    return(paste("Merge of", x[[1]]$xname, "and", x[[2]]$xname))
+  } else {
+    paste("Merge of", length(x), "histograms")
+  }
+}
+
+.AddManyHistograms <- function(x, main=paste("Merge of", length(x),
+                                   "histograms")) {
+  # Adds many histogram objects together that have the same bins.
+  #
+  # Args:
+  #   x: A list of S3 histogram objects
+  #   main:  The name to set for the merged histogram (e.g. used in plots).
+  #
+  # Returns:
+  #   An S3 histogram class suitable for plotting.
+  stopifnot(all(sapply(x, inherits, "histogram")))
+  br <- unname(lapply(x, function(y) y$breaks))
+  stopifnot(all(sapply(br, identical, y = br[[1]])))
+  # Now we know that all histograms have identical breaks.
+  cnts <- unname(lapply(x, function(y) y$counts))
+  sum.cnts <- Reduce("+", cnts)
+  hist <- list(breaks = x[[1]]$breaks,
+               counts = sum.cnts,
+               mids = x[[1]]$mids,
+               xname = main,
+               equidist = x[[1]]$equidist)
+  hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
+
+  class(hist) <- "histogram"
+  return(hist)
+}
+
+AddHistograms <- function(..., x=list(...), main=.NewHistogramName(x)) {
   # Adds two histogram objects that have the same bins.
   #
   # Args:
-  #   x: An S3 histogram object
+  #   x: An S3 histogram object.
   #   y: An S3 histogram object with the same bins as x.
   #   main:  The name to set for the merged histogram (e.g. used in plots).
   #
   # Returns:
   #   An S3 histogram class suitable for plotting.
-  stopifnot(inherits(x, "histogram"), inherits(y, "histogram"))
+
+  stopifnot(length(x) > 1)
+  if (length(x) > 2) {
+    return(.AddManyHistograms(x))
+  }
+  stopifnot(inherits(x[[1]], "histogram"), inherits(x[[2]], "histogram"))
+
   # Must have the same breakpoints
-  stopifnot(identical(x$breaks, y$breaks))
-  hist <- list(breaks=x$breaks,
-               counts=(x$counts + y$counts),
-               mids=x$mids,
+  stopifnot(identical(x[[1]]$breaks, x[[2]]$breaks))
+  hist <- list(breaks=x[[1]]$breaks,
+               counts=(x[[1]]$counts + x[[2]]$counts),
+               mids=x[[1]]$mids,
                xname=main,
-               equidist=x$equidist)
+               equidist=x[[1]]$equidist)
   hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
 
   class(hist) <- "histogram"

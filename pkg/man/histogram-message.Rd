@@ -15,7 +15,7 @@ manipulating large histograms.}
 
 \usage{
   \method{as.histogram}{default}(x, \dots)
-  \method{as.histogram}{Message}(x, main="HistogramTools.HistogramState", \dots)
+  \method{as.histogram}{Message}(x, \dots)
 }
 \arguments{
   \item{x}{An RProtoBuf Message of type "HistogramTools.HistogramState" to convert to a histogram object.}

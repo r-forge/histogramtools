@@ -29,8 +29,7 @@ Date: \tab 2012-11-11\cr
 
 Index:
 \preformatted{
-AddHistograms         Aggregate two histogram objects that have identical breaks.
-AddManyHistograms     Aggregate a list of Histograms together with identical breaks.
+AddHistograms         Aggregate histogram objects that have identical breaks.
 MergeBuckets          Merge adjacent buckets of a histogram.
 ApproxQuantile        Approximate the quantiles of the underlying distribution.
 ApproxMean            Approximate the mean of the underlying distribution.

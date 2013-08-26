@@ -16,32 +16,33 @@
 
 \name{AddHistograms}
 \alias{AddHistograms}
-\title{Aggregate two histograms that have identical breaks.}
+\title{Aggregate histograms that have identical breaks.}
 \description{
-Aggregate two histogram objects that have identical breaks.
+Aggregate histogram objects that have identical breaks.
 }
 \usage{
-  AddHistograms(x, y, main=paste("Merge of", x$xname, "and", y$xname))
+  AddHistograms(..., x=list(...), main=.NewHistogramName(x))
 }
 \arguments{
-  \item{x}{A histogram object (created by \code{\link[graphics]{hist}}).}
-  \item{y}{A histogram object.  Must have the same breakpoints as \code{x}.}
+  \item{...}{Histogram objects (created by \code{\link[graphics]{hist}}).}
+  \item{x}{A list of histogram objects.}
   \item{main}{A title to add to the merged histogram.}
 }
 \details{
-This function adds the buckets of two histogram to return a single
+This function adds the buckets of the provided histograms to return a single
 aggregated histogram.
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-\code{\link{AddManyHistograms}},
-\code{\link{histogramtools-package}}, and
+\code{\link{histogramtools-package}} and
 \code{\link{hist}}.
 }
 \examples{
 hist.1 <- hist(c(1,2,3,4), plot=FALSE)
 hist.2 <- hist(c(1,2,2,4), plot=FALSE)
 hist.sum <- AddHistograms(hist.1, hist.2)
+hist.3 <- hist(c(1,2,2,4), plot=FALSE)
+hist.sum <- AddHistograms(hist.1, hist.2, hist.3)
 }
 \keyword{manip}
 \keyword{utilities}
