@@ -41,6 +41,10 @@ TestMergeBucketsHistograms <- function() {
   checkEquals(hist.3$breaks, c(0,3,6,9))
   checkEquals(hist.3$counts, c(3,0,0))
 
+  # Verify we get an exception if we provide a breakpoint list
+  # that is not a subset of the existing list.
+  checkException(hist.bad <- MergeBuckets(hist.1, breaks=c(17,34)))
+
   # Now specify explicit subset of bucket boundaries.
   hist.4 <- MergeBuckets(hist.1, breaks=c(0, 3, 6, 9))
   checkEquals(hist.4$breaks, c(0, 3, 6, 9))

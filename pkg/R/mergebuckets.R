@@ -33,7 +33,9 @@
   #   An S3 histogram class suitable for plotting.
 
   stopifnot(is.numeric(breaks), length(breaks) > 1)
-  stopifnot(all(breaks) %in% x$breaks)
+  if (!all(breaks %in% x$breaks)) {
+    stop("List of breaks must be subset of existing breaks in histogram")
+  }
 
   if (max(breaks) < max(x$breaks)) {
     warning("Trimming buckets from histogram.")
