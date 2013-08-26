@@ -22,7 +22,7 @@
 TestKSDCC <- function() {
     x <- rexp(100)
     h1 <- hist(x, plot=FALSE)
-    h2 <- hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE)
+    h2 <- hist(x, breaks=seq(0, round(max(x) + 1), by=0.1), plot=FALSE)
 
     ksdcc.1 <- KSDCC(h1)
     ksdcc.2 <- KSDCC(h2)
@@ -30,7 +30,7 @@ TestKSDCC <- function() {
     .checkMetricInvariants(ksdcc.1)
     .checkMetricInvariants(ksdcc.2)
     checkTrue(ksdcc.1 >= ksdcc.2)
-    
+
     x1.min <- rep(head(h1$breaks, -1), h1$counts)
     x1.max <- rep(tail(h1$breaks, -1), h1$counts)
     checkEquals(unname(ks.test(x1.min, x1.max, exact=F)$statistic), KSDCC(h1))
@@ -44,7 +44,7 @@ TestEMDCC <- function() {
     set.seed(0)
     x <- rexp(100)
     h1 <- hist(x, plot=FALSE)
-    h2 <- hist(x, breaks=seq(0,round(max(x) + 1),by=0.1), plot=FALSE)
+    h2 <- hist(x, breaks=seq(0, round(max(x) + 1), by=0.1), plot=FALSE)
 
     emdcc.1 <- EMDCC(h1)
     emdcc.2 <- EMDCC(h2)

@@ -1,5 +1,8 @@
 pkg <- "HistogramTools"
 
+# Make the test deterministic - we use a lot of randomly created histograms.
+set.seed(0)
+
 if(require("RUnit", quietly = TRUE)) {
     library(package=pkg, character.only = TRUE)
     if(!(exists("path") && file.exists(path)))

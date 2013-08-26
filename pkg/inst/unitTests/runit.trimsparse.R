@@ -9,6 +9,7 @@ TestTrimHistogram <- function() {
   # But fewer buckets:
   checkTrue(length(hist.1$counts) > length(hist.trimmed$counts))
 
+  # TODO(mstokely) This emits warnings.  Could check on that fact.
   zero.hist <- hist(numeric(), breaks=c(0,1,2,3,4,5,6,7,8,9), plot=FALSE)
   zero.trimmed <- TrimHistogram(zero.hist)
   # Don't do anything when all the buckets are empty.
