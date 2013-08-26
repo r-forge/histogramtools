@@ -31,7 +31,7 @@ PlotKSDCC(h, arrow.size.scale=1, main=NULL)
 PlotEMDCC(h, main=NULL)
 }
 \arguments{
-  \item{h}{An S3 histogram object representing a pre-binned dataset
+  \item{h}{A histogram object (created by \code{\link[graphics]{hist}}) representing a pre-binned dataset
     on which we'd like to calculate the information loss due to binning.}
   \item{arrow.size.scale}{specifies a size scaling factor for the arrow
     illustrating the point of Kolmogorov-Smirnov distance between the
@@ -58,9 +58,9 @@ loss metrics for the provided histogram.
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-\code{\link{histogramtools-package}}
-\code{\link{ecdf}}
-\code{\link{hist}}
+\code{\link{histogramtools-package}},
+\code{\link{ecdf}}, and
+\code{\link{hist}}.
 }
 \examples{
 x <- rexp(1000)

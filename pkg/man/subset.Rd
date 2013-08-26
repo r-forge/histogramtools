@@ -25,7 +25,7 @@ larger histogram and discarding tail buckets.
   SubsetHistogram(x, minbreak=NULL, maxbreak=NULL)
 }
 \arguments{
-  \item{x}{An S3 histogram object.}
+  \item{x}{A histogram object (created by \code{\link[graphics]{hist}}).}
   \item{minbreak}{If non-\code{NULL}, specifies a new minimum breakpoint
 for the returned histogram.  Must be one of the existing breakpoints of \code{x}.}
   \item{maxbreak}{If non-\code{NULL}, specifies a new maximum breakpoint
@@ -41,8 +41,8 @@ returned unmodified.
 \keyword{methods}
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-\code{\link{histogramtools-package}}
-\code{\link{hist}}
+\code{\link{histogramtools-package}} and
+\code{\link{hist}}.
 }
 \examples{
 hist.1 <- hist(c(1,2,3), breaks=c(0,1,2,3,4,5,6,7,8,9), plot=FALSE)
@@ -51,3 +51,5 @@ hist.2 <- SubsetHistogram(hist.1, maxbreak=6)
 hist.1
 hist.2
 }
+\keyword{manip}
+\keyword{utilities}

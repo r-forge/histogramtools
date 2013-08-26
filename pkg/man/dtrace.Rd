@@ -37,10 +37,14 @@ ReadHistogramsFromDtraceOutputFile(filename)
   output from a dtrace command and looks for text distribution
   representations that can be parsed into R histogram objects.
 }
+\value{
+A list of histogram objects representing the histograms present in the
+Dtrace output file.
+}
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-\code{\link{histogramtools-package}}
-\code{\link{hist}}
+\code{\link{histogramtools-package}},
+\code{\link{hist}}.
 }
 \examples{
 \dontrun{
@@ -49,3 +53,6 @@ system.readsize.hists <- ReadHistogramsFromDtraceOutputFile("/tmp/dtraceoutput")
 plot(system.readsize.hists[[1]])
 }
 }
+\keyword{manip}
+\keyword{utilities}
+\keyword{datagen}

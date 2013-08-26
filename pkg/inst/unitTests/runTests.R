@@ -52,5 +52,5 @@ if(require("RUnit", quietly = TRUE)) {
     }
 } else {
     cat("R package 'RUnit' cannot be loaded -- no unit tests run\n",
-    "for package", pkg,"\n")
+    "for package", pkg, "\n")
 }

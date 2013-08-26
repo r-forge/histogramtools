@@ -25,7 +25,7 @@ form a new histogram with more wider bucket boundaries.
   MergeBuckets(x, adj.buckets=NULL, breaks=NULL, FUN=sum)
 }
 \arguments{
-  \item{x}{An S3 histogram object.}
+  \item{x}{A histogram object (created by \code{\link[graphics]{hist}}).}
   \item{adj.buckets}{The number of adjacent buckets to merge together.}
   \item{breaks}{A vector giving the breakpoints between cells, or a
     single number givein the total number of cells in the new
@@ -43,8 +43,8 @@ one with fewer buckets.
 \keyword{methods}
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-\code{\link{histogramtools-package}}
-\code{\link{hist}}
+\code{\link{histogramtools-package}} and
+\code{\link{hist}}.
 }
 \examples{
 hist.1 <- hist(c(1,2,3), breaks=c(0,1,2,3,4,5,6,7,8,9), plot=FALSE)
@@ -53,3 +53,5 @@ hist.2 <- MergeBuckets(hist.1, adj.buckets=2)
 hist.1
 hist.2
 }
+\keyword{manip}
+\keyword{utilities}

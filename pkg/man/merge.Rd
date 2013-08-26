@@ -24,8 +24,8 @@ Aggregate two histogram objects that have identical breaks.
   AddHistograms(x, y, main=paste("Merge of", x$xname, "and", y$xname))
 }
 \arguments{
-  \item{x}{An S3 histogram object.}
-  \item{y}{An S3 histogram object.  Must have the same breakpoints as \code{x}.}
+  \item{x}{A histogram object (created by \code{\link[graphics]{hist}}).}
+  \item{y}{A histogram object.  Must have the same breakpoints as \code{x}.}
   \item{main}{A title to add to the merged histogram.}
 }
 \details{
@@ -34,12 +34,14 @@ aggregated histogram.
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-\code{\link{AddManyHistograms}}
-\code{\link{histogramtools-package}}
-\code{\link{hist}}
+\code{\link{AddManyHistograms}},
+\code{\link{histogramtools-package}}, and
+\code{\link{hist}}.
 }
 \examples{
 hist.1 <- hist(c(1,2,3,4), plot=FALSE)
 hist.2 <- hist(c(1,2,2,4), plot=FALSE)
 hist.sum <- AddHistograms(hist.1, hist.2)
 }
+\keyword{manip}
+\keyword{utilities}

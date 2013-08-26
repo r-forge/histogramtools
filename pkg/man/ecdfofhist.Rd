@@ -18,34 +18,36 @@
 \alias{HistToEcdf}
 \title{Empirical Cumulative Distribution Function From a Histogram.}
 \description{
-Computes an approximate empirical cumulative distribution function of an underlying
+Computes an approximate empirical cumulative distribution function of a
 data set given a binned histogram representation of that dataset.
 }
 \usage{
 HistToEcdf(h, method="constant", f=0)
 }
 \arguments{
-  \item{h}{An S3 histogram object representing a pre-binned dataset
+  \item{h}{A histogram object (created by \code{\link[graphics]{hist}}) representing a pre-binned dataset
     on which we'd like to calculate an ECDF.}
   \item{method}{specifies the interpolation method to be used in call to
-    \code{approxfun()}.  Choices are "linear" or "constant".}
-  \item{f}{if 'method="constant"' a number between 0 and 1 inclusive,
+    \code{\link[stats]{approxfun}()}.  Choices are \code{"linear"} or \code{"constant"}.}
+  \item{f}{if \code{method="constant"} a number between 0 and 1 inclusive,
     indicating a compromise between left- and right-continuous
-     step functions.  See ?approxfun}
+     step functions.  See \code{?approxfun}}
 }
 \details{
   This function approximates the e.c.d.f. (empirical cumulative
-  distribution function) Fn over an underlying data set given a binned
+  distribution function) Fn of a data set given a binned
   histogram representation of that data set.
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-\code{\link{histogramtools-package}}
-\code{\link{ecdf}}
-\code{\link{approxfun}}
-\code{\link{hist}}
+\code{\link{histogramtools-package}},
+\code{\link{ecdf}},
+\code{\link[stats]{approxfun}}, and
+\code{\link{hist}}.
 }
 \examples{
 h <- hist(runif(100), plot=FALSE)
 plot(HistToEcdf(h))
 }
+\keyword{manip}
+\keyword{utilities}

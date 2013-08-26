@@ -18,7 +18,7 @@ manipulating large histograms.}
   \method{as.histogram}{Message}(x, main="HistogramTools.HistogramState", \dots)
 }
 \arguments{
-  \item{x}{An RProtoBuf Message of type "HistogramTools.HistogramState" to convert to an S3 histogram class.}
+  \item{x}{An RProtoBuf Message of type "HistogramTools.HistogramState" to convert to a histogram object.}
   \item{main}{The title to use for the histogram.}
   \item{\dots}{Not used.}
 }
@@ -29,9 +29,9 @@ manipulating large histograms.}
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-\code{\link{histogramtools-package}}
-\code{\link{as.Message}}
-\code{\link{RProtoBuf}}
+\code{\link{histogramtools-package}},
+\code{\link{as.Message}}, and
+\code{\link{RProtoBuf}}.
 }
 \examples{
   library(HistogramTools)
@@ -60,9 +60,11 @@ manipulating large histograms.}
   # We can parse the raw bytes as a protocol buffer
   new.hist.proto <- HistogramTools.HistogramState$read(raw.bytes)
   new.hist.proto
-  
+
   # Then convert back to a native R histogram.
   new.hist <- as.histogram(new.hist.proto)
 
   # The new histogram and the old are identical except for xname
 }
+\keyword{manip}
+\keyword{utilities}

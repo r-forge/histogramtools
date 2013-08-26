@@ -29,9 +29,9 @@ ApproxMean(x)
 Count(x)
 }
 \arguments{
-  \item{x}{An S3 histogram object created with the histogram package.}
+  \item{x}{A histogram object (created by \code{\link[graphics]{hist}}).}
   \item{probs}{Numeric vector of probabilities with values in [0,1].}
-  \item{...}{Any other arguments to pass to \code{wtd.quantile}.}
+  \item{...}{Any other arguments to pass to \code{\link[Hmisc]{wtd.quantile}}.}
 }
 \details{
 Many data analysis pipelines write out histogram protocol buffers with
@@ -44,8 +44,8 @@ observations in the histogram.
 \keyword{methods}
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-\code{\link{histogramtools-package}}
-\code{\link{hist}}
+\code{\link{histogramtools-package}} and
+\code{\link{hist}}.
 }
 \examples{
 x <- hist(c(1,2,3), breaks=c(0,1,2,3,4,5,6,7,8,9), plot=FALSE)
@@ -54,3 +54,5 @@ ApproxMean(x)
 ApproxQuantile(x, .5)
 ApproxQuantile(x, c(.05, .95))
 }
+\keyword{manip}
+\keyword{utilities}

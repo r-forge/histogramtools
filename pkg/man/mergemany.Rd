@@ -25,7 +25,7 @@ of histograms with identical bucket boundaries.
  AddManyHistograms(x, main=paste("Merge of", length(x), "histograms"))
 }
 \arguments{
-  \item{x}{A list of S3 histogram objects.}
+  \item{x}{A list of histogram objects (created by \code{\link[graphics]{hist}}).}
   \item{main}{A title to add to the merged histogram.}
 }
 \details{
@@ -34,8 +34,8 @@ This function provides a way to efficiently aggregate large numbers of histogram
 \keyword{methods}
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
-\code{\link{histogramtools-package}}
-\code{\link{hist}}
+\code{\link{histogramtools-package}} and
+\code{\link{hist}}.
 }
 \examples{
   hist.1 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
@@ -44,3 +44,5 @@ This function provides a way to efficiently aggregate large numbers of histogram
   hist.sum <- AddManyHistograms(list(hist.1, hist.2, hist.3))
   hist.sum
 }
+\keyword{manip}
+\keyword{utilities}
