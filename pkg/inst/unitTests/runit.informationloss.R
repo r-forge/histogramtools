@@ -61,7 +61,9 @@ TestEMDCC <- function() {
                        h1$mids, MaxEcdf(tail(knots(MinEcdf), -1))), ncol=3)
         A2 <- matrix(c(rep(1,length(h1$counts)),
                        h1$mids, MinEcdf(head(knots(MinEcdf), -1))), ncol=3)
-        # TODO(mstokely): Not entirely clear why we need to reduce tolerance here.
-        checkEquals(emd(A1,A2), emdcc.1, tol=.Macine$double.eps^0.25)
+        # emdist seems to use single-precision floating point, thus the need
+        # for 2^-23 as the tolerance rather than .Machine$double.eps
+        # From http://en.wikipedia.org/wiki/Machine_epsilon
+        checkEquals(emd(A1,A2), emdcc.1, tol=2^-23)
     }
 }
