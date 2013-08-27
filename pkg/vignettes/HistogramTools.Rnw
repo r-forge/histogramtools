@@ -122,7 +122,7 @@ in functionality that this package hopes to fill.
 
 % TODO(mstokely): Also cite the streaming algorithm work?
 Much previous work on histograms
-\citep{sturges1926choice,scott1979optimal} involves indentifying ideal
+\citep{sturges1926choice,scott1979optimal} involves identifying ideal
 breakpoints for visualizing a data set.  Our context is different; we
 use histograms as compact representations in a large MapReduce
 environment, and need to merge histograms from subsets of the data to
