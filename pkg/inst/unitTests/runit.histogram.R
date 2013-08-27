@@ -26,7 +26,11 @@ TestAddManyHistograms <- function() {
   hist.1 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
   hist.2 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
   hist.3 <- hist(c(4,5,6), breaks=0:9, plot=FALSE)
-  hist.sum <- AddManyHistograms(list(hist.1, hist.2, hist.3))
+  hist.sum <- AddHistograms(hist.1, hist.2, hist.3)
+  checkEquals(hist.sum$breaks, 0:9)
+  checkEquals(hist.sum$counts, c(2, 2, 2, 1, 1, 1, 0, 0, 0))
+
+  hist.sum <- AddHistograms(x=list(hist.1, hist.2, hist.3))
   checkEquals(hist.sum$breaks, 0:9)
   checkEquals(hist.sum$counts, c(2, 2, 2, 1, 1, 1, 0, 0, 0))
 }
