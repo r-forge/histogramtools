@@ -14,12 +14,10 @@ environment.  It also includes a number of utility functions for
 manipulating large histograms.}
 
 \usage{
-  \method{as.histogram}{default}(x, \dots)
   \method{as.histogram}{Message}(x, \dots)
 }
 \arguments{
   \item{x}{An RProtoBuf Message of type "HistogramTools.HistogramState" to convert to a histogram object.}
-  \item{main}{The title to use for the histogram.}
   \item{\dots}{Not used.}
 }
 \details{

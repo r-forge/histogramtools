@@ -75,8 +75,8 @@ AddHistograms <- function(..., x=list(...), main=.NewHistogramName(x)) {
   # Adds two histogram objects that have the same bins.
   #
   # Args:
-  #   x: An S3 histogram object.
-  #   y: An S3 histogram object with the same bins as x.
+  #   ...: S3 histogram objects.
+  #   x:   A list of S3 histogram objects.
   #   main:  The name to set for the merged histogram (e.g. used in plots).
   #
   # Returns:
@@ -108,7 +108,7 @@ as.histogram <- function(x, ...) {
 }
 
 # TODO(mstokely): RProtoBuf confusingly uses asMessage instead of as.Message
-as.Message <- function(x, ...) {
+as.Message <- function(x) {
   UseMethod("as.Message")
 }
 
