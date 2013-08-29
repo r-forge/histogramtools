@@ -136,7 +136,7 @@ as.histogram.Message <- function(x, ...) {
 }
 
 as.Message.histogram <- function(x) {
-  # Converts an R S3 histogram class into a HistogramTools.hist ProtoBuf.
+  # Converts an R S3 histogram class into a HistogramState ProtoBuf.
   #
   # Args:
   #   x: An S3 histogram object.
