@@ -156,5 +156,15 @@ as.Message.histogram <- function(x) {
   return(hist.msg)
 }
 
-setOldClass("histogram")
-setAs("histogram", "Message", as.Message.histogram)
+# NB(mstokely): This causes an R CMD check warning about
+# the histogram class being undocumented, so commented out.
+#
+# This would let us do :
+#   as(hist(runif(100), plot=F), "Message")
+#
+# But we can already accomplish that with :
+#   as.Message(hist(runif(100), plot=F))
+#
+# so it is not a big loss.
+#setOldClass("histogram")
+#setAs("histogram", "Message", as.Message.histogram)
