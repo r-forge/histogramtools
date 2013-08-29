@@ -346,10 +346,11 @@ lost.  We can however approximate the quantiles and cumulative
 distribution function for the underying distribution from the
 histogram.
 
-The Count, ApproxMean, and ApproxQuantile functions are meant to help
-with this, but note that they will only be accurate with very granular
-histogram buckets.  They would rarely be appropriate with histogram
-buckets chosen by the default algorithm in R.
+The \code{Count}, \code{ApproxMean}, and \code{ApproxQuantile}
+functions are meant to help with this, but note that they will only be
+accurate with very granular histogram buckets.  They would rarely be
+appropriate with histogram buckets chosen by the default algorithm in
+R.
 
 <<echo=TRUE>>=
 hist <- hist(c(1,2,3), breaks=c(0,1,2,3,4,5,6,7,8,9), plot=FALSE)
@@ -360,6 +361,28 @@ ApproxMean(hist)
 ApproxQuantile(hist, .5)
 ApproxQuantile(hist, c(.05, .95))
 @
+
+The \code{HistToEcdf} function takes a histogram and returns an
+empirical distribution function similar to what is returned by the
+\code{ecdf} function on a distribution.
+
+<<execdf,fig=TRUE,include=FALSE,echo=TRUE,height=4,width=8>>=
+h <- hist(runif(100), plot=FALSE)
+e <- HistToEcdf(h)
+e(.5)
+par(mfrow=c(1,2))
+plot(h)
+plot(HistToEcdf(h))
+par(mfrow=c(1,1))
+@
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6in,height=3in]{HistogramTools-execdf}
+\end{center}
+\caption{Histogram and CDF Created with HistToEcdf}
+\label{fig:excdf}
+\end{figure}
 
 \section{Error estimates in CDFs approximated from histograms}
 
