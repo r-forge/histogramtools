@@ -100,11 +100,6 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 %  URL: \url{http://research.google.com/pubs/MurrayStokely.html}
 %  }
 %
-%% It is also possible to add a telephone and fax number
-%% before the e-mail in the following format:
-%% Telephone: +43/512/507-7103
-%% Fax: +43/512/507-2851
-
 %% for those who use Sweave please include the following line (with % symbols):
 %% need no \usepackage{Sweave.sty}
 
@@ -113,12 +108,13 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 \section{Introduction}
 
 Histograms have been used for over a century
-\citep{pearson1895contributions} as a compact graphical
-representation of a distribution of data.  Support for generating
-histograms is included in almost all statistical software, including
-R.  However, the growth in large-scale data analysis in R with the
-MapReduce \citep{dean2008mapreduce} paradigm has highlighted some gaps
-in functionality that this package hopes to fill.
+\citep{pearson1895contributions} as a compact graphical representation
+of a distribution of data.  Support for generating histograms is
+included in almost all statistical software, including R.  However,
+the growth in large-scale data analysis in R with the MapReduce
+\citep{dean2008mapreduce} paradigm has highlighted the need for some
+extensions to the histogram functionality in R\citep{r} for the
+collection, transmission, and manipulation of larged binned data sets.
 
 % TODO(mstokely): Also cite the streaming algorithm work?
 Much previous work on histograms
@@ -136,18 +132,21 @@ boundaries for our initial data collection pass, how can we then
 reshape the bucket boundaries to be more relevant to the analysis
 questions at hand?
 
+% TODO(mstokely): Reference and cite ``Improved Histograms for
+% Selectivity Estimation of Range Predicates'' which is a great survey
+% of different types of histograms from the database community.
+
 % [cite R ?hist algo] but in the parallell
-%context each histogram must share the same breakpoints, even if they
-%are not the optimal ones for the specific data subset any particular
-%routine is accessing.  If we hope to merge the resulitng histograms
-%into a meaningful metric of the full data set.
+% context each histogram must share the same breakpoints, even if they
+% are not the optimal ones for the specific data subset any particular
+% routine is accessing.  If we hope to merge the resulting histograms
+% into a meaningful metric of the full data set.
 
-
-%This paper introduces some extensions to the histogram functionality in R
-%\citep{r} to facilitate collection, transmission, manipulation of histograms in% a MapReduce \citep{dean2008mapreduce} environment of large compute clusters.
-
-%Histograms are increasingly used in leage scale distributed systems research.  Especially with the MapReduce paradigm where many thousands of tasks may analyze a big data set and collect distributions of interest  Examples from search clusters, distributed filesystems, etc. [cite]
-
+% Histograms are increasingly used in leage scale distributed systems
+% research.  Especially with the MapReduce paradigm where many
+% thousands of tasks may analyze a big data set and collect
+% distributions of interest Examples from search clusters, distributed
+% filesystems, etc. [cite]
 
 \section{Parallel Data Collection Patterns}
 
@@ -187,14 +186,17 @@ tasks are written in R, or if those components are written in other
 languages and only the resulting output histograms need to be
 manipulated in R.
 
-%There are really two cookbook recipes for generating histograms of large data sets.  Have each mapper generate an actual histogram, in which case the reducer must merge them.
+%There are really two cookbook recipes for generating histograms of
+%large data sets.  Have each mapper generate an actual histogram, in
+%which case the reducer must merge them.
 
-%Or have each mapper output round to a bucket width and output for every bucket width item
-%then have the reducer sum those up.
+%Or have each mapper output round to a bucket width and output for
+%every bucket width item then have the reducer sum those up.
 
 %Why do we do the first one?  Why not the second one?
 
-%What is the runtime difference between the two?  Is the second faster?  Or the first?
+%What is the runtime difference between the two?  Is the second
+%faster?  Or the first?
 
 %TODO:
 %Good diagram for paper showing MapReduce generation of histograms.  As described in Hadoop MapReduce cookbook :
@@ -209,12 +211,6 @@ manipulated in R.
 %Very large data sets in Pearson's day meant more than 100 observations, but analysis of web-scale data, such as the number of unlinks in the trillions of pages on the web requires significantly larger computation resources.
 %Pearson was interested in very large data sets (more than 1000)
 
-%Trimming
-
-%If, say you are only interested in part of a distribution, for example for performance measurements the requests that had a latency of greater than X seconds only.  Then the Trim() functions can help manipulate the histograms to zoom in on an area of interest for additional plotting.
-
-
-%\section{Protocol Buffer Representations of Histograms}
 
 \section{Efficient Representations of Histograms}
 
@@ -667,7 +663,6 @@ overbinned <- hist(c(rexp(100), 1+rexp(100)), breaks=seq(0, 10, by=.01), plot=FA
 better.hist <- MergeBuckets(overbinned, adj=30)
 @
 
-
 <<downsamplehist,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,width=8,height=4>>=
 par(mfrow=c(1,2))
 plot(overbinned)
@@ -683,6 +678,12 @@ plot(better.hist)
 \end{figure}
 
 \subsection{Subsetting Histograms}
+
+% If, say you are only interested in part of a distribution, for
+% example for performance measurements the requests that had a latency
+% of greater than X seconds only.  Then the SubsetHistogram()
+% functions can help manipulate the histograms to zoom in on an area
+% of interest for additional plotting.
 
 The \code{SubsetHistogram} function takes a histogram and a new
 minimum and maximum bucket boundary and returns a new histogram with a
