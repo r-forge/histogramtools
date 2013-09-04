@@ -44,9 +44,11 @@
   }
 }
 
-.AddManyHistograms <- function(x, main=paste("Merge of", length(x),
-                                   "histograms")) {
+.AddManyHistograms <- function(x, main=.NewHistogramName(x)) {
   # Adds many histogram objects together that have the same bins.
+  #
+  # TODO(mstokely): Relax the requirement that the histograms have exactly
+  # the same bins.
   #
   # Args:
   #   x: A list of S3 histogram objects
@@ -56,23 +58,22 @@
   #   An S3 histogram class suitable for plotting.
   stopifnot(all(sapply(x, inherits, "histogram")))
   br <- unname(lapply(x, function(y) y$breaks))
-  stopifnot(all(sapply(br, identical, y = br[[1]])))
+  if (!all((sapply(br, identical, y = br[[1]])))) {
+    stop("Histograms must have identical breakpoints for this operation.")
+  }
   # Now we know that all histograms have identical breaks.
   cnts <- unname(lapply(x, function(y) y$counts))
   sum.cnts <- Reduce("+", cnts)
-  hist <- list(breaks = x[[1]]$breaks,
-               counts = sum.cnts,
-               mids = x[[1]]$mids,
-               xname = main,
-               equidist = x[[1]]$equidist)
-  hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
 
-  class(hist) <- "histogram"
-  return(hist)
+  return(.BuildHistogram(breaks = x[[1]]$breaks,
+                         counts = sum.cnts,
+                         xname = main))
 }
 
 AddHistograms <- function(..., x=list(...), main=.NewHistogramName(x)) {
   # Adds two histogram objects that have the same bins.
+  #
+  # TODO(mstokely): Support histograms without exactly the same breaks.
   #
   # Args:
   #   ...: S3 histogram objects.
@@ -82,23 +83,13 @@ AddHistograms <- function(..., x=list(...), main=.NewHistogramName(x)) {
   # Returns:
   #   An S3 histogram class suitable for plotting.
 
-  stopifnot(length(x) > 1)
-  if (length(x) > 2) {
-    return(.AddManyHistograms(x))
+  stopifnot(length(x) > 0)
+  if (length(x) == 1) {
+    return(x)
+  } else {
+    # length > 1
+    return(.AddManyHistograms(x, main=main))
   }
-  stopifnot(inherits(x[[1]], "histogram"), inherits(x[[2]], "histogram"))
-
-  # Must have the same breakpoints
-  stopifnot(identical(x[[1]]$breaks, x[[2]]$breaks))
-  hist <- list(breaks=x[[1]]$breaks,
-               counts=(x[[1]]$counts + x[[2]]$counts),
-               mids=x[[1]]$mids,
-               xname=main,
-               equidist=x[[1]]$equidist)
-  hist$density <- hist$counts / (sum(hist$counts) * diff(hist$breaks))
-
-  class(hist) <- "histogram"
-  return(hist)
 }
 
 # S3 Generics
