@@ -76,6 +76,7 @@ ReadHistogramsFromDtraceOutputFile <- function(filename) {
   bins <- as.numeric(sub("(^.*)\\|.*", "\\1", tail(textlines, -2)))
   counts <- as.numeric(sub("^.{59}(.*)", "\\1", tail(textlines, -2)))
   return(.BuildHistogram(breaks = bins,
-                         counts = head(counts, -1),  # remove the last bin, always 0.
+                         # remove the last bin from counts, always 0.
+                         counts = head(counts, -1),
                          xname = title))
 }
