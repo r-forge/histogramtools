@@ -25,6 +25,9 @@ SubsetHistogram <- function(x, minbreak=NULL, maxbreak=NULL) {
   if (!is.null(minbreak)) {
     stopifnot(is.numeric(minbreak), length(minbreak) == 1)
     stopifnot(minbreak %in% x$breaks)
+    if (minbreak == min(x$breaks)) {
+      return(x)
+    }
     # How many bins to cut from left side of histogram?
     num.to.cut <- length(which(x$breaks < minbreak))
     x$breaks <- tail(x$breaks, -num.to.cut)
@@ -33,13 +36,14 @@ SubsetHistogram <- function(x, minbreak=NULL, maxbreak=NULL) {
   if (!is.null(maxbreak)) {
     stopifnot(is.numeric(maxbreak), length(maxbreak) == 1)
     stopifnot(maxbreak %in% x$breaks)
+    if (maxbreak == min(x$breaks)) {
+      return(x)
+    }
     # How many bins to cut from right side of histogram?
     num.to.cut <- length(which(x$breaks > maxbreak))
     x$breaks <- head(x$breaks, -num.to.cut)
     x$counts <- head(x$counts, -num.to.cut)
   }
-  x$density <- x$counts / (sum(x$counts) * diff(x$breaks))
-  x$mids <- (head(x$breaks, -1) + tail(x$breaks, -1)) / 2
-  x$equidist <- .BreaksAreEquidistant(x$breaks)
-  return(x)
+  # Return a new histogram to update density, mids fields.
+  return(.BuildHistogram(x$breaks, x$counts, x$xname))
 }
