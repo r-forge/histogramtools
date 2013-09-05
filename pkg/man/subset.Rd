@@ -29,7 +29,7 @@ larger histogram and discarding tail buckets.
   \item{minbreak}{If non-\code{NULL}, specifies a new minimum breakpoint
 for the returned histogram.  Must be one of the existing breakpoints of \code{x}.}
   \item{maxbreak}{If non-\code{NULL}, specifies a new maximum breakpoint
-for the returned histogram.  Must be one of the exsiting breakpoints of \code{x}.}
+for the returned histogram.  Must be one of the existing breakpoints of \code{x}.}
 }
 \details{
 This function provides a way to "zoom-in" on a histogram by setting new
@@ -42,7 +42,7 @@ returned unmodified.
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
 \code{\link{histogramtools-package}} and
-\code{\link{hist}}.
+\code{\link[graphics]{hist}}.
 }
 \examples{
 hist.1 <- hist(c(1,2,3), breaks=c(0,1,2,3,4,5,6,7,8,9), plot=FALSE)

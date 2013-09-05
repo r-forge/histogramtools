@@ -45,7 +45,7 @@ observations in the histogram.
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
 \code{\link{histogramtools-package}} and
-\code{\link{hist}}.
+\code{\link[graphics]{hist}}.
 }
 \examples{
 x <- hist(c(1,2,3), breaks=c(0,1,2,3,4,5,6,7,8,9), plot=FALSE)

@@ -44,7 +44,7 @@ Dtrace output file.
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
 \code{\link{histogramtools-package}},
-\code{\link{hist}}.
+\code{\link[graphics]{hist}}.
 }
 \examples{
 \dontrun{

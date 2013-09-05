@@ -60,7 +60,7 @@ loss metrics for the provided histogram.
 \seealso{
 \code{\link{histogramtools-package}},
 \code{\link{ecdf}}, and
-\code{\link{hist}}.
+\code{\link[graphics]{hist}}.
 }
 \examples{
 x <- rexp(1000)

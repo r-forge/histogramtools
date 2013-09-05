@@ -21,12 +21,17 @@
 Aggregate histogram objects that have identical breaks.
 }
 \usage{
-  AddHistograms(..., x=list(...), main=.NewHistogramName(x))
+  AddHistograms(\dots{}, x=list(\dots{}), main=.NewHistogramName(x))
 }
 \arguments{
-  \item{...}{Histogram objects (created by \code{\link[graphics]{hist}}).}
-  \item{x}{A list of histogram objects.}
-  \item{main}{A title to add to the merged histogram.}
+  \item{\dots{}}{Histogram objects (created by \code{\link[graphics]{hist}}).}
+  \item{x}{A list of histogram objects. If \code{x} is supplied then the
+  \ldots are ignored.}
+  \item{main}{A title to add to the aggregated/merged histogram.  By default, if
+    two histograms are provided a title will be created that includes
+    the names of the original histograms.  If more histograms are
+    provided the title will simply include the number of aggregated histograms.
+  }
 }
 \details{
 This function adds the buckets of the provided histograms to return a single
@@ -35,7 +40,7 @@ aggregated histogram.
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
 \code{\link{histogramtools-package}} and
-\code{\link{hist}}.
+\code{\link[graphics]{hist}}.
 }
 \examples{
 hist.1 <- hist(c(1,2,3,4), plot=FALSE)

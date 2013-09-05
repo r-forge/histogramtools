@@ -35,7 +35,7 @@ HistToEcdf(h, method="constant", f=0)
 }
 \details{
   This function approximates the e.c.d.f. (empirical cumulative
-  distribution function) Fn of a data set given a binned
+  distribution function) of a data set given a binned
   histogram representation of that data set.
 }
 \author{Murray Stokely \email{mstokely@google.com}}
@@ -43,7 +43,7 @@ HistToEcdf(h, method="constant", f=0)
 \code{\link{histogramtools-package}},
 \code{\link{ecdf}},
 \code{\link[stats]{approxfun}}, and
-\code{\link{hist}}.
+\code{\link[graphics]{hist}}.
 }
 \examples{
 h <- hist(runif(100), plot=FALSE)

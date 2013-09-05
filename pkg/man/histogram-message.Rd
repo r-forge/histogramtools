@@ -4,7 +4,7 @@
 \alias{as.histogram}
 \alias{as.histogram.default}
 \alias{as.histogram.Message}
-\title{Convert histogram protocol buffers to S3 histogram objects}
+\title{Convert histogram protocol buffers to histogram objects}
 \description{This package provides a number of utility functions
 useful for manipulating large histograms.  It provides a
 \file{HistogramTools.HistogramState} protocol buffer representation of
@@ -17,7 +17,8 @@ manipulating large histograms.}
   \method{as.histogram}{Message}(x, \dots)
 }
 \arguments{
-  \item{x}{An RProtoBuf Message of type "HistogramTools.HistogramState" to convert to a histogram object.}
+  \item{x}{An RProtoBuf Message of type "HistogramTools.HistogramState"
+  to convert to a histogram object.}
   \item{\dots}{Not used.}
 }
 \details{

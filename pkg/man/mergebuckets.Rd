@@ -28,9 +28,9 @@ form a new histogram with more wider bucket boundaries.
   \item{x}{A histogram object (created by \code{\link[graphics]{hist}}).}
   \item{adj.buckets}{The number of adjacent buckets to merge together.}
   \item{breaks}{A vector giving the breakpoints between cells, or a
-    single number givein the total number of cells in the new
+    single number giving the total number of cells in the new
     histogram.  Must be less than \code{length(x$breaks)} and only used if
-    adj.buckets is equal to \code{NULL}}
+    \code{adj.buckets} is equal to \code{NULL}}
   \item{FUN}{The user defined function that should be run to merge the
     counts of adjacent buckets in the histogram.}
 }
@@ -44,7 +44,7 @@ one with fewer buckets.
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
 \code{\link{histogramtools-package}} and
-\code{\link{hist}}.
+\code{\link[graphics]{hist}}.
 }
 \examples{
 hist.1 <- hist(c(1,2,3), breaks=c(0,1,2,3,4,5,6,7,8,9), plot=FALSE)

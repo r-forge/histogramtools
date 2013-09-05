@@ -45,7 +45,7 @@ Murray Stokely <mstokely@google.com>
 }
 \keyword{ package }
 \seealso{
-\code{\link{hist}}
+\code{\link[graphics]{hist}}
 }
 \examples{
   library(HistogramTools)
