@@ -48,11 +48,9 @@
 
   x$counts <- tmp.df$x
   x$breaks <- c(tmp.df$breaks, tail(x$breaks, 1))
-  # The other named list elements of the histogram class :
-  x$density <- x$counts / (sum(x$counts) * diff(x$breaks))
-  x$mids <- (head(x$breaks, -1) + tail(x$breaks, -1)) / 2
-  x$equidist <- .BreaksAreEquidistant(x$breaks)
-  return(x)
+
+  # Updated the other named list elements of the histogram class and return.
+  return(.UpdateHistogram(x))
 }
 
 MergeBuckets <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
@@ -66,7 +64,8 @@ MergeBuckets <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
   #   x: An S3 histogram object
   #   adj.buckets: The number of adjacent buckets to merge.
   #   breaks: a vector giving the breakpoints between cells, or a
-  #     single number giving number of cells.
+  #     single number giving number of cells.  Must have same range
+  #     as x$breaks.
   #   FUN: The function used to merge buckets.  Using anything other than
   #     sum here would break the density so use with care.
   #
@@ -79,6 +78,9 @@ MergeBuckets <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
       return(.MergeBucketsToBreakList(x, breaks, FUN))
     }
     stopifnot(breaks < length(x$breaks))
+    if (!isTRUE(all.equal(range(breaks), range(x$breaks)))) {
+      stop("Range of new breakpoints too small.  Use SubsetHistogram first.")
+    }
     # How many new buckets will we have.
     new.bucket.count <- breaks
     adj.buckets <- ceiling(length(x$counts) / new.bucket.count)
@@ -94,6 +96,7 @@ MergeBuckets <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
   # The last bucket may not be full, hence the length.out
   # TODO(mstokely): Consider bucket.grouping <- x$breaks[
   #                             ceiling(seq_along(x$counts) / adj.buckets)]
+  # or: seq(from = 1, by = adj.buckets, length = new.bucket.count + 1)
   bucket.grouping <- rep(x$breaks[1+(0:new.bucket.count)*adj.buckets],
                          each=adj.buckets, length.out=length(x$counts))
 
@@ -101,9 +104,7 @@ MergeBuckets <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
 
   x$counts <- tmp.df$x
   x$breaks <- c(tmp.df$breaks, tail(x$breaks, 1))
-  # The other named list elements of the histogram class :
-  x$density <- x$counts / (sum(x$counts) * diff(x$breaks))
-  x$mids <- (head(x$breaks, -1) + tail(x$breaks, -1)) / 2
-  x$equidist <- .BreaksAreEquidistant(x$breaks)
-  return(x)
+
+  # Updated the other named list elements of the histogram class and return.
+  return(.UpdateHistogram(x))
 }

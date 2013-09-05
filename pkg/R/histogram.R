@@ -23,6 +23,8 @@
 }
 
 .BuildHistogram <- function(breaks, counts, xname="") {
+  # Returns a histogram object from the given list of breaks and counts.
+
   stopifnot(is.numeric(breaks), is.numeric(counts))
   stopifnot(length(breaks) > 1)
   stopifnot(length(breaks) == (length(counts) + 1))
@@ -34,6 +36,21 @@
                equidist = .BreaksAreEquidistant(breaks))
   class(hist) <- "histogram"
   return(hist)
+}
+
+
+.UpdateHistogram <- function(x) {
+  # Takes a histogram with possibly modified counts and breaks and updates
+  # all other required fields to be consistent.
+
+  stopifnot(inherits(x, "histogram"))
+  stopifnot(is.numeric(x$breaks), is.numeric(x$counts))
+  stopifnot(length(x$breaks) > 1)
+  stopifnot(length(x$breaks) == (length(x$counts) + 1))
+  x$density <- x$counts / (sum(x$counts) * diff(x$breaks)),
+  x$mids <-  (head(x$breaks, -1) + tail(x$breaks, -1)) / 2,
+  x$equidist <- .BreaksAreEquidistant(x$breaks))
+  return(x)
 }
 
 .NewHistogramName <- function(x) {
