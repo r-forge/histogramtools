@@ -18,8 +18,7 @@
 \alias{MergeBuckets}
 \title{Merge adjacent buckets in a histogram to create a new histogram.}
 \description{
-Merge adjacent buckets in a histogram by combining adjacent buckets to
-form a new histogram with more wider bucket boundaries.
+Merge adjacent buckets in a histogram and return a new histogram.
 }
 \usage{
   MergeBuckets(x, adj.buckets=NULL, breaks=NULL, FUN=sum)
@@ -27,10 +26,12 @@ form a new histogram with more wider bucket boundaries.
 \arguments{
   \item{x}{A histogram object (created by \code{\link[graphics]{hist}}).}
   \item{adj.buckets}{The number of adjacent buckets to merge together.}
-  \item{breaks}{A vector giving the breakpoints between cells, or a
+  \item{breaks}{If \code{adj.buckets} is equal to \code{NULL}, then this
+    argument either specifies a vector giving the breakpoints between cells, or a
     single number giving the total number of cells in the new
-    histogram.  Must be less than \code{length(x$breaks)} and only used if
-    \code{adj.buckets} is equal to \code{NULL}}
+    histogram.  The vector of new buckets must have the same range as
+    the original break list.  If a single number is provided it must be
+    less than \code{length(x$breaks)}.}
   \item{FUN}{The user defined function that should be run to merge the
     counts of adjacent buckets in the histogram.}
 }

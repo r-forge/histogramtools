@@ -17,17 +17,10 @@
   serialized and shared with other systems.
 }
 \details{
-\tabular{ll}{
-License: \tab Apache License 2.0\cr
-Package: \tab HistogramTools\cr
-Depends: \tab R (>= 2.10), methods, Hmisc\cr
-Suggests: \tab RProtoBuf\cr
-Imports: \tab RProtoBuf\cr
-Version: \tab 0.1\cr
-Date: \tab 2012-11-11\cr
-}
+See \code{library(help=HistogramTools)} for version number, dates,
+dependencies, and a complete list of functions.
 
-Index:
+Index (possibly out of date):
 \preformatted{
 AddHistograms         Aggregate histogram objects that have identical breaks.
 MergeBuckets          Merge adjacent buckets of a histogram.
