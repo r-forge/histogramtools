@@ -29,7 +29,7 @@ SubsetHistogram <- function(x, minbreak=NULL, maxbreak=NULL) {
       return(x)
     }
     # How many bins to cut from left side of histogram?
-    num.to.cut <- length(which(x$breaks < minbreak))
+    num.to.cut <- sum(x$breaks < minbreak)
     x$breaks <- tail(x$breaks, -num.to.cut)
     x$counts <- tail(x$counts, -num.to.cut)
   }
