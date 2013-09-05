@@ -54,6 +54,9 @@ TestMergeBucketsHistograms <- function() {
   checkEquals(hist.4$breaks, c(0, 3, 6, 9))
   checkEquals(hist.4$counts, c(3, 0, 0))
 
+  # Now try to specify a smaller range such that it has to drop buckets.
+  checkException(MergeBuckets(hist.1, breaks=2:9))
+
   # Now specify a variant on hist.1
   hist.5 <- hist(c(1,2,3), breaks=0:10, plot=FALSE)
   hist.6 <- MergeBuckets(hist.5, adj=2)
