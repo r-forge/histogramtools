@@ -47,9 +47,9 @@
   stopifnot(is.numeric(x$breaks), is.numeric(x$counts))
   stopifnot(length(x$breaks) > 1)
   stopifnot(length(x$breaks) == (length(x$counts) + 1))
-  x$density <- x$counts / (sum(x$counts) * diff(x$breaks)),
-  x$mids <-  (head(x$breaks, -1) + tail(x$breaks, -1)) / 2,
-  x$equidist <- .BreaksAreEquidistant(x$breaks))
+  x$density <- x$counts / (sum(x$counts) * diff(x$breaks))
+  x$mids <-  (head(x$breaks, -1) + tail(x$breaks, -1)) / 2
+  x$equidist <- .BreaksAreEquidistant(x$breaks)
   return(x)
 }
 

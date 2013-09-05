@@ -36,7 +36,7 @@ SubsetHistogram <- function(x, minbreak=NULL, maxbreak=NULL) {
   if (!is.null(maxbreak)) {
     stopifnot(is.numeric(maxbreak), length(maxbreak) == 1)
     stopifnot(maxbreak %in% x$breaks)
-    if (maxbreak == min(x$breaks)) {
+    if (maxbreak == max(x$breaks)) {
       return(x)
     }
     # How many bins to cut from right side of histogram?

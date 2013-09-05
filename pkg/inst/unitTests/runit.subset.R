@@ -30,10 +30,10 @@ TestSubsetHistogram <- function() {
 
   # Return original histogram if new breakpoints are existing ends.
   hist.nosubset <- SubsetHistogram(hist.1, minbreak=0)
-  checkEquals(hist.nosubset$breaks, 0:9)
-  checkEquals(hist.nosubset$counts, c(1, 2, 2, 0, 0, 0, 0, 1, 0, 0))
+  checkEquals(hist.nosubset$breaks, hist.1$breaks)
+  checkEquals(hist.nosubset$counts, hist.1$counts)
 
   hist.nosubset <- SubsetHistogram(hist.1, maxbreak=9)
-  checkEquals(hist.nosubset$breaks, 0:9)
-  checkEquals(hist.nosubset$counts, c(1, 2, 2, 0, 0, 0, 0, 1, 0, 0))
+  checkEquals(hist.nosubset$breaks, hist.1$breaks)
+  checkEquals(hist.nosubset$counts, hist.1$counts)
 }
