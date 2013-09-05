@@ -28,6 +28,8 @@ ApproxMean <- function(x) {
 # information about the breakpoints, which could potentially be used
 # to provide more accurate approximations.  An alternative slower
 # implementation based on cumsum may be added back here.
+# Tim suggests using approx there:
+# approx(cumsum(c(0, x$counts)) / sum(x$counts, x$breaks, probs, ...)
 
 # wtd.quantile is from Hmisc package.
 ApproxQuantile <- function(x, probs, ...) {
