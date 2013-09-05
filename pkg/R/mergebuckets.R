@@ -37,10 +37,18 @@
     stop("List of breaks must be subset of existing breaks in histogram")
   }
 
-  if (max(breaks) < max(x$breaks)) {
-    warning("Trimming buckets from histogram.")
-    x <- SubsetHistogram(x, maxbreak=max(breaks))
+  if (!isTRUE(all.equal(range(breaks), range(x$breaks)))) {
+    stop("Range of new breakpoints too small.  Use SubsetHistogram first.")
   }
+  # TODO(mstokely): Make this work and subset the histogram with a warning.
+  #  if (max(breaks) < max(x$breaks)) {
+  #    warning("Trimming buckets from histogram.")
+  #    x <- SubsetHistogram(x, maxbreak=max(breaks))
+  #  }
+  #  if (min(breaks) < min(x$breaks)) {
+  #    warning("Trimming buckets from histogram.")
+  #    x <- SubsetHistogram(x, minbreak=min(breaks))
+  #  }
 
   i <- which(x$breaks %in% breaks)
   bucket.grouping <- rep(head(breaks, -1), diff(i))
@@ -78,9 +86,6 @@ MergeBuckets <- function(x, adj.buckets=NULL, breaks=NULL, FUN=sum) {
       return(.MergeBucketsToBreakList(x, breaks, FUN))
     }
     stopifnot(breaks < length(x$breaks))
-    if (!isTRUE(all.equal(range(breaks), range(x$breaks)))) {
-      stop("Range of new breakpoints too small.  Use SubsetHistogram first.")
-    }
     # How many new buckets will we have.
     new.bucket.count <- breaks
     adj.buckets <- ceiling(length(x$counts) / new.bucket.count)
