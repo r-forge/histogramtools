@@ -61,7 +61,7 @@
     warning("All buckets of histogram zero, returning unmodified.")
     return(x)
   }
-  smallest.nonzero <- which.min(x$counts > 0)
+  smallest.nonzero <- which.max(x$counts > 0)
   if (smallest.nonzero == 1) {
     # First bucket is non-zero.
     return(x)
