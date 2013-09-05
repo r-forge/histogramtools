@@ -29,12 +29,17 @@ KSDCC <- function(h) {
   # Return Value:
   #   A number between 0 and 1 giving the MDCC.
 
-  MinEcdf <- HistToEcdf(h, f=0)
-  MaxEcdf <- HistToEcdf(h, f=1)
+  # Geometrically, we are looking at :
+  #
+  #   MinEcdf <- HistToEcdf(h, f=0)
+  #   MaxEcdf <- HistToEcdf(h, f=1)
+  #   return(max(MaxEcdf(h$mids) - MinEcdf(h$mids)))
+  #
+  # (The knots() of these ECDFs are our histogram break points.
+  #  So we evaluate the differences at the histogram mid points.)
 
-  # The knots() of these ECDFs are our histogram break points.
-  # So we evaluate the differences at the histogram mid points.
-  return(max(MaxEcdf(h$mids) - MinEcdf(h$mids)))
+  # However, this is more succintly expressed as:
+  return(max(h$counts) / sum(h$counts))
 }
 
 EMDCC <- function(h) {
@@ -57,18 +62,24 @@ EMDCC <- function(h) {
   # Return Value:
   #   A number between 0 and 1 giving the EMDCC.
 
-  MinEcdf <- HistToEcdf(h, f=0)
-  MaxEcdf <- HistToEcdf(h, f=1)
-  total.width <- max(knots(MaxEcdf)) - min(knots(MinEcdf))
-  total.height <- 1
-  total.area <- total.width * total.height
+  # Geometrically, we are looking at :
+  #
+  #   MinEcdf <- HistToEcdf(h, f=0)
+  #   MaxEcdf <- HistToEcdf(h, f=1)
+  #   total.width <- max(knots(MaxEcdf)) - min(knots(MinEcdf))
+  #   total.height <- 1
+  #   total.area <- total.width * total.height
+  #
+  #   areas.of.cdf.uncertainty <- (tail(knots(MinEcdf), -1) -
+  #                             head(knots(MinEcdf), -1)) *
+  #                               (MaxEcdf(tail(knots(MinEcdf), -1)) -
+  #                                MinEcdf(head(knots(MinEcdf), -1)))
+  #
+  #   return(sum(areas.of.cdf.uncertainty) / total.area)
 
-  areas.of.cdf.uncertainty <- (tail(knots(MinEcdf), -1) -
-                               head(knots(MinEcdf), -1)) *
-                                 (MaxEcdf(tail(knots(MinEcdf), -1)) -
-                                  MinEcdf(head(knots(MinEcdf), -1)))
-
-  return(sum(areas.of.cdf.uncertainty) / total.area)
+  # However, this is more succintly expressed as:
+  return(sum(diff(h$breaks) * h$counts) / sum(h$counts) /
+         diff(range(h$breaks)))
 }
 
 PlotKSDCC <- function(h, arrow.size.scale=1, main=NULL) {
@@ -80,7 +91,7 @@ PlotKSDCC <- function(h, arrow.size.scale=1, main=NULL) {
   #   h: An S3 histogram object.
   #   arrow.size.scale: An optional value to scale the size of the arrow head
   #   main: A title for the plot.
-  
+
   MinEcdf <- HistToEcdf(h, f=0)
   MaxEcdf <- HistToEcdf(h, f=1)
   if (!is.null(main)) {
@@ -89,13 +100,14 @@ PlotKSDCC <- function(h, arrow.size.scale=1, main=NULL) {
     plot(MaxEcdf)
   }
 
-  diffs <- MaxEcdf(h$mids) - MinEcdf(h$mids)
-  mdcc <- max(diffs)
-  index.of.max <- min(which(diffs == mdcc))
-  height <- MaxEcdf(h$mids[index.of.max]) - MinEcdf(h$mids[index.of.max])
-  arrows(knots(MinEcdf)[index.of.max], MinEcdf(h$mids[index.of.max]),
-         knots(MinEcdf)[index.of.max], MaxEcdf(h$mids[index.of.max]),
-         length=0.25*(4*height)*arrow.size.scale,     # (4*height) chosen on aesthetics
+  index.of.max <- which.max(h$counts)
+  height <- max(h$counts) / sum(h$counts)
+  arrows(x0=knots(MinEcdf)[index.of.max],
+         y0=MinEcdf(h$mids[index.of.max]),
+         y1=MaxEcdf(h$mids[index.of.max]),
+         # TODO(mstokely): (4*height) chosen to work well by default
+         # and in a par(mfrow=c(n,k)) environment as in the vignette.
+         length=0.25*(4*height)*arrow.size.scale,
          code=3, col="red", lwd=3)
 }
 
