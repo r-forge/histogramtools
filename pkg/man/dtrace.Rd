@@ -48,7 +48,8 @@ Dtrace output file.
 }
 \examples{
 \dontrun{
-system("dtrace -n 'syscall::read:return { @[execname] = quantize(arg0);} > /tmp/dtraceoutput'", intern=TRUE)
+system("dtrace -n 'syscall::read:return { @[execname] = quantize(arg0);}> /tmp/dtraceoutput'",
+  intern=TRUE)
 system.readsize.hists <- ReadHistogramsFromDtraceOutputFile("/tmp/dtraceoutput")
 plot(system.readsize.hists[[1]])
 }
