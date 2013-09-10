@@ -155,6 +155,13 @@ as.Message.histogram <- function(x) {
   # This catches NAs
   stopifnot(!is.null(x$breaks))
   stopifnot(is.numeric(x$breaks))
+  stopifnot(require(RProtoBuf))
+  # We can't conditionally require RProtoBuf and do this in onload()
+  if (!exists("HistogramTools.HistogramState",
+              "RProtoBuf:DescriptorPool")) {
+    readProtoFiles(package="HistogramTools")
+  }
+
   hist.class <- P("HistogramTools.HistogramState")
   hist.msg <- new(hist.class)
 
