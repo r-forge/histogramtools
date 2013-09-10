@@ -22,7 +22,7 @@ Computes an approximate empirical cumulative distribution function of a
 data set given a binned histogram representation of that dataset.
 }
 \usage{
-HistToEcdf(h, method="constant", f=0)
+HistToEcdf(h, method="constant", f=0, inverse=FALSE)
 }
 \arguments{
   \item{h}{A histogram object (created by \code{\link[graphics]{hist}}) representing a pre-binned dataset
@@ -31,7 +31,8 @@ HistToEcdf(h, method="constant", f=0)
     \code{\link[stats]{approxfun}()}.  Choices are \code{"linear"} or \code{"constant"}.}
   \item{f}{if \code{method="constant"} a number between 0 and 1 inclusive,
     indicating a compromise between left- and right-continuous
-     step functions.  See \code{?approxfun}}
+    step functions.  See \code{?approxfun}}
+  \item{inverse}{if \code{TRUE} return the inverse Ecdf.}
 }
 \details{
   This function approximates the e.c.d.f. (empirical cumulative

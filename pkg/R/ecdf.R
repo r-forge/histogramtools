@@ -14,7 +14,7 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
-HistToEcdf <- function(h, method="constant", f=0) {
+HistToEcdf <- function(h, method="constant", f=0, inverse=FALSE) {
   # Compute an empirical cumulative distribution function from a histogram.
   #
   # Args:
@@ -24,6 +24,7 @@ HistToEcdf <- function(h, method="constant", f=0) {
   #   f: for ‘method="constant"’ a number between 0 and 1 inclusive,
   #      indicating a compromise between left- and right-continuous
   #      step functions.  See ?approxfun
+  #   inverse: If TRUE, return the inverse function.
   #
   # Returns:
   #   An empirical cumulative distribution function (see ?ecdf)
@@ -31,7 +32,14 @@ HistToEcdf <- function(h, method="constant", f=0) {
   n <- sum(h$counts)
   # We don't want to use h$mids here, because we want at least
   # to get the correct answers at the breakpoints.
-  rval <- approxfun(h$breaks, c(0, cumsum(h$counts) / n),
+  x.vals <- h$breaks
+  y.vals <- c(0, cumsum(h$counts) / n)
+  if (inverse) {
+    vals.tmp <- x.vals
+    x.vals <- y.vals
+    y.vals <- vals.tmp
+  }
+  rval <- approxfun(x.vals, y.vals,
                     method = method, yleft = 0, yright = 1, f = f,
                     ties = "ordered")
   class(rval) <- c("ecdf", "stepfun", class(rval))
