@@ -16,15 +16,17 @@
 
 \name{AddHistograms}
 \alias{AddHistograms}
+\alias{.NewHistogramName}
 \title{Aggregate histograms that have identical breaks.}
 \description{
 Aggregate histogram objects that have identical breaks.
 }
 \usage{
-  AddHistograms(\dots{}, x=list(\dots{}), main=.NewHistogramName(x))
+  AddHistograms(\dots, x=list(\dots), main=.NewHistogramName(x))
+  .NewHistogramName(x)
 }
 \arguments{
-  \item{\dots{}}{Histogram objects (created by \code{\link[graphics]{hist}}).}
+  \item{\dots}{Histogram objects (created by \code{\link[graphics]{hist}}).}
   \item{x}{A list of histogram objects. If \code{x} is supplied then the
   \ldots are ignored.}
   \item{main}{A title to add to the aggregated/merged histogram.  By default, if
@@ -36,6 +38,9 @@ Aggregate histogram objects that have identical breaks.
 \details{
 This function adds the buckets of the provided histograms to return a single
 aggregated histogram.
+
+\code{.NewHistogramName} is a utility that takes the list of histogram
+objects to be aggregated and returns a name for the new merged histogram.
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
