@@ -30,7 +30,7 @@ manipulating large histograms.}
 \seealso{
 \code{\link{histogramtools-package}},
 \code{\link{as.Message}}, and
-\code{\link{RProtoBuf}}.
+\code{\link[RProtoBuf]{RProtoBuf}}.
 }
 \examples{
   library(HistogramTools)
@@ -57,7 +57,7 @@ manipulating large histograms.}
   raw.bytes <- hist.msg$serialize(NULL)
 
   # We can parse the raw bytes as a protocol buffer
-  new.hist.proto <- HistogramTools.HistogramState$read(raw.bytes)
+  new.hist.proto <- P("HistogramTools.HistogramState")$read(raw.bytes)
   new.hist.proto
 
   # Then convert back to a native R histogram.

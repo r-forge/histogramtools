@@ -157,8 +157,9 @@ as.Message.histogram <- function(x) {
   stopifnot(is.numeric(x$breaks))
   stopifnot(require(RProtoBuf))
   # We can't conditionally require RProtoBuf and do this in onload()
-  if (!exists("HistogramTools.HistogramState",
-              "RProtoBuf:DescriptorPool")) {
+  if (("RProtoBuf:DescriptorPool" %in% search()) &&
+      !exists("HistogramTools.HistogramState",
+              where="RProtoBuf:DescriptorPool")) {
     readProtoFiles(package="HistogramTools")
   }
 
