@@ -39,6 +39,7 @@ KSDCC <- function(h) {
   #  So we evaluate the differences at the histogram mid points.)
 
   # However, this is more succintly expressed as:
+  stopifnot(inherits(h, "histogram"))
   return(max(h$counts) / sum(h$counts))
 }
 
@@ -78,11 +79,12 @@ EMDCC <- function(h) {
   #   return(sum(areas.of.cdf.uncertainty) / total.area)
 
   # However, this is more succintly expressed as:
+  stopifnot(inherits(h, "histogram"))
   return(sum(diff(h$breaks) * h$counts) / sum(h$counts) /
          diff(range(h$breaks)))
 }
 
-PlotKSDCC <- function(h, arrow.size.scale=1, main=NULL) {
+PlotKSDCC <- function(h, arrow.size.scale=1, main=paste("KSDCC =", KSDCC(h))) {
   # Plot a CDF from the given histogram along with a red arrow
   # indicating the point of maximum distance between the possible CDFs
   # of the underlying unbinned distribution corresponding to the KSDCC.
@@ -111,7 +113,7 @@ PlotKSDCC <- function(h, arrow.size.scale=1, main=NULL) {
          code=3, col="red", lwd=3)
 }
 
-PlotEMDCC <- function(h, main=NULL) {
+PlotEMDCC <- function(h, main=paste("EMDCC =", EMDCC(h))) {
   # Plot a CDF from the given histogram with a yellow boxes
   # covering all possible ranges for the e.c.d.f of the underlying
   # distribution from which the binned histogram was created.

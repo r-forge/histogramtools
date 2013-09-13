@@ -1,0 +1,149 @@
+\documentclass[10pt,twocolumn]{article}
+%\VignetteIndexEntry{HistogramTools-quickref}
+
+%\DefineVerbatimEnvironment{Sinput}{Verbatim} {xleftmargin=2em}
+%\DefineVerbatimEnvironment{Soutput}{Verbatim}{xleftmargin=2em}
+%\DefineVerbatimEnvironment{Scode}{Verbatim}{xleftmargin=2em}
+%\fvset{listparameters={\setlength{\topsep}{0pt}}}
+%\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+
+\setlength{\hoffset}{-0.8in}
+\setlength{\voffset}{-0.8in}
+
+\setlength{\marginparwidth}{0pt}
+\setlength{\marginparsep}{0pt}
+\setlength{\oddsidemargin}{0pt}
+\setlength{\headheight}{0pt}
+\setlength{\topmargin}{0pt}
+\setlength{\headsep}{0pt}
+\setlength{\footskip}{0pt}
+\setlength{\textheight}{27cm}
+\setlength{\textwidth}{20cm}
+
+\usepackage[colorlinks]{hyperref}
+
+<<echo=FALSE,print=FALSE>>=
+options(width=50)
+library(RProtoBuf)
+library(HistogramTools)
+set.seed(0)
+ht.version <- packageDescription("HistogramTools")$Version
+@
+% closing $ needed here
+
+\author{Murray Stokely}
+\title{HistogramTools \Sexpr{ht.version}: Quick Reference Guide}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\paragraph{Histogram Manipulation}
+
+This package includes a number of basic functions for subsetting, trimming,
+merging, adding, and otherwise manipulating basic R histogram objects.
+
+<<echo=TRUE, eval=FALSE>>=
+h <- hist(runif(100, 0, 100),
+          breaks=seq(from=0,to=200,by=5), plot=F)
+TrimHistogram(h)
+SubsetHistogram(h, maxbreak=70)
+MergeBuckets(h, adj.buckets=2)
+@
+
+<<echo=FALSE, print=FALSE, eval=TRUE>>=
+h <- hist(runif(100, 0, 100),
+          breaks=seq(from=0,to=200,by=5), plot=F)
+@
+
+<<exhist,fig=TRUE,echo=FALSE,include=FALSE>>=
+par(mfrow=c(2,2))
+plot(h, main="Histogram h")
+plot(TrimHistogram(h), main="TrimHistogram(h)")
+plot(SubsetHistogram(h, max=70), main="SubsetHistogram(h, max=70)")
+plot(MergeBuckets(h, 4), main="MergeBuckets(h, 4)")
+@
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4in,height=4in]{HistogramTools-quickref-exhist}
+\end{center}
+\label{fig:exhist}
+\end{figure}
+
+\paragraph{Information Loss}
+
+The introduction of binning a dataset into a histogram introduces
+information loss.  The Kolmogorov-Smirnov Distance of the Cumulative
+Curves (KSDCC) and Earth Mover's Distance of the Cumulative Curves
+(EMDCC) are two provided error metrics for histograms.  The plots here show a
+visual representation of the returned value. EMDCC is the area of the
+yellow boxes and KSDCC is the distance of the red arrow.
+
+<<errorhist,fig=TRUE,echo=TRUE,include=FALSE,width=8,height=4>>=
+par(mfrow=c(1,2), par(mar=c(5,4,4,0)+0.1))
+PlotEMDCC(h)
+PlotKSDCC(h)
+EMDCC(h)
+KSDCC(h)
+@
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4in,height=2in]{HistogramTools-quickref-errorhist}
+\end{center}
+\label{fig:errorhist}
+\end{figure}
+
+\paragraph{Serialize a Histogram}
+
+This package includes functions for reading and writing Histograms
+from other tools.  Most notably, it can encode or decode any arbitrary
+R histogram into a portable protocol buffer format to send to other
+programs written in other languages.
+
+% keep.source=T
+% invisible(cat(paste(readLines(system.file("proto/histogram.proto",
+%                                package="HistogramTools")), "\n")))
+%@
+
+<<keep.source=T>>=
+hist.msg <- as.Message(h)
+length(hist.msg$serialize(NULL))
+@
+
+\paragraph{Common HistogramTools Methods}
+
+\begin{center}
+\begin{small}
+\begin{tabular}{cp{6.7cm}}
+\hline
+\texttt{HistToEcdf} & Returns cumulative distribution function of histogram \\
+\texttt{AddHistograms} & Aggregate two or more histograms for different data sets with identical bucket boundaries\\
+\texttt{MergeBuckets} & Merge adjacent bucket boundaries to return a
+histogram with fewer buckets\\
+\texttt{Count}  & Return the number of data points in hist\\
+\texttt{ApproxMean}  & Return an approximate mean of the binned data\\
+\texttt{ApproxQuantile}  & Return an approximate quantile of the binned data\\
+\texttt{SubsetHistogram}  & Returns a new histogram with a subset of the buckets\\
+\texttt{TrimHistogram}  & Returns a new histogram with empty buckets
+at the left or right of distribution removed\\
+\hline
+\texttt{PlotKSDCC}  & Plot ECDF of hist with annotation at point of KS
+distance of the cumulative curves\\
+\texttt{PlotEMDCC}  & Plot ECDF of hist with annotation showing earth
+mover's distance of the cumulative curves\\
+\texttt{KSDCC}  & Return Kolmogorov-Smirnov distance of the cumulative
+curves (btwn 0 and 1)\\
+\texttt{EMDCC}  & Return the Earth Mover's distance of the cumulative
+curves (btwn 0 and 1)\\
+\hline
+\texttt{as.histogram} & Parse a HistogramState protocol buffer and return an R histogram.\\
+\texttt{as.Message}  & Serialize an R histogram as a HistogramState protocol buffer\\
+%\texttt{ReadHistogramsFromDtraceOutputFile} & Indicates if a message has a given field.   \\
+\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+\end{document}

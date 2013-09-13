@@ -1,8 +1,8 @@
 Package: HistogramTools
 Type: Package
 Title: Utility Functions for R Histograms
-Version: 0.1
-Date: 2012-11-10
+Version: 0.1.1
+Date: 2013-09-13
 Author: Murray Stokely <mstokely@google.com>
 Maintainer: Murray Stokely <mstokely@google.com>
 Suggests: RUnit, RProtoBuf, emdist

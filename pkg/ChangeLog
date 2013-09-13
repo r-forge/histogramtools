@@ -1,0 +1,6 @@
+2013-09-13  Murray Stokely  <murray@FreeBSD.org>
+
+	* vignettes/HistogramTools-quickref.Rnw: Add quick reference
+	  vignette.
+	* informationloss.R: Improve default plot titles.
+

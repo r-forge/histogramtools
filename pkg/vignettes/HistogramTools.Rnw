@@ -1,6 +1,6 @@
 \documentclass{article}
 \usepackage{amsfonts}
-%% %\VignetteIndexEntry{HistogramTools-intro}
+%\VignetteIndexEntry{HistogramTools-intro}
 
 %% JSS stuff we can remove for JSS version.
 \usepackage[authoryear,round,longnamesfirst]{natbib}
