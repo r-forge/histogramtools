@@ -1,0 +1,9 @@
+The files test/doRUnit.R and inst/unitTests/runTests.R are based on
+the GPLv2 RMetrics packages.
+
+These files originally follow Gregor Gorjanc's example in CRAN package
+'gdata' and the corresponding section in the R Wiki:
+http://wiki.r-project.org/rwiki/doku.php?id=developers:runit
+
+The rest of the code in this package is made available under the
+Apache License 2.0

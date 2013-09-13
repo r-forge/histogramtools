@@ -1,3 +1,10 @@
+# -------------------------------------------------------------------------
+# General Unit Test Launcher
+# Based on the RMetrics team test cases, which in turn is based on a
+# compendium of best practices from the mailing list)
+# This file is GPLv2
+# -------------------------------------------------------------------------
+
 pkg <- "HistogramTools"
 
 # Make the test deterministic - we use a lot of randomly created histograms.
