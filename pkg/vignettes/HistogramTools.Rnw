@@ -319,11 +319,11 @@ however, so we can do better:
 
 <<echo=TRUE,print=TRUE,eval=FALSE>>=
 raw.bytes <- memCompress(hist.msg$serialize(NULL), "gzip")
-print(length(raw.bytes))
+length(raw.bytes)
 <<echo=F,print=T,eval=TRUE>>=
 if (require(RProtoBuf)) {
 raw.bytes <- memCompress(hist.msg$serialize(NULL), "gzip")
-print(length(raw.bytes))
+length(raw.bytes)
 } else {
 raw.bytes <- memCompress("Not available", "gzip")
 cat("RProtoBuf not available")
@@ -338,11 +338,12 @@ use the \code{as.histogram} method.
 
 <<echo=TRUE,print=FALSE,eval=FALSE>>=
 uncompressed.bytes <- memDecompress(raw.bytes, "gzip")
-new.hist.proto <- HistogramTools.HistogramState$read(uncompressed.bytes)
+new.hist.proto <- P("HistogramTools.HistogramState")$read(uncompressed.bytes)
 length(uncompressed.bytes)
 <<echo=FALSE,eval=TRUE>>=
+uncompressed.bytes <- memDecompress(raw.bytes, "gzip")
 if (require(RProtoBuf)) {
-  new.hist.proto <- HistogramTools.HistogramState$read(uncompressed.bytes)
+  new.hist.proto <- P("HistogramTools.HistogramState")$read(uncompressed.bytes)
   length(uncompressed.bytes)
 }
 @
