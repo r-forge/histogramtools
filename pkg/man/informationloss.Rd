@@ -27,8 +27,8 @@ about the underlying distribution of data for a given histogram.
 \usage{
 KSDCC(h)
 EMDCC(h)
-PlotKSDCC(h, arrow.size.scale=1, main=NULL)
-PlotEMDCC(h, main=NULL)
+PlotKSDCC(h, arrow.size.scale=1, main=paste("KSDCC =", KSDCC(h)))
+PlotEMDCC(h, main=paste("EMDCC =", EMDCC(h)))
 }
 \arguments{
   \item{h}{A histogram object (created by \code{\link[graphics]{hist}}) representing a pre-binned dataset
