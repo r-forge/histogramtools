@@ -310,7 +310,7 @@ length(hist.msg$serialize(NULL))
 if (require(RProtoBuf)) {
   length(hist.msg$serialize(NULL))
 } else {
-  cat("RProtoBuf not available.")
+  invisible(cat("RProtoBuf not available."))
 }
 @
 
@@ -336,13 +336,14 @@ for later analysis by other tools.  To recreate the
 original R histogram object from the serialized protocol buffer we can
 use the \code{as.histogram} method.
 
-<<echo=TRUE>>=
+<<echo=TRUE,print=FALSE,eval=FALSE>>=
 uncompressed.bytes <- memDecompress(raw.bytes, "gzip")
-@
-<<echo=TRUE,print=TRUE>>=
-if (require(RProtoBuf)) {
-length(uncompressed.bytes)
 new.hist.proto <- HistogramTools.HistogramState$read(uncompressed.bytes)
+length(uncompressed.bytes)
+<<echo=FALSE,eval=TRUE>>=
+if (require(RProtoBuf)) {
+  new.hist.proto <- HistogramTools.HistogramState$read(uncompressed.bytes)
+  length(uncompressed.bytes)
 }
 @
 
