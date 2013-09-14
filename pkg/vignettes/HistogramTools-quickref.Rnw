@@ -106,16 +106,18 @@ programs written in other languages.
 %                                package="HistogramTools")), "\n")))
 %@
 
-<<echo=F,print=F>>=
-if(require(RProtoBuf)) {
-<<keep.source=T>>=
+<<echo=T,print=F,eval=F,keep.source=T>>=
 hist.msg <- as.Message(h)
 length(hist.msg$serialize(NULL))
-<<echo=F,print=F>>=
+@
+<<echo=F,print=T,eval=T>>=
+if(require(RProtoBuf)) {
+  hist.msg <- as.Message(h)
+  length(hist.msg$serialize(NULL))
 }
 @
 
-\paragraph{Common HistogramTools Methods}
+\paragraph{Common HistogramTools Functions}
 
 \begin{center}
 \begin{small}
