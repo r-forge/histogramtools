@@ -1,6 +1,8 @@
 2013-09-13  Murray Stokely  <murray@FreeBSD.org>
 
+	* DESCRIPTION: Update date, move RProtoBuf to enhances line.
+	* vignettes/HistogramTools.Rnw: Make this build without
+	  RProtoBuf installed
 	* vignettes/HistogramTools-quickref.Rnw: Add quick reference
 	  vignette.
 	* informationloss.R: Improve default plot titles.
-

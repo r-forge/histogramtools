@@ -41,6 +41,7 @@ Murray Stokely <mstokely@google.com>
 \code{\link[graphics]{hist}}
 }
 \examples{
+  if(require(RProtoBuf)) {
   library(HistogramTools)
 
   tmp.hist <- hist(c(1,2,4,43,20,33,1,1,3), plot=FALSE)
@@ -72,4 +73,5 @@ Murray Stokely <mstokely@google.com>
   new.hist <- as.histogram(new.hist.proto)
 
   # The new histogram and the old are identical except for xname
+  }
 }

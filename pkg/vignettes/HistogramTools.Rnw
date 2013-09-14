@@ -286,7 +286,13 @@ representation.
 In addition to the added portability, the protocol buffer
 representation is significantly more compact.
 
-<<echo=TRUE,print=TRUE>>=
+<<echo=FALSE,print=FALSE>>=
+if(require(RProtoBuf)) {
+hist.msg <- as.Message(myhist)
+} else {
+hist.msg <- "RProtoBuf library not available"
+}
+<<echo=TRUE,print=TRUE,eval=FALSE>>=
 hist.msg <- as.Message(myhist)
 @
 
@@ -298,16 +304,30 @@ cat(as.character(hist.msg))
 
 But it is most useful when serialized to a compact binary representation:
 
-<<echo=TRUE,print=TRUE>>=
+<<echo=TRUE,print=TRUE,eval=FALSE>>=
 length(hist.msg$serialize(NULL))
+<<echo=F,print=T,eval=TRUE>>=
+if (require(RProtoBuf)) {
+  length(hist.msg$serialize(NULL))
+} else {
+  cat("RProtoBuf not available.")
+}
 @
 
 This protocol buffer representation is not compressed by default,
 however, so we can do better:
 
-<<echo=TRUE>>=
+<<echo=TRUE,print=TRUE,eval=FALSE>>=
 raw.bytes <- memCompress(hist.msg$serialize(NULL), "gzip")
 print(length(raw.bytes))
+<<echo=F,print=T,eval=TRUE>>=
+if (require(RProtoBuf)) {
+raw.bytes <- memCompress(hist.msg$serialize(NULL), "gzip")
+print(length(raw.bytes))
+} else {
+raw.bytes <- memCompress("Not available", "gzip")
+cat("RProtoBuf not available")
+}
 @
 
 We can then send this compressed binary representation of the
@@ -320,18 +340,29 @@ use the \code{as.histogram} method.
 uncompressed.bytes <- memDecompress(raw.bytes, "gzip")
 @
 <<echo=TRUE,print=TRUE>>=
+if (require(RProtoBuf)) {
 length(uncompressed.bytes)
 new.hist.proto <- HistogramTools.HistogramState$read(uncompressed.bytes)
+}
 @
 
 The resulting histogram is the same as the original; it was converted
 to a protocol buffer, serialized, compressed, then uncompressed,
 parsed, and converted back to a histogram.
 
-<<fig=TRUE,echo=TRUE,height=4,width=8>>=
-par(mfrow=c(1,2))
+<<echo=TRUE,print=FALSE,eval=FALSE>>=
 plot(myhist)
 plot(as.histogram(new.hist.proto))
+@
+
+<<fig=TRUE,echo=FALSE,height=4,width=8>>=
+par(mfrow=c(1,2))
+plot(myhist)
+if (require(RProtoBuf)) {
+plot(as.histogram(new.hist.proto))
+} else {
+plot(myhist)
+}
 @
 
 \section{Quantiles and Cumulative Distribution Functions}

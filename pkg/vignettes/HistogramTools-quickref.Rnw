@@ -24,7 +24,6 @@
 
 <<echo=FALSE,print=FALSE>>=
 options(width=50)
-library(RProtoBuf)
 library(HistogramTools)
 set.seed(0)
 ht.version <- packageDescription("HistogramTools")$Version
@@ -107,9 +106,13 @@ programs written in other languages.
 %                                package="HistogramTools")), "\n")))
 %@
 
+<<echo=F,print=F>>=
+if(require(RProtoBuf)) {
 <<keep.source=T>>=
 hist.msg <- as.Message(h)
 length(hist.msg$serialize(NULL))
+<<echo=F,print=F>>=
+}
 @
 
 \paragraph{Common HistogramTools Methods}
