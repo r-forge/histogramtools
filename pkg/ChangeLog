@@ -1,3 +1,9 @@
+2013-09-14  Murray Stokely  <murray@FreeBSD.org>
+
+	* R/ash.R (HistToASH): Implement support for smoothing out a
+	  histogram with average shifted histograms from ash package.
+	* vignettes/HistogramTools.Rnw: Document the above.
+
 2013-09-13  Murray Stokely  <murray@FreeBSD.org>
 
 	* DESCRIPTION: Update date, move RProtoBuf to enhances line.

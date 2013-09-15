@@ -782,6 +782,30 @@ plot(hist.2, main="hist.2")
 %
 %Now we have an example reference to Table\ref{tab:one}.
 
+\section{Visualization}
+
+\subsection{Average Shifted Histograms}
+
+Average shifted histograms are a simple device for taking a collection
+of $m$ histograms each with uniform bin width $h$, but with bin
+origins offset/shifted \citep{scott2009multivariate}.
+
+Given the focus of this package on large data sets, a HistToASH
+function is provided to produce the average shifted histogram from a
+single histogram assuming the underlying dataset is no longer
+available in unbinned form.  The next plot shows the original density histogram
+of the overlaid with the average shifted histogram with smoothing
+parameter 5.
+
+<<fig=TRUE>>=
+x <- runif(1000, min=0, max=100)
+h <- hist(x, breaks=0:100, plot=F)
+
+plot(h,freq=FALSE, main="Histogram of x with ASH superimposed in red")
+# Superimpose the Average Shifted Histogram on top of the original.
+lines(HistToASH(h), col="red")
+@ 
+
 \section{Summary}
 The HistogramTools package presented in this paper has been in wide
 use for the last several years to allow engineers to read distribution

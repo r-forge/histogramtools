@@ -31,6 +31,7 @@ HistToEcdf            Approximate the ECDF of the underlying distribution.
 SubsetHistogram       Subset a histogram by removing some of the buckets.
 TrimHistogram         Remove empty buckets from the tails of a histogram.
 ReadHistogramsFromDtraceOutputFile  Read a list of Histograms from the output of the DTrace tool.
+AshFromHist           Compute Average Shifted Histogram from a Histogram.
 }
 }
 \author{
