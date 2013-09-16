@@ -1,3 +1,8 @@
+2013-09-15  Murray Stokely  <murray@FreeBSD.org>
+
+	* vignettes/HistogramTools-UnitTests.Rnw: Add a vignette showing
+	  results of the unit tests.
+
 2013-09-14  Murray Stokely  <murray@FreeBSD.org>
 
 	* R/ash.R (HistToASH): Implement support for smoothing out a
