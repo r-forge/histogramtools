@@ -1,0 +1,57 @@
+\documentclass[10pt]{article}
+%\VignetteIndexEntry{HistogramTools-UnitTests}
+
+%\DefineVerbatimEnvironment{Sinput}{Verbatim} {xleftmargin=2em}
+%\DefineVerbatimEnvironment{Soutput}{Verbatim}{xleftmargin=2em}
+%\DefineVerbatimEnvironment{Scode}{Verbatim}{xleftmargin=2em}
+%\fvset{listparameters={\setlength{\topsep}{0pt}}}
+%\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+
+%\setlength{\hoffset}{-0.8in}
+%\setlength{\voffset}{-0.8in}
+
+%\setlength{\marginparwidth}{0pt}
+\setlength{\marginparsep}{0pt}
+%\setlength{\oddsidemargin}{0pt}
+\setlength{\headheight}{0pt}
+\setlength{\topmargin}{0pt}
+\setlength{\headsep}{0pt}
+\setlength{\footskip}{0pt}
+\setlength{\textheight}{27cm}
+%\setlength{\textwidth}{20cm}
+
+\usepackage[colorlinks]{hyperref}
+
+<<echo=FALSE,print=FALSE>>=
+options(width=50)
+library(HistogramTools)
+library(RUnit)
+set.seed(0)
+ht.version <- packageDescription("HistogramTools")$Version
+@
+% closing $ needed here
+
+\author{Murray Stokely}
+\title{HistogramTools \Sexpr{ht.version}: Unit Test Results}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+<<echo=FALSE,print=FALSE,results=hide>>=
+# Define tests
+testSuite <- defineTestSuite(
+  name="HistogramTools Unit Tests",
+  dirs=system.file("unitTests", package = "HistogramTools"),
+  testFuncRegexp = "^[Tt]est.+")
+
+# Run tests
+tests <- runTestSuite(testSuite)
+@
+
+<<echo=FALSE,print=TRUE>>=
+# Print results
+printTextProtocol(tests)
+@
+
+\end{document}
