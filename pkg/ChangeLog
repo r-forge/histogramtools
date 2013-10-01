@@ -4,6 +4,7 @@
 	  with RProtoBuf:: too appease R CMD CHECK.
 	* man/ash.Rd: Appease R CMD CHECK.
 	* R/plot.R (PlotLog2ByteEcdf): Idem.
+	* R/zzz.R: Remove again, load proto defs in coercion functions.
 	* DESCRIPTION (Depends): Remove unused dependency on methods.
 	* NAMESPACE: Tighten up what we import and export.
 
