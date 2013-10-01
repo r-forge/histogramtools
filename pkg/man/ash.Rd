@@ -44,8 +44,8 @@ HistToASH(h, m=5, kopt=c(2,2))
 }
 \examples{
 x <- runif(1000, min=0, max=100)
-h <- hist(x, breaks=0:100, plot=F)
-plot(h,freq=FALSE)
+h <- hist(x, breaks=0:100, plot=FALSE)
+plot(h, freq=FALSE)
 
 # Superimpose the Average Shifted Histogram on top of the original.
 lines(HistToASH(h), col="red")
