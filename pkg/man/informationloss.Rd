@@ -44,7 +44,10 @@ PlotEMDCC(h, main=paste("EMDCC =", EMDCC(h)))
 The \code{KSDCC} (Kolmogorov-Smirnov Distance of the Cumulative Curves)
 function provides the Kolmogorov-Smirnov distance between the empirical
 distribution functions of the smallest and largest datasets that could
-be represented by the binned data in the provided histogram.
+be represented by the binned data in the provided histogram.  This
+quantity has also been called the Maximum Displacement of the Cumulative
+Curves (MDCC) in the computer science performance evaluation community (see
+references).
 
 The \code{EMDCC} (Earth Mover's Distance of the Cumulative Curves)
 function is like the Kolmogorov-Smirnov statistic, but uses an integral
@@ -56,6 +59,7 @@ The \code{PlotKSDCC} and \code{PlotEMDCC} functions take a histogram and
 generate a plot showing a geometric representation of the information
 loss metrics for the provided histogram.
 }
+\references{Douceur, John R., and William J. Bolosky. "A large-scale study of file-system contents." \emph{ACM SIGMETRICS Performance Evaluation Review} \bold{27.1} (1999): 59-70.}
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
 \code{\link{histogramtools-package}},
