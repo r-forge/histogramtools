@@ -42,6 +42,7 @@ ReadHistogramsFromDtraceOutputFile <- function(filename) {
   })
 
   myhists <- lapply(myh, .BuildSingleHistogramFromDtraceOutput)
+  names(myhists) <- lapply(myhists, function(x) str_trim(x$xname))
   return(myhists)
 }
 
