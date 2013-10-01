@@ -1,2 +1,3 @@
 exportPattern("^[[:alpha:]]+")
 importFrom(ash, ash1)
+importFrom(stringr, str_trim)
