@@ -806,6 +806,42 @@ plot(h,freq=FALSE, main="Histogram of x with ASH superimposed in red")
 lines(HistToASH(h), col="red")
 @ 
 
+\subsection{Log-scale Histograms}
+
+Many histograms encountered in databases, distributed systems, and
+other areas of computer science use log-scaled bucket boundaries
+and may still contain counts that vary exponentially.
+
+Examples of such data sets include the size or age of files stored, or
+the latency enountered by read requests.  Such histograms can be read
+into R using the methods of this package, but the default plotting
+functionality is not very useful.
+
+For example, Figure~\ref{fig:logloghist} shows the default plot output
+for the histogram of read sizes observed when building a FreeBSD kernel.
+% 
+<<logloghist,fig=TRUE,include=FALSE,echo=FALSE,height=4,width=8>>=
+par(mfrow=c(1,3))
+filename <- system.file("unitTests/data/buildkernel-readsize-dtrace.txt",
+                        package="HistogramTools")
+dtrace.hists <- ReadHistogramsFromDtraceOutputFile(filename)
+plot(dtrace.hists[["TOTAL"]], main="", freq=FALSE)
+plot(dtrace.hists[["TOTAL"]], main="", freq=TRUE)
+PlotLog2ByteEcdf(dtrace.hists[["TOTAL"]])
+
+@
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=5in,height=2.5in]{HistogramTools-logloghist}
+\end{center}
+\caption{Example Log Log Histogram Data}
+\label{fig:logloghist}
+\end{figure}
+
+The left most histogram plots the density, but this is dominated
+significantly fby TODO.
+
 \section{Summary}
 The HistogramTools package presented in this paper has been in wide
 use for the last several years to allow engineers to read distribution

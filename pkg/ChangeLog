@@ -1,3 +1,11 @@
+2013-09-30  Murray Stokely  <murray@FreeBSD.org>
+
+	* R/plot.R (PlotLog2ByteEcdf): Add function for creating better
+	  Ecdfs of data binned on power of 2 boundaries (bytes).
+	* man/plot.Rd: Document the above.
+	* vignettes/HistogramTools.Rnw (subsection{Log-scale Histograms}): 
+	  Document the above.
+
 2013-09-15  Murray Stokely  <murray@FreeBSD.org>
 
 	* vignettes/HistogramTools-UnitTests.Rnw: Add a vignette showing
