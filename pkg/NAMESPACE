@@ -1,3 +1,6 @@
 exportPattern("^[[:alpha:]]+")
 importFrom(ash, ash1)
 importFrom(stringr, str_trim)
+importFrom(Hmisc, wtd.quantile)
+S3method(as.Message, histogram)
+S3method(as.histogram, Message)
