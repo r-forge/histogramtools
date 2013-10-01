@@ -16,14 +16,23 @@
 
 \name{PlotLog2ByteEcdf}
 \alias{PlotLog2ByteEcdf}
+\alias{PlotLogTimeDurationEcdf}
 \title{Plot Binned Histogram and ECDF Data.}
 \description{
-Computes a univariate average shifted histogram (polynomial kernel)
-given a single input histogram.
+Produces aesthetically pleasing ECDF plots for two common classes of
+non-equiwidth histograms.  Specifically, (1) histograms with power of two
+bucket boundaries commonly used in computer science for measuring
+resource usage, and (2) histograms with log-scaled time duration buckets
+with a range from 1 second to 10 years.
 }
 \usage{
-PlotLog2ByteEcdf <- function(x, main="", xlab="Bytes (log)",
-                             ylab="Cumulative Fraction", ...)
+PlotLog2ByteEcdf(x, main="", xlab="Bytes (log)",
+                 ylab="Cumulative Fraction", ...)
+PlotLogTimeDurationEcdf(x, with.grid=TRUE,
+                        xlab="Age (log)",
+                        ylab="Cumulative Fraction",
+                        cex.lab=1.6,
+                        cex.axis=1.6, ...)
 }
 \arguments{
   \item{x}{A histogram object (created by \code{\link[graphics]{hist}})
@@ -32,11 +41,20 @@ PlotLog2ByteEcdf <- function(x, main="", xlab="Bytes (log)",
   \item{main}{Optional title for the figure.}
   \item{xlab}{x-axis label for the Ecdf plot.}
   \item{ylab}{y-axis label for the Ecdf plot.}
+  \item{with.grid}{Logical.  If true, draw faint grid lines on the ECDF
+    plot.}
+  \item{cex.lab}{Graphical parameters for plot and axes.}
+  \item{cex.axis}{Graphical parameters for plot and axes.}
   \item{...}{Additional parameters are passed to \code{plot()}.}
 }
 \details{
-  This function takes a histogram or ecdf which has power of 2 bucket
-  boundaries representing bytes and creates an Ecdf plot.
+The \code{PlotLog2ByteEcdf} function takes a histogram or ecdf which
+has power of 2 bucket boundaries representing bytes and creates an
+Ecdf plot.
+
+The \code{PlotLogTimeDurationEcdf} function takes a histogram or ecdf
+which has exponential bucket boundaries representing seconds of age or
+duration and creates an Ecdf plot.
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
@@ -50,4 +68,12 @@ filename<-system.file("unitTests/data/buildkernel-readsize-dtrace.txt",
 dtrace.hists <- ReadHistogramsFromDtraceOutputFile(filename)
 x<-SubsetHistogram(dtrace.hists[["TOTAL"]], minbreak=1)
 PlotLog2ByteEcdf(x, cex.lab=1.4)
+
+x <- rexp(100000)
+x <- x*(86400*300)/diff(range(x))
+
+n <- as.integer(1+log2(max(x)))
+
+h <- hist(x, breaks=c(0, unique(as.integer(2^seq(from=0, to=n, by=.25)))))
+PlotLogTimeDurationEcdf(h)
 }
