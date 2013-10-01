@@ -16,7 +16,15 @@
 
 PlotLog2ByteEcdf <- function(x, main="", xlab="Bytes (log)",
                              ylab="Cumulative Fraction",
+                             with.grid=TRUE,
                              ...) {
+# Plots ECDF of a histogram with power of 2 byte boundaries.
+#
+# Args:
+#   x: A histogram or ecdf object.
+#   with.grid: If true, draw a faint grid on the plot.
+#   cex.axis: cex parameter for the axes.  
+#   ...: Additional arguments to pass to plot()
   if (inherits(x, "histogram")) {
     x <- HistToEcdf(x)
   }
@@ -46,6 +54,10 @@ PlotLog2ByteEcdf <- function(x, main="", xlab="Bytes (log)",
     labs <- knots(x)[knots(x) %in% 2^(0:53)]
   }
   axis(1, at=axt.marks, lab=labs)
+  if (with.grid) {
+    abline(h=seq(.2,.8, by=.2), lty="dotted", col="lightgray")
+    abline(v=axt.marks, lty="dotted", col="lightgray")
+  }
 }
 
 PlotLogTimeDurationEcdf <- function(x, with.grid=TRUE,

@@ -27,7 +27,7 @@ with a range from 1 second to 10 years.
 }
 \usage{
 PlotLog2ByteEcdf(x, main="", xlab="Bytes (log)",
-                 ylab="Cumulative Fraction", ...)
+                 ylab="Cumulative Fraction", with.grid=TRUE, ...)
 PlotLogTimeDurationEcdf(x, with.grid=TRUE,
                         xlab="Age (log)",
                         ylab="Cumulative Fraction",
