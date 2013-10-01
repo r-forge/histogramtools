@@ -53,7 +53,7 @@ PlotLog2ByteEcdf <- function(x, main="", xlab="Bytes (log)",
   } else {
     labs <- knots(x)[knots(x) %in% 2^(0:53)]
   }
-  axis(1, at=axt.marks, lab=labs)
+  axis(1, at=axt.marks, labels=labs)
   if (with.grid) {
     abline(h=seq(.2,.8, by=.2), lty="dotted", col="lightgray")
     abline(v=axt.marks, lty="dotted", col="lightgray")
