@@ -31,7 +31,7 @@ PlotLog2ByteEcdf <- function(x,
   }
   stopifnot(inherits(x, "ecdf"))
   power.of.two.breaks <- intersect(knots(x), 2^(0:53))
-  if (power.of.two.breaks < 3) {
+  if (length(power.of.two.breaks) < 3) {
     stop("Insufficient powers of 2 in knots() of ecdf")
   }
   plot(knots(x), x(knots(x)),
