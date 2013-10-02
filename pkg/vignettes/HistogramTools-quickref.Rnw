@@ -14,11 +14,13 @@
 \setlength{\marginparsep}{0pt}
 \setlength{\oddsidemargin}{0pt}
 \setlength{\headheight}{0pt}
-\setlength{\topmargin}{0pt}
+\setlength{\topmargin}{1pt}
 \setlength{\headsep}{0pt}
 \setlength{\footskip}{0pt}
 \setlength{\textheight}{27cm}
+%\setlength{\textheight}{10in}
 \setlength{\textwidth}{20cm}
+%\setlength{\textwidth}{8in}
 
 \usepackage[colorlinks]{hyperref}
 
@@ -32,6 +34,21 @@ ht.version <- packageDescription("HistogramTools")$Version
 
 \author{Murray Stokely}
 \title{HistogramTools \Sexpr{ht.version}: Quick Reference Guide}
+
+% start right flush section
+% redefine maketitle
+%   \let\myMaketitle\maketitle
+\renewcommand\maketitle{%
+ \begin{center}
+%  \framebox[4in]{\bf
+   {\bf
+   {\Large HistogramTools \Sexpr{ht.version} \par}
+   {\Large Quick Reference Guide \par}
+   Murray Stokely \hspace{1cm} \today \par
+  }
+  \mbox{\rule{4in}{0.5pt}\par}
+ \end{center}
+}
 
 \begin{document}
 \maketitle
@@ -63,12 +80,16 @@ plot(SubsetHistogram(h, max=70), main="SubsetHistogram(h, max=70)")
 plot(MergeBuckets(h, 4), main="MergeBuckets(h, 4)")
 @
 
+\vspace{-.3cm}
+
 \begin{figure}[h]
 \begin{center}
 \includegraphics[width=4in,height=4in]{HistogramTools-quickref-exhist}
 \end{center}
 \label{fig:exhist}
 \end{figure}
+
+\vspace{-.3cm}
 
 \paragraph{Information Loss}
 
@@ -134,6 +155,11 @@ histogram with fewer buckets\\
 \texttt{TrimHistogram}  & Return a new histogram with empty buckets
 at the left or right of distribution removed\\
 \hline
+\texttt{PlotLog2ByteEcdf} & Plot ECDF of hist with power of two bucket
+boundaries\\
+\scriptsize{\texttt{PlotLogTimeDurationEcdf}} & Plot ECDF of hist with log-scaled
+time duration bucket boundaries\\
+\hline
 \texttt{PlotKSDCC}  & Plot ECDF of hist with annotation at point of KS
 distance of the cumulative curves\\
 \texttt{PlotEMDCC}  & Plot ECDF of hist with annotation showing earth
@@ -145,7 +171,8 @@ curves (btwn 0 and 1)\\
 \hline
 \texttt{as.histogram} & Parse a HistogramState protocol buffer and return an R histogram.\\
 \texttt{as.Message}  & Serialize an R histogram as a HistogramState protocol buffer\\
-%\texttt{ReadHistogramsFromDtraceOutputFile} & Indicates if a message has a given field.   \\
+\tiny{\texttt{ReadHistogramsFromDtraceOutputFile}} & Read histograms
+from DTrace output.\\
 \hline
 \end{tabular}
 \end{small}
