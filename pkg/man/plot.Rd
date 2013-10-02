@@ -26,7 +26,7 @@ resource usage, and (2) histograms with log-scaled time duration buckets
 with a range from 1 second to 10 years.
 }
 \usage{
-PlotLog2ByteEcdf(x, main="", xlab="Bytes (log)",
+PlotLog2ByteEcdf(x, xlab="Bytes (log)",
                  ylab="Cumulative Fraction", with.grid=TRUE, ...)
 PlotLogTimeDurationEcdf(x, with.grid=TRUE,
                         xlab="Age (log)",
@@ -42,7 +42,7 @@ PlotLogTimeDurationEcdf(x, with.grid=TRUE,
   \item{main}{Optional title for the figure.}
   \item{xlab}{x-axis label for the Ecdf plot.}
   \item{ylab}{y-axis label for the Ecdf plot.}
-  \item{with.grid}{Logical.  If true, draw faint grid lines on the ECDF
+  \item{with.grid}{Logical.  If TRUE, draw faint grid lines on the ECDF
     plot.}
   \item{cex.lab}{Graphical parameters for plot and axes.}
   \item{cex.axis}{Graphical parameters for plot and axes.}
