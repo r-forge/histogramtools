@@ -169,10 +169,10 @@ curves (btwn 0 and 1)\\
 \texttt{EMDCC}  & Return the Earth Mover's distance of the cumulative
 curves (btwn 0 and 1)\\
 \hline
-\texttt{as.histogram} & Parse a HistogramState protocol buffer and return an R histogram.\\
+\texttt{as.histogram} & Parse a HistogramState protocol buffer and return an R histogram\\
 \texttt{as.Message}  & Serialize an R histogram as a HistogramState protocol buffer\\
 \tiny{\texttt{ReadHistogramsFromDtraceOutputFile}} & Read histograms
-from DTrace output.\\
+from DTrace output\\
 \hline
 \end{tabular}
 \end{small}

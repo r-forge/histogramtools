@@ -16,9 +16,17 @@
 
 # Requires David W. Scott's ASH code from ash package on CRAN.
 HistToASH <- function(h, m=5, kopt=c(2,2)) {
+  # Create an Average Shifted Histogram from a histogram.
+  #
+  # See ?ash1
+  #
+  # Args:
+  #   h:  An S3 histogram object.
+  #   m:  Smooth parameter for ash1 function
+  #   kopt: Parameter for ash1 function.
   stopifnot(inherits(h, "histogram"))
   if (!h$equidist) {
-    stop("Average Shifted Histograms only supported for equidist histograms")
+    stop("Histogram must be equidist to generate an Average Shifted Histogram")
   }
   # Assuming we have a finely bucketed initial histogram.
   bin1 <- list(nc = h$counts,
