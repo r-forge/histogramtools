@@ -75,7 +75,7 @@ plot(MergeBuckets(h, 4), main="MergeBuckets(h, 4)")
 The introduction of binning a dataset into a histogram introduces
 information loss.  The Kolmogorov-Smirnov Distance of the Cumulative
 Curves (KSDCC) and Earth Mover's Distance of the Cumulative Curves
-(EMDCC) are two provided error metrics for histograms.  The plots here show a
+(EMDCC) are two error metrics for histograms.  The plots here show a
 visual representation of the returned value. EMDCC is the area of the
 yellow boxes and KSDCC is the distance of the red arrow.
 
@@ -123,22 +123,22 @@ if(require(RProtoBuf)) {
 \begin{small}
 \begin{tabular}{cp{6.7cm}}
 \hline
-\texttt{HistToEcdf} & Returns cumulative distribution function of histogram \\
+\texttt{HistToEcdf} & Return the cumulative distribution function of histogram \\
 \texttt{AddHistograms} & Aggregate two or more histograms for different data sets with identical bucket boundaries\\
 \texttt{MergeBuckets} & Merge adjacent bucket boundaries to return a
 histogram with fewer buckets\\
 \texttt{Count}  & Return the number of data points in hist\\
 \texttt{ApproxMean}  & Return an approximate mean of the binned data\\
 \texttt{ApproxQuantile}  & Return an approximate quantile of the binned data\\
-\texttt{SubsetHistogram}  & Returns a new histogram with a subset of the buckets\\
-\texttt{TrimHistogram}  & Returns a new histogram with empty buckets
+\texttt{SubsetHistogram}  & Return a new histogram with a subset of the buckets\\
+\texttt{TrimHistogram}  & Return a new histogram with empty buckets
 at the left or right of distribution removed\\
 \hline
 \texttt{PlotKSDCC}  & Plot ECDF of hist with annotation at point of KS
 distance of the cumulative curves\\
 \texttt{PlotEMDCC}  & Plot ECDF of hist with annotation showing earth
 mover's distance of the cumulative curves\\
-\texttt{KSDCC}  & Return Kolmogorov-Smirnov distance of the cumulative
+\texttt{KSDCC}  & Return the Kolmogorov-Smirnov distance of the cumulative
 curves (btwn 0 and 1)\\
 \texttt{EMDCC}  & Return the Earth Mover's distance of the cumulative
 curves (btwn 0 and 1)\\

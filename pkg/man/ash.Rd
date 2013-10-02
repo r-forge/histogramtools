@@ -25,17 +25,20 @@ given a single input histogram.
 HistToASH(h, m=5, kopt=c(2,2))
 }
 \arguments{
-  \item{h}{A histogram object (created by \code{\link[graphics]{hist}}) representing a pre-binned dataset
-    on which we'd like to calculate an Average Shifted Histogram.}
-  \item{m}{optional integer smoothing parameter, passed to \code{\link[ash]{ash1}()}.}
-  \item{kopt}{vector of length 2 specifying the kernel, passed to \code{\link[ash]{ash1}()}.}
+  \item{h}{A histogram object (created by \code{\link[graphics]{hist}})
+    representing a pre-binned dataset.}
+  \item{m}{optional integer smoothing parameter, passed to
+    \code{\link[ash]{ash1}()}.}
+  \item{kopt}{vector of length 2 specifying the kernel, passed to
+    \code{\link[ash]{ash1}()}.}
 }
 \details{
   This function takes a histogram and uses the counts as the input to
   the \code{\link[ash]{ash1}()} function in the ash package to compute
   the average shifted histogram.
 }
-\references{Scott, David W. \emph{Multivariate density estimation: theory, practice, and visualization.} Vol. 383. Wiley. com, 2009.}
+\references{Scott, David W. \emph{Multivariate density estimation:
+    theory, practice, and visualization.} Vol. 383. Wiley. com, 2009.}
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
 \code{\link{histogramtools-package}},

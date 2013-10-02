@@ -14,7 +14,8 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
-PlotLog2ByteEcdf <- function(x, main="", xlab="Bytes (log)",
+PlotLog2ByteEcdf <- function(x,
+                             xlab="Bytes (log)",
                              ylab="Cumulative Fraction",
                              with.grid=TRUE,
                              ...) {
@@ -22,41 +23,36 @@ PlotLog2ByteEcdf <- function(x, main="", xlab="Bytes (log)",
 #
 # Args:
 #   x: A histogram or ecdf object.
-#   with.grid: If true, draw a faint grid on the plot.
+#   with.grid: If TRUE, draw a faint grid on the plot.
 #   cex.axis: cex parameter for the axes.  
 #   ...: Additional arguments to pass to plot()
   if (inherits(x, "histogram")) {
     x <- HistToEcdf(x)
   }
   stopifnot(inherits(x, "ecdf"))
-  if (sum(knots(x) %in% 2^(0:53)) < 3) {
+  power.of.two.breaks <- intersect(knots(x), 2^(0:53))
+  if (power.of.two.breaks < 3) {
     stop("Insufficient powers of 2 in knots() of ecdf")
   }
   plot(knots(x), x(knots(x)),
        type="l",
        lwd=2,
        log="x",
-       main=main,
        xaxt="n",
        las=1,
        xlab=xlab,
        ylab=ylab,
        ...
        )
-  
-  if (sum(knots(x) %in% 2^(0:53)) < 3) {
-    stop("Insufficient powers of 2 in knots() of ecdf")
-  }
-  axt.marks <- knots(x)[knots(x) %in% 2^(0:53)]
   if (require(gdata)) {
-    labs <- humanReadable(knots(x)[knots(x) %in% 2^(0:53)], standard="")
+    labs <- humanReadable(power.of.two.breaks)
   } else {
-    labs <- knots(x)[knots(x) %in% 2^(0:53)]
+    labs <- power.of.two.breaks
   }
-  axis(1, at=axt.marks, labels=labs)
+  axis(1, at=power.of.two.breaks, labels=labs)
   if (with.grid) {
     abline(h=seq(.2,.8, by=.2), lty="dotted", col="lightgray")
-    abline(v=axt.marks, lty="dotted", col="lightgray")
+    abline(v=power.of.two.breaks, lty="dotted", col="lightgray")
   }
 }
 
@@ -71,8 +67,8 @@ PlotLogTimeDurationEcdf <- function(x, with.grid=TRUE,
 #
 # Args:
 #   x: A histogram or ecdf object.
-#   with.grid: If true, draw a faint grid on the plot.
-#   cex.axis: cex parameter for the axes.  
+#   with.grid: If TRUE, draw a faint grid on the plot.
+#   cex.axis: cex parameter for the axes.
 #   ...: Additional arguments to pass to plot()
 
   if (inherits(x, "histogram")) {

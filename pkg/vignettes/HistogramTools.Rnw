@@ -322,11 +322,11 @@ raw.bytes <- memCompress(hist.msg$serialize(NULL), "gzip")
 length(raw.bytes)
 <<echo=F,print=T,eval=TRUE>>=
 if (require(RProtoBuf)) {
-raw.bytes <- memCompress(hist.msg$serialize(NULL), "gzip")
-length(raw.bytes)
+  raw.bytes <- memCompress(hist.msg$serialize(NULL), "gzip")
+  length(raw.bytes)
 } else {
-raw.bytes <- memCompress("Not available", "gzip")
-cat("RProtoBuf not available")
+  raw.bytes <- memCompress("Not available", "gzip")
+  cat("RProtoBuf not available")
 }
 @
 
@@ -361,9 +361,9 @@ plot(as.histogram(new.hist.proto))
 par(mfrow=c(1,2))
 plot(myhist)
 if (require(RProtoBuf)) {
-plot(as.histogram(new.hist.proto))
+  plot(as.histogram(new.hist.proto))
 } else {
-plot(myhist)
+  plot(myhist)
 }
 @
 

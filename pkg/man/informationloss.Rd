@@ -27,25 +27,27 @@ about the underlying distribution of data for a given histogram.
 \usage{
 KSDCC(h)
 EMDCC(h)
-PlotKSDCC(h, arrow.size.scale=1, main=paste("KSDCC =", KSDCC(h)))
-PlotEMDCC(h, main=paste("EMDCC =", EMDCC(h)))
+PlotKSDCC(h, arrow.size.scale=1, main=paste("KSDCC =", KSDCC(h)), ...)
+PlotEMDCC(h, main=paste("EMDCC =", EMDCC(h)), ...)
 }
 \arguments{
-  \item{h}{A histogram object (created by \code{\link[graphics]{hist}}) representing a pre-binned dataset
-    on which we'd like to calculate the information loss due to binning.}
+  \item{h}{A \code{"histogram"} object (created by
+    \code{\link[graphics]{hist}}) representing a pre-binned dataset on
+    which we'd like to calculate the information loss due to binning.}
   \item{arrow.size.scale}{specifies a size scaling factor for the arrow
     illustrating the point of Kolmogorov-Smirnov distance between the
     two e.c.d.fs}
   \item{main}{if 'method="constant"' a number between 0 and 1 inclusive,
     indicating a compromise between left- and right-continuous
-     step functions.  See ?approxfun}
+    step functions.  See ?approxfun}
+  \item{...}{Any other arguments to pass to \code{\link[graphics]{plot}}}
 }
 \details{
 The \code{KSDCC} (Kolmogorov-Smirnov Distance of the Cumulative Curves)
 function provides the Kolmogorov-Smirnov distance between the empirical
 distribution functions of the smallest and largest datasets that could
 be represented by the binned data in the provided histogram.  This
-quantity has also been called the Maximum Displacement of the Cumulative
+quantity is also called the Maximum Displacement of the Cumulative
 Curves (MDCC) in the computer science performance evaluation community (see
 references).
 
@@ -59,7 +61,9 @@ The \code{PlotKSDCC} and \code{PlotEMDCC} functions take a histogram and
 generate a plot showing a geometric representation of the information
 loss metrics for the provided histogram.
 }
-\references{Douceur, John R., and William J. Bolosky. "A large-scale study of file-system contents." \emph{ACM SIGMETRICS Performance Evaluation Review} \bold{27.1} (1999): 59-70.}
+\references{Douceur, John R., and William J. Bolosky. "A large-scale
+  study of file-system contents." \emph{ACM SIGMETRICS Performance
+  Evaluation Review} \bold{27.1} (1999): 59-70.}
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
 \code{\link{histogramtools-package}},

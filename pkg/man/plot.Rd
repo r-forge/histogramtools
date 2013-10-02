@@ -35,9 +35,10 @@ PlotLogTimeDurationEcdf(x, with.grid=TRUE,
                         cex.axis=1.6, ...)
 }
 \arguments{
-  \item{x}{A histogram object (created by \code{\link[graphics]{hist}})
-    representing a pre-binned dataset or an ecdf object (created by
-    \code{\link[stats]{ecdf}} or \code{\link[HistogramTools]{HistToEcdf}}).}
+  \item{x}{A \code{"histogram"} object (created by
+    \code{\link[graphics]{hist}}) representing a pre-binned dataset or
+    an \code{"ecdf"} object (created by \code{\link[stats]{ecdf}} or
+    \code{\link{HistToEcdf}}).}
   \item{main}{Optional title for the figure.}
   \item{xlab}{x-axis label for the Ecdf plot.}
   \item{ylab}{y-axis label for the Ecdf plot.}
@@ -45,16 +46,17 @@ PlotLogTimeDurationEcdf(x, with.grid=TRUE,
     plot.}
   \item{cex.lab}{Graphical parameters for plot and axes.}
   \item{cex.axis}{Graphical parameters for plot and axes.}
-  \item{...}{Additional parameters are passed to \code{plot()}.}
+  \item{...}{Additional parameters are passed to
+    \code{\link[graphics]{plot}()}.}
 }
 \details{
-The \code{PlotLog2ByteEcdf} function takes a histogram or ecdf which
-has power of 2 bucket boundaries representing bytes and creates an
-Ecdf plot.
+The \code{PlotLog2ByteEcdf} function takes a \code{"histogram"} or
+\code{"ecdf"} which has power of 2 bucket boundaries representing bytes
+and creates an Ecdf plot.
 
-The \code{PlotLogTimeDurationEcdf} function takes a histogram or ecdf
-which has exponential bucket boundaries representing seconds of age or
-duration and creates an Ecdf plot.
+The \code{PlotLogTimeDurationEcdf} function takes a \code{"histogram"}
+or \code{"ecdf"} with exponential bucket boundaries representing
+seconds of age or duration and creates an Ecdf plot.
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
@@ -63,10 +65,10 @@ duration and creates an Ecdf plot.
 \code{\link[stats]{ecdf}}.
 }
 \examples{
-filename<-system.file("unitTests/data/buildkernel-readsize-dtrace.txt",
-                       package="HistogramTools")
+filename <- system.file("unitTests/data/buildkernel-readsize-dtrace.txt",
+                         package="HistogramTools")
 dtrace.hists <- ReadHistogramsFromDtraceOutputFile(filename)
-x<-SubsetHistogram(dtrace.hists[["TOTAL"]], minbreak=1)
+x <- SubsetHistogram(dtrace.hists[["TOTAL"]], minbreak=1)
 PlotLog2ByteEcdf(x, cex.lab=1.4)
 
 x <- rexp(100000)
