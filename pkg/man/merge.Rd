@@ -40,7 +40,9 @@ This function adds the buckets of the provided histograms to return a single
 aggregated histogram.
 
 \code{.NewHistogramName} is a utility that takes the list of histogram
-objects to be aggregated and returns a name for the new merged histogram.
+objects to be aggregated and returns a name for the new merged
+histogram.  It is normally hidden, but can be viewed using
+\code{HistogramTools:::.NewHistogramName}.
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
