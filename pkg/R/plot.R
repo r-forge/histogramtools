@@ -24,7 +24,7 @@ PlotLog2ByteEcdf <- function(x,
 # Args:
 #   x: A histogram or ecdf object.
 #   with.grid: If TRUE, draw a faint grid on the plot.
-#   cex.axis: cex parameter for the axes.  
+#   cex.axis: cex parameter for the axes.
 #   ...: Additional arguments to pass to plot()
   if (inherits(x, "histogram")) {
     x <- HistToEcdf(x)

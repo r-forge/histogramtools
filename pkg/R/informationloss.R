@@ -96,13 +96,11 @@ PlotKSDCC <- function(h, arrow.size.scale=1, main=paste("KSDCC =", KSDCC(h)),
   #   main: A title for the plot.
   #   ...: Additional arguments to pass to plot().
 
+  stopifnot(inherits(h, "histogram"))
+  stopifnot(is.character(main), length(main) == 1)
   MinEcdf <- HistToEcdf(h, f=0)
   MaxEcdf <- HistToEcdf(h, f=1)
-  if (!is.null(main)) {
-    plot(MaxEcdf, main=main, ...)
-  } else {
-    plot(MaxEcdf, ...)
-  }
+  plot(MaxEcdf, main=main, ...)
 
   index.of.max <- which.max(h$counts)
   height <- max(h$counts) / sum(h$counts)
@@ -125,6 +123,8 @@ PlotEMDCC <- function(h, main=paste("EMDCC =", EMDCC(h)), ...) {
   #   main: A title for the plot.
   #   ...: Additional arguments to pass to plot().
 
+  stopifnot(inherits(h, "histogram"))
+  stopifnot(is.character(main), length(main) == 1)
   MinEcdf <- HistToEcdf(h, f=0)
   MaxEcdf <- HistToEcdf(h, f=1)
   if (!is.null(main)) {
