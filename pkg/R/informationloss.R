@@ -127,11 +127,7 @@ PlotEMDCC <- function(h, main=paste("EMDCC =", EMDCC(h)), ...) {
   stopifnot(is.character(main), length(main) == 1)
   MinEcdf <- HistToEcdf(h, f=0)
   MaxEcdf <- HistToEcdf(h, f=1)
-  if (!is.null(main)) {
-    plot(MaxEcdf, main=main, ...)
-  } else {
-    plot(MaxEcdf, ...)
-  }
+  plot(MaxEcdf, main=main, ...)
   rect(head(knots(MinEcdf), -1),
        MinEcdf(head(knots(MinEcdf), -1)),
        tail(knots(MinEcdf), -1),
