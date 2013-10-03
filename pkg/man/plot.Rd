@@ -39,7 +39,6 @@ PlotLogTimeDurationEcdf(x, with.grid=TRUE,
     \code{\link[graphics]{hist}}) representing a pre-binned dataset or
     an \code{"ecdf"} object (created by \code{\link[stats]{ecdf}} or
     \code{\link{HistToEcdf}}).}
-  \item{main}{Optional title for the figure.}
   \item{xlab}{x-axis label for the Ecdf plot.}
   \item{ylab}{y-axis label for the Ecdf plot.}
   \item{with.grid}{Logical.  If TRUE, draw faint grid lines on the ECDF
