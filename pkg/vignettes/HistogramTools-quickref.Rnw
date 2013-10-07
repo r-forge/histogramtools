@@ -1,5 +1,5 @@
 \documentclass[10pt,twocolumn]{article}
-%\VignetteIndexEntry{HistogramTools-quickref}
+%\VignetteIndexEntry{HistogramTools-QuickRef}
 
 %\DefineVerbatimEnvironment{Sinput}{Verbatim} {xleftmargin=2em}
 %\DefineVerbatimEnvironment{Soutput}{Verbatim}{xleftmargin=2em}
