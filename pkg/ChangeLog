@@ -1,3 +1,14 @@
+2013-10-09  Murray Stokely  <murray@FreeBSD.org>
+
+	* DESCRIPTION (Version): Increment.
+	* R/histogram.R (ScaleHistogram): Add a ScaleHistogram function
+	  for when counts need to be scaled as part of post-processing the data.
+	* R/plot.R (PlotRelativeFrequency): Add a PlotRelativeFrequency
+	  function since R only allows frequency and density by default.
+	* man/scale.Rd: Document new functionality.
+	* man/plothist.Rd: Idem.
+	* man/histogram-package.Rd: Idem.
+
 2013-10-01  Murray Stokely  <murray@FreeBSD.org>
 
 	* R/histogram.R (as.Message.histogram): Prefix RProtoBuf calls

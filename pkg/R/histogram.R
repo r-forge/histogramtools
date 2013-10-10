@@ -107,6 +107,22 @@ AddHistograms <- function(..., x=list(...), main=.NewHistogramName(x)) {
   }
 }
 
+ScaleHistogram <- function(x, factor) {
+  # Scale the counts of each bucket in a histogram by a factor.
+  #
+  # Args:
+  #   x:       A histogram object.
+  #   factor:  Scaling factor for the counts.
+  #
+  # Returns:
+  #   An S3 histogram class suitable for plotting.
+
+  stopifnot(inherits(x, "histogram"))
+  stopifnot(is.numeric(factor), length(factor) == 1)
+  x$counts <- x$counts * factor
+  return(.UpdateHistogram(x))
+}
+
 # S3 Generics
 
 as.histogram <- function(x, ...) {

@@ -1,7 +1,7 @@
 Package: HistogramTools
 Type: Package
 Title: Utility Functions for R Histograms
-Version: 0.2
+Version: 0.2.1
 Date: 2013-10-02
 Author: Murray Stokely <mstokely@google.com>
 Maintainer: Murray Stokely <mstokely@google.com>

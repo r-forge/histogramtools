@@ -14,6 +14,18 @@
 #
 # Author: mstokely@google.com (Murray Stokely)
 
+PlotRelativeFrequency <- function(x, ylab="Relative Frequency", ...) {
+# Plots relative frequency histogram.
+#
+# By default R plots only absolute frequency or density.
+#
+# Args:
+#   x:    A histogram
+#   ...:  Additional arguments to pass to plot()
+  x <- ScaleHistogram(x, 1/Count(x))
+  plot(x, freq=TRUE, ylab=ylab, ...)
+}
+
 PlotLog2ByteEcdf <- function(x,
                              xlab="Bytes (log)",
                              ylab="Cumulative Fraction",

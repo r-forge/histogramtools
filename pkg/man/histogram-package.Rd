@@ -30,6 +30,7 @@ Count                 Count of all samples in a histogram.
 HistToEcdf            Approximate the ECDF of the underlying distribution.
 SubsetHistogram       Subset a histogram by removing some of the buckets.
 TrimHistogram         Remove empty buckets from the tails of a histogram.
+ScaleHistogram        Scale histogram bucket counts by a numeric value.
 AshFromHist           Compute Average Shifted Histogram from a histogram.
 KSDCC                 Compute maximal KS-statistic of CDFs constructed from histogram.
 EMDCC                 Compute maximal Earth Mover's Distance of CDFs constructed from histogram.
@@ -37,6 +38,7 @@ PlotKSDCC             Plot the KSDCC metric and a CDF from the histogram.
 PlotEMDCC             Plot the EMDCC metric and a CDF from the histogram.
 PlotLog2ByteEcdf      Plot the CDF from a histogram with log2 scaled byte boundaries.
 PlotLogTimeDurationEcdf Plot the CDF from a histogram with log scaled time duration boundaries.
+PlotRelativeFrequency Plot a relative frequency histogram.
 ReadHistogramsFromDtraceOutputFile  Read a list of Histograms from the output of the DTrace tool.
 }
 }
