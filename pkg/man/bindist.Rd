@@ -71,8 +71,8 @@ Swain, Michael J., and Dana H. Ballard. "Color indexing." International journal 
 \code{\link[graphics]{hist}}.
 }
 \examples{
-h1 <- hist(runif(100), plot=F)
-h2 <- hist(runif(100), plot=F)
+h1 <- hist(runif(100), plot=FALSE)
+h2 <- hist(runif(100), plot=FALSE)
 
 minkowski.dist(h1, h2, 1)
 minkowski.dist(h1, h2, 2)

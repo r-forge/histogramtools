@@ -41,6 +41,6 @@ representation.
 }
 \examples{
 x <- runif(100)
-h <- hist(x, plot=F)
+h <- hist(x, plot=FALSE)
 plot(ScaleHistogram(h, 10))
 }

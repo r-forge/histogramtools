@@ -44,6 +44,6 @@ frequency histogram.  This function plots this type of histogram.
 }
 \examples{
 x <- runif(100)
-h <- hist(x, plot=F)
+h <- hist(x, plot=FALSE)
 PlotRelativeFrequency(h)
 }

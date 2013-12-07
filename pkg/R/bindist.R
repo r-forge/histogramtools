@@ -25,15 +25,15 @@ intersect.hist <- function(h1, h2) {
 # Minkowski-form distance described in section 2.1 of
 # "The Earth Mover's Distance as a Metric for Image Retrieval"
 minkowski.dist <- function(h1, h2, p) {
-  stopifnot(inherits(x, "histogram"), inherits(y, "histogram"))
-  stopifnot(all(x$breaks == y$breaks))
+  stopifnot(inherits(h1, "histogram"), inherits(h2, "histogram"))
+  stopifnot(all(h1$breaks == h2$breaks))
   stopifnot(is.numeric(p), length(p) == 1, p > 0)
   return((sum(abs(h1$counts - h2$counts)^p))^(1/p))
 }
 
 intersect.dist <- function(h1, h2) {
-  stopifnot(inherits(x, "histogram"), inherits(y, "histogram"))
-  stopifnot(all(x$breaks == y$breaks))
+  stopifnot(inherits(h1, "histogram"), inherits(h2, "histogram"))
+  stopifnot(all(h1$breaks == h2$breaks))
   h3 <- intersect.hist(h1, h2)
   return(1 - (sum(h3$counts) / sum(h2$counts)))
 }
@@ -41,7 +41,7 @@ intersect.dist <- function(h1, h2) {
 # Described in EMD paper above, which references
 # S. Kullback.  Information Theory and Statistics, Dover, 1968.
 kl.divergence <- function(h1, h2) {
-  stopifnot(inherits(x, "histogram"), inherits(y, "histogram"))
+  stopifnot(inherits(h1, "histogram"), inherits(h2, "histogram"))
   stopifnot(all(h1$breaks == h2$breaks))
   return(sum(h1$counts * log(h1$counts / h2$counts)))
 }
@@ -50,7 +50,7 @@ kl.divergence <- function(h1, h2) {
 # In EMD paper aboce, which references
 # Puzicha, Non-parametric similarity measures for unsupervised texture segmentationFr
 jeffrey.divergence <- function(h1, h2) {
-  stopifnot(inherits(x, "histogram"), inherits(y, "histogram"))
+  stopifnot(inherits(h1, "histogram"), inherits(h2, "histogram"))
   stopifnot(all(h1$breaks == h2$breaks))
   m <- HistogramTools:::.BuildHistogram(h1$breaks,
                                         (h1$counts + h2$counts) / 2)
