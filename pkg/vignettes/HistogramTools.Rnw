@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage{amsfonts}
+% TODO(mstokely): Can use a larger title here with spaces and such.
 %\VignetteIndexEntry{HistogramTools-Intro}
 
 %% JSS stuff we can remove for JSS version.
@@ -104,6 +105,8 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 %% need no \usepackage{Sweave.sty}
 
 %% end of declarations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
 
 \section{Introduction}
 
