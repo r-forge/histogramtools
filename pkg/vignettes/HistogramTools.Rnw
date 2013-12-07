@@ -782,6 +782,62 @@ plot(hist.2, main="hist.2")
 %
 %Now we have an example reference to Table\ref{tab:one}.
 
+\section{Histogram Distance Measures}
+
+This package provides a number of metrics for computing a distance
+measure for two histograms.  At the moment, only bin-by-bin similarity
+measures are supported meaning that the two histograms must have
+exactly the same bucket boundaries.  The attributes of the different
+distance measures are described in \citep{rubner2000earth}.
+
+\subsection{Minkowski Distance}
+
+The Minkowski distance of order $p$ between two histograms can be
+computed with the \code{minkowski.dist} function.
+
+<<echo=TRUE,print=FALSE>>=
+h1 <- hist(runif(100), plot=FALSE)
+h2 <- hist(runif(100), plot=FALSE)
+
+minkowski.dist(h1, h2, 1)
+minkowski.dist(h1, h2, 2)
+minkowski.dist(h1, h2, 3)
+
+# Verify the implementation:
+p <- 3
+#dist(t(matrix(c(h1$counts, h2$counts), nrow=2)), "minkowski", p=p)
+# Or, alternatively:
+(sum(abs(h1$counts - h2$counts)^p))^(1/p)
+@ 
+
+\subsection{Histogram Intersection Distance}
+
+The histogram intersection distance \citep{swain1991color} between two
+histograms can be computed with the \code{intersect.dist} function.
+
+<<echo=TRUE,print=FALSE>>=
+intersect.dist(h1, h2)
+@ 
+
+\subsection{Kullback-Leibler Divergence}
+
+The Kullback-Leibler Divergence \citep{kullback1997information}
+between two histograms can be computed with the \code{kl.divergence}
+function.
+
+<<echo=TRUE,print=FALSE>>=
+kl.divergence(h1, h2)
+@
+
+\subsection{Jeffrey Divergence}
+
+The \code{jeffrey.divergence} function computes the Jeffrey
+divergence between two histograms \citep{puzicha1997non}.
+
+<<echo=TRUE,print=FALSE>>=
+jeffrey.divergence(h1, h2)
+@
+
 \section{Visualization}
 
 \subsection{Average Shifted Histograms}
