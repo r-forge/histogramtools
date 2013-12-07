@@ -22,7 +22,7 @@
   all(abs(diffs - diffs[1]) < .Machine$double.eps^0.5 * max(diffs))
 }
 
-.BuildHistogram <- function(breaks, counts, xname="") {
+PreBinnedHistogram <- .BuildHistogram <- function(breaks, counts, xname="") {
   # Returns a histogram object from the given list of breaks and counts.
 
   stopifnot(is.numeric(breaks), is.numeric(counts))

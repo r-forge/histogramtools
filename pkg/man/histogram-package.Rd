@@ -40,6 +40,10 @@ PlotLog2ByteEcdf      Plot the CDF from a histogram with log2 scaled byte bounda
 PlotLogTimeDurationEcdf Plot the CDF from a histogram with log scaled time duration boundaries.
 PlotRelativeFrequency Plot a relative frequency histogram.
 ReadHistogramsFromDtraceOutputFile  Read a list of Histograms from the output of the DTrace tool.
+minkowski.dist        Compute the Minkowski difference between two histograms.
+intersect.dist        Compute the histogram intersection distance between two histograms.
+kl.divergence         Compute the Kullback-Leibler divergence between two histograms.
+jeffrey.divergence    Compute the Jeffrey divergence between two histograms.
 }
 }
 \author{

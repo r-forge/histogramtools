@@ -1,3 +1,10 @@
+2013-12-06  Murray Stokely  <murray@FreeBSD.org>
+
+	* DESCRIPTION (Version): Increment.
+	* R/bindist.R (intersect.dist): Add histogram distance measures.
+	* man/bindist.Rd: Document new functions.
+	* man/histogram-package.Rd: Idem.
+
 2013-10-09  Murray Stokely  <murray@FreeBSD.org>
 
 	* DESCRIPTION (Version): Increment.
