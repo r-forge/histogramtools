@@ -1,3 +1,10 @@
+2013-12-07  Murray Stokely  <murray@FreeBSD.org>
+
+	* vignettes/HistogramTools.Rnw: Reorganize vignette in a more
+	  coherent way and document new functions.
+	* DESCRIPTION (Imports): Move Hmisc from Depends to Imports.
+	* man/intersect.Rd: Docuemnt the IntersectHistograms function.
+
 2013-12-06  Murray Stokely  <murray@FreeBSD.org>
 
 	* DESCRIPTION (Version): Increment.
