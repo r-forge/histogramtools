@@ -15,11 +15,11 @@
 # Author: mstokely@google.com (Murray Stokely)
 
 # Defined in Color Indexing, by Swain and Ballard.
-intersect.hist <- function(h1, h2) {
+IntersectHistograms <- function(h1, h2) {
   stopifnot(inherits(h1, "histogram"), inherits(h2, "histogram"))
   stopifnot(all(h1$breaks == h2$breaks))
   intersect.counts <- pmin(h1$counts, h2$counts)
-  return(HistogramTools:::.BuildHistogram(h1$breaks, intersect.counts))
+  return(.BuildHistogram(h1$breaks, intersect.counts))
 }
 
 # Minkowski-form distance described in section 2.1 of
@@ -28,13 +28,14 @@ minkowski.dist <- function(h1, h2, p) {
   stopifnot(inherits(h1, "histogram"), inherits(h2, "histogram"))
   stopifnot(all(h1$breaks == h2$breaks))
   stopifnot(is.numeric(p), length(p) == 1, p > 0)
+#  return(dist(t(matrix(c(h1$counts, h2$counts), nrow=2)), "minkowski", p=p))
   return((sum(abs(h1$counts - h2$counts)^p))^(1/p))
 }
 
 intersect.dist <- function(h1, h2) {
   stopifnot(inherits(h1, "histogram"), inherits(h2, "histogram"))
   stopifnot(all(h1$breaks == h2$breaks))
-  h3 <- intersect.hist(h1, h2)
+  h3 <- IntersectHistograms(h1, h2)
   return(1 - (sum(h3$counts) / sum(h2$counts)))
 }
 
@@ -52,8 +53,8 @@ kl.divergence <- function(h1, h2) {
 jeffrey.divergence <- function(h1, h2) {
   stopifnot(inherits(h1, "histogram"), inherits(h2, "histogram"))
   stopifnot(all(h1$breaks == h2$breaks))
-  m <- HistogramTools:::.BuildHistogram(h1$breaks,
-                                        (h1$counts + h2$counts) / 2)
+  m <- .BuildHistogram(h1$breaks,
+                       (h1$counts + h2$counts) / 2)
   return(sum(h1$counts * log(h1$counts / m$counts) +
              h2$counts * log(h2$counts / m$counts)))
 }
