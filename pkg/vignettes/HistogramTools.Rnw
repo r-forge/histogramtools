@@ -902,7 +902,11 @@ if (require(RProtoBuf)) {
 
 \subsection{Filesystem Workload Characterization with DTrace}
 
-TODO
+The DTrace framework \cite{cantrill2004dynamic} provides a scalable
+method of dynamically collecting and aggregating system performance
+data on Unix systems.  The \code{ReadHistogramsFromDtraceOutputFile}
+Parses the text output of the DTrace command to convert the ASCII
+representation of aggregate distributions into R histogram objects.
 
 \subsection{Binning Large Data Sets with Map-Reduce}
 
