@@ -35,7 +35,7 @@
 %   \citeauthor*{key} ==>>          Jones, Baker, and Smith
 %   \citeyear{key} ==>>             1990
 
-%%
+\newcommand{\keywords}[1]{\textbf{Keywords: }#1}
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\pkg}[1]{\textbf{#1}}
 \usepackage{Sweave}
@@ -51,6 +51,7 @@ ht.version <- packageDescription("HistogramTools")$Version
 prettyDate <- format(Sys.Date(), "%B %e, %Y")
 @
 % closing $ needed here
+
 
 %% almost as usual
 \author{Murray Stokely}
@@ -73,7 +74,11 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
   for sharing between distributed tasks, functions for
   manipulating the resulting aggregate histograms, and functions for
   measuring and visualizing the information loss associated with
-  histogram representations of a data set.
+  histogram representations of a data set.\\
+\vspace{1ex}
+
+\noindent
+\keywords{histograms, distance, non-parametric, metric, map-reduce}
 }
 % \Keywords{histograms, distributions, R, mapreduce, protocol buffers, RProtoBuf}
 % \Plainkeywords{histograms, distributions, R, mapreduce, protocol
@@ -151,223 +156,251 @@ questions at hand?
 % distributions of interest Examples from search clusters, distributed
 % filesystems, etc. [cite]
 
-\section{Parallel Data Collection Patterns}
+\section{Histogram Bin Manipulation}
 
-Many large data sets in fields such as particle physics and information
-processing are stored in binned or histogram form in order to reduce
-the data storage requirements \citep{scott2009multivariate}.
+\subsection{Trimming Empty Buckets from the Tails}
 
-There are two common patterns for generating histograms of large data
-sets with MapReduce.  In the first method, each mapper task can
-generate a histogram over a subset of the data that is has been
-assigned, and then the histograms of each mapper are sent to one or
-more reducer tasks to merge.
+When generating histograms with a large number of fine-grained
+bucket boundaries, the resulting histograms may have a large
+number of empty consecutive buckets on the left or right side of the
+histogram.  The \code{TrimHistogram} function can be used to remove
+them as illustrated in Figure~\ref{fig:trimhist}.
 
-In the second method, each mapper rounds a data point to a bucket
-width and outputs that bucket as a key and '1' as a value.  Reducers
-then sum up all of the values with the same key and output to a data store.
+<<echo=TRUE,print=FALSE>>=
+hist.1 <- hist(runif(100,min=2,max=4), breaks=seq(0,6,by=.2), plot=FALSE)
+hist.trimmed <- TrimHistogram(hist.1)
+@
 
-In both methods, the mapper tasks must choose identical
-bucket boundaries even though they are analyzing disjoint parts of the
-input set that may cover different ranges, or we must implement
-multiple phases.
+<<echo=TRUE,print=TRUE>>=
+length(hist.1$counts)
+sum(hist.1$counts)
+length(hist.trimmed$counts)
+sum(hist.trimmed$counts)
+@
+
+<<trimhist,fig=TRUE,echo=TRUE,include=FALSE,width=8,height=4>>=
+par(mfrow=c(1,2))
+plot(hist.1)
+plot(TrimHistogram(hist.1), main="Trimmed Histogram")
+@
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics{histogram-mapreduce-diag1.pdf}
+\includegraphics[width=5in,height=2.5in]{HistogramTools-trimhist}
 \end{center}
-\caption{Diagram of MapReduce Histogram Generation Pattern}
-\label{fig:mr-histogram-pattern1}
+\caption{Effect of the \code{TrimHistogram} function.}
+\label{fig:trimhist}
 \end{figure}
 
-Figure~\ref{fig:mr-histogram-pattern1} illustrates the second method
-described above for histogram generation of large data sets with
-MapReduce.
+\subsection{Adding/Merging Histograms}
 
-This package is designed to be helpful if some of the Map or Reduce
-tasks are written in R, or if those components are written in other
-languages and only the resulting output histograms need to be
-manipulated in R.
+If histograms (for different data sets) have the same bucket
+boundaries, it is possible to add them together to obtain the
+histogram for the combined data set by aggregating the counts values
+with the \code{AddHistograms} function illustrated in
+Figure~\ref{fig:mergehist}.
 
-%There are really two cookbook recipes for generating histograms of
-%large data sets.  Have each mapper generate an actual histogram, in
-%which case the reducer must merge them.
-
-%Or have each mapper output round to a bucket width and output for
-%every bucket width item then have the reducer sum those up.
-
-%Why do we do the first one?  Why not the second one?
-
-%What is the runtime difference between the two?  Is the second
-%faster?  Or the first?
-
-%TODO:
-%Good diagram for paper showing MapReduce generation of histograms.  As described in Hadoop MapReduce cookbook :
-
-% Histogram makes sense only under a continuous dimension (for example, access time and file % size). It groups the number of occurrences of some event into several groups in the dimension. % For example, in this recipe, if we take the access time from weblogs as the dimension, then we will group the access time by the hour.
-%
-%The following figure shows a summary of the execution. Here the mapper calculates the hour of %the day and emits the "hour of the day" and 1 as the key and value respectively. Then each %reducer receives all the occurrences of one hour of a day, and calculates the number of %occurrences:
-% THIS ABOVE IS FROM :
-%\url{http://my.safaribooksonline.com/book/-/9781849517287/6dot-analytics/ch06s06_html}
-
-%\section{Applications}
-%Very large data sets in Pearson's day meant more than 100 observations, but analysis of web-scale data, such as the number of unlinks in the trillions of pages on the web requires significantly larger computation resources.
-%Pearson was interested in very large data sets (more than 1000)
-
-
-\section{Efficient Representations of Histograms}
-
-Consider an example histogram of 100 random data points.
-Figure~\ref{fig:exhist} shows the graphical representation and list
-structure of R histogram objects.
-
-<<exhist,fig=TRUE,include=FALSE,echo=TRUE>>=
-myhist <- hist(runif(100))
+<<echo=TRUE,print=FALSE>>=
+hist.1 <- hist(c(1,2,3,4), plot=FALSE)
+hist.2 <- hist(c(1,2,2,4), plot=FALSE)
+hist.sum <- AddHistograms(hist.1, hist.2)
 @
 
-\begin{figure}[h]
-\begin{minipage}{.4\textwidth}
+<<mergehist,fig=TRUE,echo=FALSE,include=FALSE,width=8,height=4>>=
+par(mfrow=c(1,3))
+plot(hist.1)
+plot(hist.2)
+plot(hist.sum,main="Aggregated Histogram")
+@
+
+\begin{figure}[h!]
 \begin{center}
-\includegraphics[width=2.5in,height=2.5in]{HistogramTools-exhist}
+\includegraphics[width=5in,height=2.5in]{HistogramTools-mergehist}
 \end{center}
-%\captionof{figure}{Example Histogram}
-%\label{fig:exhist}
-\end{minipage}\hfill \begin{minipage}{.5\textwidth}
-\begin{tiny}
-<<echo=FALSE,print=TRUE>>=
-myhist
-@
-\end{tiny}
-\end{minipage}
-\caption{Example Histogram}
-\label{fig:exhist}
+\caption{Effect of the \code{AddHistograms} function.}
+\label{fig:mergehist}
 \end{figure}
 
-This histogram compactly represents the full distribution.
-Histogram objects in R are lists with \Sexpr{length(myhist)} components: breaks, counts,
-density, mids, name, and equidist.
+\code{AddHistograms} accepts an arbitrary number of histogram objects
+to aggregate as long as they have the same bucket boundaries.
 
-If we are working in a parallel environment and need to distribute
-such a histogram to other tasks running in a compute cluster, we
-need to serialize this histogram object to a binary format that can be
-transferred over the network.
-
-\subsection{Native R Serialization}
-
-R includes a built-in serialization framework that allows one to
-serialize any R object to an Rdata file.
-
-<<echo=TRUE,print=TRUE>>=
-length(serialize(myhist, NULL))
+<<echo=TRUE,print=FALSE>>=
+  hist.1 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
+  hist.2 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
+  hist.3 <- hist(c(4,5,6), breaks=0:9, plot=FALSE)
+  hist.sum <- AddHistograms(hist.1, hist.2, hist.3)
+  hist.sum
 @
 
-This works and is quite convenient if the histogram must only be
-shared between tasks running the R interpreter, but it is not a very
-portable format.
+\subsection{Merging Buckets}
 
-\subsection{Protocol Buffers}
+We may want a version of a histogram with fewer buckets, to save
+storage or to produce better plots.  The \code{MergeBuckets} function takes
+a histogram and a parameter for the number of adjacent buckets to
+merge together and returns a new histogram with different bucket
+boundaries as illustrated in Figure~\ref{fig:downsamplehist}.
 
-Protocol Buffers are a flexible, efficient, automated, cross-platform
-mechanism for serializing structured data \citep{Pike:2005:IDP:1239655.1239658,protobuf}.  The RProtoBuf package
-\citep{rprotobuf} provides an interface for manipulating protocol
-buffer objects directly within R.
-
-Of the \Sexpr{length(myhist)} elements stored in an R histogram object, we only need to
-store three in our serialization format since the others can be
-re-computed.  This leads to the following simple protocol buffer
-definition of the breaks, counts, and name of a histogram:
-
-<<echo=FALSE>>=
-invisible(cat(paste(readLines(system.file("proto/histogram.proto",
-                                package="HistogramTools")), "\n")))
+<<echo=TRUE,print=FALSE>>=
+overbinned <- hist(c(rexp(100), 1+rexp(100)), breaks=seq(0, 10, by=.01), plot=FALSE)
+better.hist <- MergeBuckets(overbinned, adj=30)
 @
 
-The package provides \code{as.Message} and \code{as.histogram} methods
-for converting between R histogram objects and this protocol buffer
-representation.
-
-In addition to the added portability, the protocol buffer
-representation is significantly more compact.
-
-<<echo=FALSE,print=FALSE>>=
-if(require(RProtoBuf)) {
-hist.msg <- as.Message(myhist)
-} else {
-hist.msg <- "RProtoBuf library not available"
-}
-<<echo=TRUE,print=TRUE,eval=FALSE>>=
-hist.msg <- as.Message(myhist)
-@
-
-Our histogram protocol buffer has a human-readable ASCII representation:
-
-<<echo=TRUE>>=
-cat(as.character(hist.msg))
-@
-
-But it is most useful when serialized to a compact binary representation:
-
-<<echo=TRUE,print=TRUE,eval=FALSE>>=
-length(hist.msg$serialize(NULL))
-<<echo=F,print=T,eval=TRUE>>=
-if (require(RProtoBuf)) {
-  length(hist.msg$serialize(NULL))
-} else {
-  invisible(cat("RProtoBuf not available."))
-}
-@
-
-This protocol buffer representation is not compressed by default,
-however, so we can do better:
-
-<<echo=TRUE,print=TRUE,eval=FALSE>>=
-raw.bytes <- memCompress(hist.msg$serialize(NULL), "gzip")
-length(raw.bytes)
-<<echo=F,print=T,eval=TRUE>>=
-if (require(RProtoBuf)) {
-  raw.bytes <- memCompress(hist.msg$serialize(NULL), "gzip")
-  length(raw.bytes)
-} else {
-  raw.bytes <- memCompress("Not available", "gzip")
-  cat("RProtoBuf not available")
-}
-@
-
-We can then send this compressed binary representation of the
-histogram over a network or store it to a cross-platform data store
-for later analysis by other tools.  To recreate the
-original R histogram object from the serialized protocol buffer we can
-use the \code{as.histogram} method.
-
-<<echo=TRUE,print=FALSE,eval=FALSE>>=
-uncompressed.bytes <- memDecompress(raw.bytes, "gzip")
-new.hist.proto <- P("HistogramTools.HistogramState")$read(uncompressed.bytes)
-length(uncompressed.bytes)
-<<echo=FALSE,eval=TRUE>>=
-uncompressed.bytes <- memDecompress(raw.bytes, "gzip")
-if (require(RProtoBuf)) {
-  new.hist.proto <- P("HistogramTools.HistogramState")$read(uncompressed.bytes)
-  length(uncompressed.bytes)
-}
-@
-
-The resulting histogram is the same as the original; it was converted
-to a protocol buffer, serialized, compressed, then uncompressed,
-parsed, and converted back to a histogram.
-
-<<echo=TRUE,print=FALSE,eval=FALSE>>=
-plot(myhist)
-plot(as.histogram(new.hist.proto))
-@
-
-<<fig=TRUE,echo=FALSE,height=4,width=8>>=
+<<downsamplehist,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,width=8,height=4>>=
 par(mfrow=c(1,2))
-plot(myhist)
-if (require(RProtoBuf)) {
-  plot(as.histogram(new.hist.proto))
-} else {
-  plot(myhist)
-}
+plot(overbinned)
+plot(better.hist)
+@
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=3.3in,height=2.5in]{HistogramTools-downsamplehist}
+\end{center}
+\caption{Effect of the \code{MergeBuckets} function.}
+\label{fig:downsamplehist}
+\end{figure}
+
+\subsection{Subsetting Histograms}
+
+% If, say you are only interested in part of a distribution, for
+% example for performance measurements the requests that had a latency
+% of greater than X seconds only.  Then the SubsetHistogram()
+% functions can help manipulate the histograms to zoom in on an area
+% of interest for additional plotting.
+
+The \code{SubsetHistogram} function takes a histogram and a new
+minimum and maximum bucket boundary and returns a new histogram with a
+subset of the buckets as illustrated in Figure~\ref{fig:subsethist}.
+
+% TODO(mstokely): Add reference to iceberg queries, database work in
+% this area.
+
+<<echo=TRUE,print=FALSE>>=
+hist.1 <- hist(runif(100, min=0, max=10), breaks=seq(from=0, to=10, by=.5), plot=FALSE)
+hist.2 <- SubsetHistogram(hist.1, minbreak=2, maxbreak=6)
+@
+
+<<subsethist,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,width=5.3,height=4>>=
+par(mfrow=c(1,2))
+plot(hist.1, main="hist.1")
+plot(hist.2, main="hist.2")
+@
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=3.3in,height=2.5in]{HistogramTools-subsethist}
+\end{center}
+\caption{Effect of the \code{SubsetHistogram} function.}
+\label{fig:subsethist}
+\end{figure}
+
+\subsection{Intersecting Histograms}
+
+The \code{IntersectHistograms} function takes two histograms with
+identical bucket boundaries and returns a histogram of the
+intersection of the two.  Each bucket of the returned histogram
+contains the minimum of the equivalent buckets in the two provided
+histograms.
+
+<<echo=TRUE,print=FALSE>>=
+hist.1 <- hist(runif(100))
+hist.2 <- hist(runif(100))
+hist.3 <- IntersectHistograms(hist.1, hist.2)
+@ 
+
+<<intersecthist,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,width=5.3,height=4>>=
+par(mfrow=c(1,3))
+plot(hist.1, main="hist.1")
+plot(hist.2, main="hist.2")
+plot(hist.3, main="hist.3")
+@
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=3.3in,height=2.5in]{HistogramTools-intersecthist}
+\end{center}
+\caption{Effect of the \code{IntersectHistograms} function.}
+\label{fig:intersecthist}
+\end{figure}
+
+\subsection{Scaling Histograms}
+
+The \code{ScaleHistogram} function takes a histogram and a numeric
+value to scale each bucket bound by.  This can be used, e.g. to
+normalize the histogram area to a desired value as illustrated in
+Figure~\ref{fig:scalehist}.
+
+<<echo=TRUE,print=FALSE>>=
+hist.2 <- ScaleHistogram(hist.1, 1/sum(hist.1$counts))
+@ 
+
+<<scalehist,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,width=5.3,height=4>>=
+par(mfrow=c(1,2))
+plot(hist.1, main="hist.1")
+plot(hist.2, main="hist.2")
+@
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=3.3in,height=2.5in]{HistogramTools-scalehist}
+\end{center}
+\caption{Effect of the \code{ScaleHistogram} function.}
+\label{fig:scalehist}
+\end{figure}
+
+\section{Histogram Distance Measures}
+
+This package provides a number of metrics for computing a distance
+measure for two histograms.  At the moment, only bin-by-bin similarity
+measures are supported meaning that the two histograms must have
+exactly the same bucket boundaries.  The attributes of the different
+distance measures are described in \citep{rubner2000earth}.
+
+\subsection{Minkowski Distance}
+
+The Minkowski distance of order $p$ between two histograms can be
+computed with the \code{minkowski.dist} function.
+
+<<echo=TRUE,print=FALSE>>=
+h1 <- hist(runif(100), plot=FALSE)
+h2 <- hist(runif(100), plot=FALSE)
+
+minkowski.dist(h1, h2, 1)
+minkowski.dist(h1, h2, 2)
+minkowski.dist(h1, h2, 3)
+
+# Verify the implementation:
+p <- 3
+#dist(t(matrix(c(h1$counts, h2$counts), nrow=2)), "minkowski", p=p)
+# Or, alternatively:
+(sum(abs(h1$counts - h2$counts)^p))^(1/p)
+@ 
+
+\subsection{Histogram Intersection Distance}
+
+The histogram intersection distance \citep{swain1991color} between two
+histograms can be computed with the \code{intersect.dist} function.
+
+<<echo=TRUE,print=FALSE>>=
+intersect.dist(h1, h2)
+@ 
+
+\subsection{Kullback-Leibler Divergence}
+
+The Kullback-Leibler Divergence \citep{kullback1997information}
+between two histograms can be computed with the \code{kl.divergence}
+function.
+
+<<echo=TRUE,print=FALSE>>=
+kl.divergence(h1, h2)
+@
+
+\subsection{Jeffrey Divergence}
+
+The \code{jeffrey.divergence} function computes the Jeffrey
+divergence between two histograms \citep{puzicha1997non}.
+
+<<echo=TRUE,print=FALSE>>=
+jeffrey.divergence(h1, h2)
 @
 
 \section{Quantiles and Cumulative Distribution Functions}
@@ -610,143 +643,6 @@ So, using this metric, the second lower example with more granular
 histogram bins produces an ECDF with reduced worst case error bounds
 compared to the one with default buckets, as expected.
 
-\section{Histogram Bin Manipulation}
-
-\subsection{Trimming Empty Buckets from the Tails}
-
-When generating histograms with a large number of fine-grained
-bucket boundaries, the resulting histograms may have a large
-number of empty consecutive buckets on the left or right side of the
-histogram.  The \code{TrimHistogram} function can be used to remove
-them as illustrated in Figure~\ref{fig:trimhist}.
-
-<<echo=TRUE,print=FALSE>>=
-hist.1 <- hist(runif(100,min=2,max=4), breaks=seq(0,6,by=.2), plot=FALSE)
-hist.trimmed <- TrimHistogram(hist.1)
-@
-
-<<echo=TRUE,print=TRUE>>=
-length(hist.1$counts)
-sum(hist.1$counts)
-length(hist.trimmed$counts)
-sum(hist.trimmed$counts)
-@
-
-<<trimhist,fig=TRUE,echo=TRUE,include=FALSE,width=8,height=4>>=
-par(mfrow=c(1,2))
-plot(hist.1)
-plot(TrimHistogram(hist.1), main="Trimmed Histogram")
-@
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=5in,height=2.5in]{HistogramTools-trimhist}
-\end{center}
-\caption{Effect of the \code{TrimHistogram} function.}
-\label{fig:trimhist}
-\end{figure}
-
-\subsection{Adding/Merging Histograms}
-
-If histograms (for different data sets) have the same bucket
-boundaries, it is possible to add them together to obtain the
-histogram for the combined data set by aggregating the counts values
-with the \code{AddHistograms} function illustrated in
-Figure~\ref{fig:mergehist}.
-
-<<echo=TRUE,print=FALSE>>=
-hist.1 <- hist(c(1,2,3,4), plot=FALSE)
-hist.2 <- hist(c(1,2,2,4), plot=FALSE)
-hist.sum <- AddHistograms(hist.1, hist.2)
-@
-
-<<mergehist,fig=TRUE,echo=FALSE,include=FALSE,width=8,height=4>>=
-par(mfrow=c(1,3))
-plot(hist.1)
-plot(hist.2)
-plot(hist.sum,main="Aggregated Histogram")
-@
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=5in,height=2.5in]{HistogramTools-mergehist}
-\end{center}
-\caption{Effect of the \code{AddHistograms} function.}
-\label{fig:mergehist}
-\end{figure}
-
-\code{AddHistograms} accepts an arbitrary number of histogram objects
-to aggregate as long as they have the same bucket boundaries.
-
-<<<echo=TRUE,print=FALSE>>=
-  hist.1 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
-  hist.2 <- hist(c(1,2,3), breaks=0:9, plot=FALSE)
-  hist.3 <- hist(c(4,5,6), breaks=0:9, plot=FALSE)
-  hist.sum <- AddHistograms(hist.1, hist.2, hist.3)
-  hist.sum
-@
-
-\subsection{Merging Buckets}
-
-We may want a version of a histogram with fewer buckets, to save
-storage or to produce better plots.  The \code{MergeBuckets} function takes
-a histogram and a parameter for the number of adjacent buckets to
-merge together and returns a new histogram with different bucket
-boundaries as illustrated in Figure~\ref{fig:downsamplehist}.
-
-<<echo=TRUE,print=FALSE>>=
-overbinned <- hist(c(rexp(100), 1+rexp(100)), breaks=seq(0, 10, by=.01), plot=FALSE)
-better.hist <- MergeBuckets(overbinned, adj=30)
-@
-
-<<downsamplehist,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,width=8,height=4>>=
-par(mfrow=c(1,2))
-plot(overbinned)
-plot(better.hist)
-@
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=3.3in,height=2.5in]{HistogramTools-downsamplehist}
-\end{center}
-\caption{Effect of the \code{MergeBuckets} function.}
-\label{fig:downsamplehist}
-\end{figure}
-
-\subsection{Subsetting Histograms}
-
-% If, say you are only interested in part of a distribution, for
-% example for performance measurements the requests that had a latency
-% of greater than X seconds only.  Then the SubsetHistogram()
-% functions can help manipulate the histograms to zoom in on an area
-% of interest for additional plotting.
-
-The \code{SubsetHistogram} function takes a histogram and a new
-minimum and maximum bucket boundary and returns a new histogram with a
-subset of the buckets as illustrated in Figure~\ref{fig:subsethist}.
-
-% TODO(mstokely): Add reference to iceberg queries, database work in
-% this area.
-
-<<echo=TRUE,print=FALSE>>=
-hist.1 <- hist(runif(100, min=0, max=10), breaks=seq(from=0, to=10, by=.5), plot=FALSE)
-hist.2 <- SubsetHistogram(hist.1, minbreak=2, maxbreak=6)
-@
-
-<<subsethist,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,width=5.3,height=4>>=
-par(mfrow=c(1,2))
-plot(hist.1, main="hist.1")
-plot(hist.2, main="hist.2")
-@
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=3.3in,height=2.5in]{HistogramTools-subsethist}
-\end{center}
-\caption{Effect of the \code{SubsetHistogram} function.}
-\label{fig:subsethist}
-\end{figure}
-
 %\begin{figure}[h!]
 %\begin{center}
 %\includegraphics[width=5in,height=2.5in]{HistogramTools-downsamplehist}
@@ -784,63 +680,6 @@ plot(hist.2, main="hist.2")
 %@
 %
 %Now we have an example reference to Table\ref{tab:one}.
-
-\section{Histogram Distance Measures}
-
-This package provides a number of metrics for computing a distance
-measure for two histograms.  At the moment, only bin-by-bin similarity
-measures are supported meaning that the two histograms must have
-exactly the same bucket boundaries.  The attributes of the different
-distance measures are described in \citep{rubner2000earth}.
-
-\subsection{Minkowski Distance}
-
-The Minkowski distance of order $p$ between two histograms can be
-computed with the \code{minkowski.dist} function.
-
-<<echo=TRUE,print=FALSE>>=
-h1 <- hist(runif(100), plot=FALSE)
-h2 <- hist(runif(100), plot=FALSE)
-
-minkowski.dist(h1, h2, 1)
-minkowski.dist(h1, h2, 2)
-minkowski.dist(h1, h2, 3)
-
-# Verify the implementation:
-p <- 3
-#dist(t(matrix(c(h1$counts, h2$counts), nrow=2)), "minkowski", p=p)
-# Or, alternatively:
-(sum(abs(h1$counts - h2$counts)^p))^(1/p)
-@ 
-
-\subsection{Histogram Intersection Distance}
-
-The histogram intersection distance \citep{swain1991color} between two
-histograms can be computed with the \code{intersect.dist} function.
-
-<<echo=TRUE,print=FALSE>>=
-intersect.dist(h1, h2)
-@ 
-
-\subsection{Kullback-Leibler Divergence}
-
-The Kullback-Leibler Divergence \citep{kullback1997information}
-between two histograms can be computed with the \code{kl.divergence}
-function.
-
-<<echo=TRUE,print=FALSE>>=
-kl.divergence(h1, h2)
-@
-
-\subsection{Jeffrey Divergence}
-
-The \code{jeffrey.divergence} function computes the Jeffrey
-divergence between two histograms \citep{puzicha1997non}.
-
-<<echo=TRUE,print=FALSE>>=
-jeffrey.divergence(h1, h2)
-@
-
 \section{Visualization}
 
 \subsection{Average Shifted Histograms}
@@ -902,6 +741,231 @@ PlotLog2ByteEcdf(dtrace.hists[["TOTAL"]])
 \caption{Example Log Log Histogram Data}
 \label{fig:logloghist}
 \end{figure}
+
+
+\section{Efficient Representations of Histograms}
+
+Consider an example histogram of 100 random data points.
+Figure~\ref{fig:exhist} shows the graphical representation and list
+structure of R histogram objects.
+
+<<exhist,fig=TRUE,include=FALSE,echo=TRUE>>=
+myhist <- hist(runif(100))
+@
+
+\begin{figure}[h]
+\begin{minipage}{.4\textwidth}
+\begin{center}
+\includegraphics[width=2.5in,height=2.5in]{HistogramTools-exhist}
+\end{center}
+%\captionof{figure}{Example Histogram}
+%\label{fig:exhist}
+\end{minipage}\hfill \begin{minipage}{.5\textwidth}
+\begin{tiny}
+<<echo=FALSE,print=TRUE>>=
+myhist
+@
+\end{tiny}
+\end{minipage}
+\caption{Example Histogram}
+\label{fig:exhist}
+\end{figure}
+
+This histogram compactly represents the full distribution.
+Histogram objects in R are lists with \Sexpr{length(myhist)} components: breaks, counts,
+density, mids, name, and equidist.
+
+If we are working in a parallel environment and need to distribute
+such a histogram to other tasks running in a compute cluster, we
+need to serialize this histogram object to a binary format that can be
+transferred over the network.
+
+\subsection{Native R Serialization}
+
+R includes a built-in serialization framework that allows one to
+serialize any R object to an Rdata file.
+
+<<echo=TRUE,print=TRUE>>=
+length(serialize(myhist, NULL))
+@
+
+This works and is quite convenient if the histogram must only be
+shared between tasks running the R interpreter, but it is not a very
+portable format.
+
+\subsection{Protocol Buffers}
+
+Protocol Buffers are a flexible, efficient, automated, cross-platform
+mechanism for serializing structured data \citep{Pike:2005:IDP:1239655.1239658,protobuf}.  The RProtoBuf package
+\citep{rprotobuf} provides an interface for manipulating protocol
+buffer objects directly within R.
+
+Of the \Sexpr{length(myhist)} elements stored in an R histogram object, we only need to
+store three in our serialization format since the others can be
+re-computed.  This leads to the following simple protocol buffer
+definition of the breaks, counts, and name of a histogram:
+
+<<echo=FALSE>>=
+invisible(cat(paste(readLines(system.file("proto/histogram.proto",
+                                package="HistogramTools")), "\n")))
+@
+
+The package provides \code{as.Message} and \code{as.histogram} methods
+for converting between R histogram objects and this protocol buffer
+representation.
+
+In addition to the added portability, the protocol buffer
+representation is significantly more compact.
+
+<<echo=FALSE,print=FALSE>>=
+if(require(RProtoBuf)) {
+hist.msg <- as.Message(myhist)
+} else {
+hist.msg <- "RProtoBuf library not available"
+}
+<<echo=TRUE,print=TRUE,eval=FALSE>>=
+hist.msg <- as.Message(myhist)
+@
+
+Our histogram protocol buffer has a human-readable ASCII representation:
+
+<<echo=TRUE>>=
+cat(as.character(hist.msg))
+@
+
+But it is most useful when serialized to a compact binary representation:
+
+<<echo=TRUE,print=TRUE,eval=FALSE>>=
+length(hist.msg$serialize(NULL))
+<<echo=F,print=T,eval=TRUE>>=
+if (require(RProtoBuf)) {
+  length(hist.msg$serialize(NULL))
+} else {
+  invisible(cat("RProtoBuf not available."))
+}
+@
+
+This protocol buffer representation is not compressed by default,
+however, so we can do better:
+
+<<echo=TRUE,print=TRUE,eval=FALSE>>=
+raw.bytes <- memCompress(hist.msg$serialize(NULL), "gzip")
+length(raw.bytes)
+<<echo=F,print=T,eval=TRUE>>=
+if (require(RProtoBuf)) {
+  raw.bytes <- memCompress(hist.msg$serialize(NULL), "gzip")
+  length(raw.bytes)
+} else {
+  raw.bytes <- memCompress("Not available", "gzip")
+  cat("RProtoBuf not available")
+}
+@
+
+We can then send this compressed binary representation of the
+histogram over a network or store it to a cross-platform data store
+for later analysis by other tools.  To recreate the
+original R histogram object from the serialized protocol buffer we can
+use the \code{as.histogram} method.
+
+<<echo=TRUE,print=FALSE,eval=FALSE>>=
+uncompressed.bytes <- memDecompress(raw.bytes, "gzip")
+new.hist.proto <- P("HistogramTools.HistogramState")$read(uncompressed.bytes)
+length(uncompressed.bytes)
+<<echo=FALSE,eval=TRUE>>=
+uncompressed.bytes <- memDecompress(raw.bytes, "gzip")
+if (require(RProtoBuf)) {
+  new.hist.proto <- P("HistogramTools.HistogramState")$read(uncompressed.bytes)
+  length(uncompressed.bytes)
+}
+@
+
+The resulting histogram is the same as the original; it was converted
+to a protocol buffer, serialized, compressed, then uncompressed,
+parsed, and converted back to a histogram.
+
+<<echo=TRUE,print=FALSE,eval=FALSE>>=
+plot(myhist)
+plot(as.histogram(new.hist.proto))
+@
+
+<<fig=TRUE,echo=FALSE,height=4,width=8>>=
+par(mfrow=c(1,2))
+plot(myhist)
+if (require(RProtoBuf)) {
+  plot(as.histogram(new.hist.proto))
+} else {
+  plot(myhist)
+}
+@
+
+\section{Applications}
+
+\subsection{Filesystem Workload Characterization with DTrace}
+
+TODO
+
+\subsection{Binning Large Data Sets with Map-Reduce}
+
+Many large data sets in fields such as particle physics and information
+processing are stored in binned or histogram form in order to reduce
+the data storage requirements \citep{scott2009multivariate}.
+
+There are two common patterns for generating histograms of large data
+sets with MapReduce.  In the first method, each mapper task can
+generate a histogram over a subset of the data that is has been
+assigned, and then the histograms of each mapper are sent to one or
+more reducer tasks to merge.
+
+In the second method, each mapper rounds a data point to a bucket
+width and outputs that bucket as a key and '1' as a value.  Reducers
+then sum up all of the values with the same key and output to a data store.
+
+In both methods, the mapper tasks must choose identical
+bucket boundaries even though they are analyzing disjoint parts of the
+input set that may cover different ranges, or we must implement
+multiple phases.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics{histogram-mapreduce-diag1.pdf}
+\end{center}
+\caption{Diagram of MapReduce Histogram Generation Pattern}
+\label{fig:mr-histogram-pattern1}
+\end{figure}
+
+Figure~\ref{fig:mr-histogram-pattern1} illustrates the second method
+described above for histogram generation of large data sets with
+MapReduce.
+
+This package is designed to be helpful if some of the Map or Reduce
+tasks are written in R, or if those components are written in other
+languages and only the resulting output histograms need to be
+manipulated in R.
+
+%There are really two cookbook recipes for generating histograms of
+%large data sets.  Have each mapper generate an actual histogram, in
+%which case the reducer must merge them.
+
+%Or have each mapper output round to a bucket width and output for
+%every bucket width item then have the reducer sum those up.
+
+%Why do we do the first one?  Why not the second one?
+
+%What is the runtime difference between the two?  Is the second
+%faster?  Or the first?
+
+%TODO:
+%Good diagram for paper showing MapReduce generation of histograms.  As described in Hadoop MapReduce cookbook :
+
+% Histogram makes sense only under a continuous dimension (for example, access time and file % size). It groups the number of occurrences of some event into several groups in the dimension. % For example, in this recipe, if we take the access time from weblogs as the dimension, then we will group the access time by the hour.
+%
+%The following figure shows a summary of the execution. Here the mapper calculates the hour of %the day and emits the "hour of the day" and 1 as the key and value respectively. Then each %reducer receives all the occurrences of one hour of a day, and calculates the number of %occurrences:
+% THIS ABOVE IS FROM :
+%\url{http://my.safaribooksonline.com/book/-/9781849517287/6dot-analytics/ch06s06_html}
+
+%\section{Applications}
+%Very large data sets in Pearson's day meant more than 100 observations, but analysis of web-scale data, such as the number of unlinks in the trillions of pages on the web requires significantly larger computation resources.
+%Pearson was interested in very large data sets (more than 1000)
 
 \section{Summary}
 The HistogramTools package presented in this paper has been in wide
