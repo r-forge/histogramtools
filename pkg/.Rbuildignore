@@ -1,0 +1,7 @@
+svn-commit.*
+vignettes/jss.bst
+vignettes/.*.aux
+vignettes/.*.out
+vignettes/.*.blg
+vignettes/.*.bbl
+vignettes/.*.log
