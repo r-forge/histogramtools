@@ -31,6 +31,7 @@ HistToEcdf            Approximate the ECDF of the underlying distribution.
 SubsetHistogram       Subset a histogram by removing some of the buckets.
 TrimHistogram         Remove empty buckets from the tails of a histogram.
 ScaleHistogram        Scale histogram bucket counts by a numeric value.
+PreBinnedHistogram    Generate a histogram from pre-binned data.
 AshFromHist           Compute Average Shifted Histogram from a histogram.
 KSDCC                 Compute maximal KS-statistic of CDFs constructed from histogram.
 EMDCC                 Compute maximal Earth Mover's Distance of CDFs constructed from histogram.
