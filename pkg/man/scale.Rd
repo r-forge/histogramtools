@@ -28,7 +28,7 @@ ScaleHistogram(x, factor)
   \item{x}{A \code{"histogram"} object (created by
     \code{\link[graphics]{hist}}) representing a dataset summarized by binning.}
   \item{factor}{A number value to scale the bucket counts by.  Defaults
-    to 1/Count(x) to normalize the area of the histogram to 1.}
+    to 1/Count(x) to normalize the sum of counts of the histogram to 1.}
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{

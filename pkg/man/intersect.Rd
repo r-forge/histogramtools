@@ -27,10 +27,8 @@ provided histograms.
 IntersectHistograms(h1, h2)
 }
 \arguments{
-  \item{h1}{A \code{"histogram"} object (created by
-    \code{\link[graphics]{hist}}) representing a pre-binned dataset.}
-  \item{h2}{A \code{"histogram"} object (created by
-    \code{\link[graphics]{hist}}) representing a pre-binned dataset.}
+  \item{h1,h2}{\code{"histogram"} objects (created by
+    \code{\link[graphics]{hist}}) representing a dataset summarized by binning.}
 }
 \references{
 Swain, Michael J., and Dana H. Ballard. "Color indexing." International journal of computer vision 7.1 (1991): 11-32.

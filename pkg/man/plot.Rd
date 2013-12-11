@@ -41,7 +41,7 @@ PlotLogTimeDurationEcdf(x, with.grid=TRUE,
     \code{\link{HistToEcdf}}).}
   \item{xlab}{x-axis label for the Ecdf plot.}
   \item{ylab}{y-axis label for the Ecdf plot.}
-  \item{with.grid}{Logical.  If TRUE, draw faint grid lines on the ECDF
+  \item{with.grid}{Logical.  If \code{TRUE}, draw faint grid lines on the ECDF
     plot.}
   \item{cex.lab}{Graphical parameters for plot and axes.}
   \item{cex.axis}{Graphical parameters for plot and axes.}

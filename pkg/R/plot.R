@@ -22,7 +22,7 @@ PlotRelativeFrequency <- function(x, ylab="Relative Frequency", ...) {
 # Args:
 #   x:    A histogram
 #   ...:  Additional arguments to pass to plot()
-  x <- ScaleHistogram(x, 1/Count(x))
+  x <- ScaleHistogram(x, 1 / Count(x))
   plot(x, freq=TRUE, ylab=ylab, ...)
 }
 

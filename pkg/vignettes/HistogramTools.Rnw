@@ -384,7 +384,7 @@ histograms can be computed with the \code{intersect.dist} function.
 intersect.dist(h1, h2)
 @
 
-If histograms \code{h1} and \code{h2} are not constrained to contain the
+If histograms \code{h1} and \code{h2} do not contain the
 same number of counts, then this metric will not be symmetric.
 
 \subsection{Kullback-Leibler Divergence}

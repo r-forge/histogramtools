@@ -107,7 +107,7 @@ AddHistograms <- function(..., x=list(...), main=.NewHistogramName(x)) {
   }
 }
 
-ScaleHistogram <- function(x, factor=1/Count(x)) {
+ScaleHistogram <- function(x, factor=1 / Count(x)) {
   # Scale the counts of each bucket in a histogram by a factor.
   #
   # Args:
