@@ -164,7 +164,7 @@ When generating histograms with a large number of fine-grained
 bucket boundaries, the resulting histograms may have a large
 number of empty consecutive buckets on the left or right side of the
 histogram.  The \code{TrimHistogram} function can be used to remove
-them as illustrated in Figure~\ref{fig:trimhist}.
+them, as illustrated in Figure~\ref{fig:trimhist}.
 
 <<echo=TRUE,print=FALSE>>=
 hist.1 <- hist(runif(100,min=2,max=4), breaks=seq(0,6,by=.2), plot=FALSE)
@@ -238,7 +238,7 @@ We may want a version of a histogram with fewer buckets, to save
 storage or to produce better plots.  The \code{MergeBuckets} function takes
 a histogram and a parameter for the number of adjacent buckets to
 merge together and returns a new histogram with different bucket
-boundaries as illustrated in Figure~\ref{fig:downsamplehist}.
+boundaries, as illustrated in Figure~\ref{fig:downsamplehist}.
 
 <<echo=TRUE,print=FALSE>>=
 overbinned <- hist(c(rexp(100), 1+rexp(100)), breaks=seq(0, 10, by=.01), plot=FALSE)
@@ -269,7 +269,7 @@ plot(better.hist)
 
 The \code{SubsetHistogram} function takes a histogram and a new
 minimum and maximum bucket boundary and returns a new histogram with a
-subset of the buckets as illustrated in Figure~\ref{fig:subsethist}.
+subset of the buckets, as illustrated in Figure~\ref{fig:subsethist}.
 
 % TODO(mstokely): Add reference to iceberg queries, database work in
 % this area.
@@ -305,7 +305,7 @@ histograms.
 hist.1 <- hist(runif(100))
 hist.2 <- hist(runif(100))
 hist.3 <- IntersectHistograms(hist.1, hist.2)
-@ 
+@
 
 <<intersecthist,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,width=5.3,height=4>>=
 par(mfrow=c(1,3))
@@ -325,13 +325,13 @@ plot(hist.3, main="hist.3")
 \subsection{Scaling Histograms}
 
 The \code{ScaleHistogram} function takes a histogram and a numeric
-value to scale each bucket bound by.  This can be used, e.g. to
-normalize the histogram area to a desired value as illustrated in
+value to scale each bucket bound by.  This can be used, e.g.\ to
+normalize the histogram area to a desired value, as illustrated in
 Figure~\ref{fig:scalehist}.
 
 <<echo=TRUE,print=FALSE>>=
 hist.2 <- ScaleHistogram(hist.1, 1/sum(hist.1$counts))
-@ 
+@
 
 <<scalehist,fig=TRUE,echo=FALSE,print=FALSE,include=FALSE,width=5.3,height=4>>=
 par(mfrow=c(1,2))
@@ -373,7 +373,7 @@ p <- 3
 #dist(t(matrix(c(h1$counts, h2$counts), nrow=2)), "minkowski", p=p)
 # Or, alternatively:
 (sum(abs(h1$counts - h2$counts)^p))^(1/p)
-@ 
+@
 
 \subsection{Histogram Intersection Distance}
 
@@ -382,7 +382,7 @@ histograms can be computed with the \code{intersect.dist} function.
 
 <<echo=TRUE,print=FALSE>>=
 intersect.dist(h1, h2)
-@ 
+@
 
 \subsection{Kullback-Leibler Divergence}
 
@@ -529,7 +529,7 @@ represented by that histogram, and then calculates the
 Kolmogorov-Smirnov distance between the two CDFs.  This measure can be
 used in cases where expanding the binned data into \code{x.min} and
 \code{x.max} explicitly to calculate distances using
-e.g. \code{ks.test} directly would not be feasible.
+e.g.\ \code{ks.test} directly would not be feasible.
 Figure~\ref{fig:KSDCC} illustrates geometrically what value is being
 returned.
 
@@ -702,7 +702,7 @@ h <- hist(x, breaks=0:100, plot=F)
 plot(h,freq=FALSE, main="Histogram of x with ASH superimposed in red")
 # Superimpose the Average Shifted Histogram on top of the original.
 lines(HistToASH(h), col="red")
-@ 
+@
 
 \subsection{Log-scale Histograms}
 

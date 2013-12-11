@@ -22,7 +22,9 @@
 \title{Histogram Distance Measures}
 \description{
 The pairs of bins in two histograms with the same bucket boundaries are
-compared to compute bin-by-bin dissimilarity measures.
+compared to compute a dissimilarity measures.
+% Todo introduce non bin-by-bin measures and then add more description
+% here describing the two types.
 }
 \usage{
 minkowski.dist(h1, h2, p)
@@ -31,17 +33,15 @@ kl.divergence(h1, h2)
 jeffrey.divergence(h1, h2)
 }
 \arguments{
-  \item{h1}{A \code{"histogram"} object (created by
+  \item{h1,h2}{\code{"histogram"} objects (created by
     \code{\link[graphics]{hist}}) representing a binned dataset.}
-  \item{h2}{A \code{"histogram"} object (created by
-    \code{\link[graphics]{hist}}) representing a binned dataset.}
-  \item{p}{Order of the minkowski distance between two histograms to
+  \item{p}{Order of the Minkowski distance between two histograms to
     compute.}
 }
 \details{
 The \code{minkowski.dist} function computes the Minkowski distance of
-order \code{p} between two histograms.  p=1 is the Manhattan distance
-and p=2 is the Euclidean distance.
+order \code{p} between two histograms.  \code{p=1} is the Manhattan distance
+and \code{p=2} is the Euclidean distance.
 
 The \code{intersect.dist} function computes the intersection distance of
 two histograms.

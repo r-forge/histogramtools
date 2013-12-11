@@ -14,10 +14,10 @@ TrimHistogram(x, left=TRUE, right=TRUE)
 }
 \arguments{
   \item{x}{A histogram object (created by \code{\link[graphics]{hist}}).}
-  \item{left}{If TRUE, consecutive buckets in the left tail of the
+  \item{left}{If \code{TRUE}, consecutive buckets in the left tail of the
     histogram without any elements will
     be removed from the returned histogram.}
-  \item{right}{If TRUE, consecutive buckets in the right tail of the
+  \item{right}{If \code{TRUE}, consecutive buckets in the right tail of the
     histogram without any elements will
     be removed from the returned histogram.}
 }

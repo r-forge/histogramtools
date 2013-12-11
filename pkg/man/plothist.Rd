@@ -21,26 +21,25 @@
 Produces a relative frequency histogram.
 }
 \usage{
-PlotRelativeFrequency(x,
-                      ylab="Relative Frequency",
-                      ...)
+PlotRelativeFrequency(x, ylab="Relative Frequency", \dots)
 }
 \arguments{
   \item{x}{A \code{"histogram"} object (created by
     \code{\link[graphics]{hist}}) representing a pre-binned dataset.}
   \item{ylab}{y-axis label for the plot.}
-  \item{...}{Additional parameters are passed to
+  \item{\dots}{Additional parameters are passed to
     \code{\link[graphics]{plot}()}.}
 }
 \details{
-The default \code{plot} function for histograms supports Frequency or
+The default \code{\link[graphics]{plot.histogram}} function supports Frequency or
 Density plots, but does not provide a way to produce a relative
 frequency histogram.  This function plots this type of histogram.
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{
 \code{\link{histogramtools-package}},
-\code{\link[graphics]{hist}}.
+\code{\link[graphics]{hist}},
+\code{\link[graphics]{plot.histogram}}.
 }
 \examples{
 x <- runif(100)

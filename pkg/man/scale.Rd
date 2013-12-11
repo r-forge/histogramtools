@@ -26,13 +26,9 @@ ScaleHistogram(x, factor)
 }
 \arguments{
   \item{x}{A \code{"histogram"} object (created by
-    \code{\link[graphics]{hist}}) representing a pre-binned dataset.}
-  \item{factor}{A number value to scale the bucket counts by.}
-}
-\details{
-Sometimes in the data collection process it may be necessary to scale
-the observation counts that have been binned into a histogram
-representation.
+    \code{\link[graphics]{hist}}) representing a dataset summarized by binning.}
+  \item{factor}{A number value to scale the bucket counts by.  Defaults
+    to 1/Count(x) to normalize the area of the histogram to 1.}
 }
 \author{Murray Stokely \email{mstokely@google.com}}
 \seealso{

@@ -24,14 +24,14 @@ Approximate the quantiles of the underlying distribution for which only
 a histogram is available.
 }
 \usage{
-ApproxQuantile(x, probs, ...)
+ApproxQuantile(x, probs, \dots)
 ApproxMean(x)
 Count(x)
 }
 \arguments{
   \item{x}{A histogram object (created by \code{\link[graphics]{hist}}).}
   \item{probs}{Numeric vector of probabilities with values in [0,1].}
-  \item{...}{Any other arguments to pass to \code{\link[Hmisc]{wtd.quantile}}.}
+  \item{\dots}{Any other arguments to pass to \code{\link[Hmisc]{wtd.quantile}}.}
 }
 \details{
 Many data analysis pipelines write out histogram protocol buffers with

@@ -27,8 +27,8 @@ about the underlying distribution of data for a given histogram.
 \usage{
 KSDCC(h)
 EMDCC(h)
-PlotKSDCC(h, arrow.size.scale=1, main=paste("KSDCC =", KSDCC(h)), ...)
-PlotEMDCC(h, main=paste("EMDCC =", EMDCC(h)), ...)
+PlotKSDCC(h, arrow.size.scale=1, main=paste("KSDCC =", KSDCC(h)), \dots)
+PlotEMDCC(h, main=paste("EMDCC =", EMDCC(h)), \dots)
 }
 \arguments{
   \item{h}{A \code{"histogram"} object (created by
@@ -40,7 +40,7 @@ PlotEMDCC(h, main=paste("EMDCC =", EMDCC(h)), ...)
   \item{main}{if 'method="constant"' a number between 0 and 1 inclusive,
     indicating a compromise between left- and right-continuous
     step functions.  See ?approxfun}
-  \item{...}{Any other arguments to pass to \code{\link[graphics]{plot}}}
+  \item{\ldots}{Any other arguments to pass to \code{\link[graphics]{plot}}}
 }
 \details{
 The \code{KSDCC} (Kolmogorov-Smirnov Distance of the Cumulative Curves)
