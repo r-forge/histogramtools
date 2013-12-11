@@ -32,6 +32,8 @@ minkowski.dist <- function(h1, h2, p) {
   return((sum(abs(h1$counts - h2$counts)^p))^(1/p))
 }
 
+# Described in EMD paper above, which references
+# "Color Indexing", Swain and Ballard, 1991, p15.
 intersect.dist <- function(h1, h2) {
   stopifnot(inherits(h1, "histogram"), inherits(h2, "histogram"))
   stopifnot(all(h1$breaks == h2$breaks))
@@ -44,17 +46,22 @@ intersect.dist <- function(h1, h2) {
 kl.divergence <- function(h1, h2) {
   stopifnot(inherits(h1, "histogram"), inherits(h2, "histogram"))
   stopifnot(all(h1$breaks == h2$breaks))
-  return(sum(h1$counts * log(h1$counts / h2$counts)))
+  h1.normcounts <- h1$counts / sum(h1$counts)
+  h2.normcounts <- h2$counts / sum(h2$counts)
+  return(sum(h1.normcounts * log(h1.normcounts / h2.normcounts)))
 }
 
-
-# In EMD paper aboce, which references
-# Puzicha, Non-parametric similarity measures for unsupervised texture segmentationFr
+# In EMD paper above, which references:
+# Puzicha, Hoffmann, Buhmann
+# Non-parametric similarity measures for unsupervised texture
+# segmentation and image retrieval
 jeffrey.divergence <- function(h1, h2) {
   stopifnot(inherits(h1, "histogram"), inherits(h2, "histogram"))
   stopifnot(all(h1$breaks == h2$breaks))
+  h1.normcounts <- h1$counts / sum(h1$counts)
+  h2.normcounts <- h2$counts / sum(h2$counts)
   m <- .BuildHistogram(h1$breaks,
-                       (h1$counts + h2$counts) / 2)
-  return(sum(h1$counts * log(h1$counts / m$counts) +
-             h2$counts * log(h2$counts / m$counts)))
+                       (h1.normcounts + h2.normcounts) / 2)
+  return(sum(h1.normcounts * log(h1.normcounts / m$counts) +
+             h2.normcounts * log(h2.normcounts / m$counts)))
 }

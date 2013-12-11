@@ -22,7 +22,7 @@
 \title{Histogram Distance Measures}
 \description{
 The pairs of bins in two histograms with the same bucket boundaries are
-compared to compute a dissimilarity measures.
+compared to compute dissimilarity measures.
 % Todo introduce non bin-by-bin measures and then add more description
 % here describing the two types.
 }
@@ -44,7 +44,9 @@ order \code{p} between two histograms.  \code{p=1} is the Manhattan distance
 and \code{p=2} is the Euclidean distance.
 
 The \code{intersect.dist} function computes the intersection distance of
-two histograms.
+two histograms, as defined in Swain and Ballard 1991, p15.  If
+histograms \code{h1} and \code{h2} are not constrained to contain the
+same number of counts, then this metric will not be symmetric.
 
 The \code{kl.divergence} function computes the Kullback-Leibler
 divergence between two histograms.
