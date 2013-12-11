@@ -94,9 +94,11 @@ plot(MergeBuckets(h, 4), main="MergeBuckets(h, 4)")
 \paragraph{Information Loss}
 
 The introduction of binning a dataset into a histogram introduces
-information loss.  The Kolmogorov-Smirnov Distance of the Cumulative
+information loss.  The package provides standard Histogram distance
+measures as well as distance functions on the possibile ECDFs that
+could have been constructed from the original data: the Kolmogorov-Smirnov Distance of the Cumulative
 Curves (KSDCC) and Earth Mover's Distance of the Cumulative Curves
-(EMDCC) are two error metrics for histograms.  The plots here show a
+(EMDCC).  The plots here show a
 visual representation of the returned value. EMDCC is the area of the
 yellow boxes and KSDCC is the distance of the red arrow.
 
@@ -142,23 +144,32 @@ if(require(RProtoBuf)) {
 
 \begin{center}
 \begin{small}
-\begin{tabular}{cp{6.7cm}}
+\begin{tabular}[t]{@{\hspace{2mm}}l@{\hspace{2mm}}p{6.5cm}}
 \hline
-\texttt{HistToEcdf} & Return the cumulative distribution function of histogram \\
-\texttt{AddHistograms} & Aggregate two or more histograms for different data sets with identical bucket boundaries\\
-\texttt{MergeBuckets} & Merge adjacent bucket boundaries to return a
-histogram with fewer buckets\\
+\multicolumn{2}{l}{Bin Manipulation}\\
+\hline
+\texttt{TrimHistogram} & Remove empty consecutive buckets from ends\\
+\texttt{AddHistograms} & Aggregate two or more histograms\\
+\texttt{MergeBuckets} & Merge adjacent bucket boundaries\\
+\texttt{SubsetHistogram}  & Return histogram with subset of buckets\\
+\texttt{IntersectHistograms} & Return a intersection of two histograms\\
+\texttt{ScaleHistogram} & Scale the counts of a histogram by a factor\\
+\hline
+\multicolumn{2}{l}{Quantiles and Empirical CDFs}\\
+\hline
+\texttt{HistToEcdf} & Return the ECDF of histogram \\
 \texttt{Count}  & Return the number of data points in hist\\
 \texttt{ApproxMean}  & Return an approximate mean of the binned data\\
 \texttt{ApproxQuantile}  & Return an approximate quantile of the binned data\\
-\texttt{SubsetHistogram}  & Return a new histogram with a subset of the buckets\\
-\texttt{TrimHistogram}  & Return a new histogram with empty buckets
-at the left or right of distribution removed\\
 \hline
-\texttt{PlotLog2ByteEcdf} & Plot ECDF of hist with power of two bucket
-boundaries\\
-\scriptsize{\texttt{PlotLogTimeDurationEcdf}} & Plot ECDF of hist with log-scaled
-time duration bucket boundaries\\
+\multicolumn{2}{l}{Distance Measures of Two Histograms}\\
+\hline
+\texttt{minkowski.dist} & The Minkowski distance of order $p$.\\
+\texttt{intersect.dist} & The intersection distance.\\
+\texttt{kl.divergence} & Kullback-Leibler Divergence.\\
+\texttt{jeffrey.divergence} & Jeffrey Divergence.\\
+\hline
+\multicolumn{2}{l}{Binned CDF Distance Measures}\\
 \hline
 \texttt{PlotKSDCC}  & Plot ECDF of hist with annotation at point of KS
 distance of the cumulative curves\\
@@ -168,7 +179,15 @@ mover's distance of the cumulative curves\\
 curves (btwn 0 and 1)\\
 \texttt{EMDCC}  & Return the Earth Mover's distance of the cumulative
 curves (btwn 0 and 1)\\
+\end{tabular}
+\begin{tabular}[t]{@{\hspace{2mm}}l@{\hspace{2mm}}p{6.5cm}}
 \hline
+\multicolumn{2}{l}{Misc}\\
+\hline
+\texttt{PlotLog2ByteEcdf} & Plot ECDF of hist with power of two bucket
+boundaries\\
+\scriptsize{\texttt{PlotLogTimeDurationEcdf}} & Plot ECDF of hist with log-scaled
+time duration bucket boundaries\\
 \texttt{as.histogram} & Parse a HistogramState protocol buffer and return an R histogram\\
 \texttt{as.Message}  & Serialize an R histogram as a HistogramState protocol buffer\\
 \tiny{\texttt{ReadHistogramsFromDtraceOutputFile}} & Read histograms
@@ -177,5 +196,4 @@ from DTrace output\\
 \end{tabular}
 \end{small}
 \end{center}
-
 \end{document}
