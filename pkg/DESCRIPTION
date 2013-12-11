@@ -1,8 +1,8 @@
 Package: HistogramTools
 Type: Package
 Title: Utility Functions for R Histograms
-Version: 0.2.2
-Date: 2013-12-06
+Version: 0.3
+Date: 2013-12-11
 Author: Murray Stokely <mstokely@google.com>
 Maintainer: Murray Stokely <mstokely@google.com>
 Imports: Hmisc, ash, stringr

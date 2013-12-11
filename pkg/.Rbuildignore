@@ -5,6 +5,7 @@ vignettes/.*.out
 vignettes/.*.blg
 vignettes/.*.bbl
 vignettes/.*.log
+vignettes/.*.toc
 # Not ready yet.
 R/chisq.R
 R/cmv.R
