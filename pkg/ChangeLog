@@ -1,6 +1,7 @@
 2013-12-11  Murray Stokely  <mstokely@google.com>
 
-	* DESCRIPTION (Version): Increment to 3.0
+	* DESCRIPTION (Version): Increment to 3.0.
+	* inst/NEWS.Rd: Document updates since 2.0.
 	* man/binning.Rd: Document PreBinnedHistogram.
 	* vignettes/HistogramTools-quickref.Rnw: Add new functions to table.
 
