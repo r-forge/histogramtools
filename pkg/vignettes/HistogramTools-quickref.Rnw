@@ -12,14 +12,15 @@
 
 \setlength{\marginparwidth}{0pt}
 \setlength{\marginparsep}{0pt}
-\setlength{\oddsidemargin}{0pt}
+\setlength{\oddsidemargin}{0.1in}
 \setlength{\headheight}{0pt}
 \setlength{\topmargin}{1pt}
 \setlength{\headsep}{0pt}
 \setlength{\footskip}{0pt}
-\setlength{\textheight}{27cm}
+\setlength{\textheight}{26.7cm}
 %\setlength{\textheight}{10in}
-\setlength{\textwidth}{20cm}
+\setlength{\textwidth}{18cm}
+\setlength{\columnsep}{1cm}
 %\setlength{\textwidth}{8in}
 
 \usepackage[colorlinks]{hyperref}
@@ -46,7 +47,7 @@ ht.version <- packageDescription("HistogramTools")$Version
    {\Large Quick Reference Guide \par}
    Murray Stokely \hspace{1cm} \today \par
   }
-  \mbox{\rule{4in}{0.5pt}\par}
+  \mbox{\rule{\columnwidth}{0.5pt}\par}
  \end{center}
 }
 
@@ -61,10 +62,10 @@ merging, adding, and otherwise manipulating basic R histogram objects.
 
 <<echo=TRUE, eval=FALSE>>=
 h <- hist(runif(100, 0, 100),
-          breaks=seq(from=0,to=200,by=5), plot=F)
-TrimHistogram(h)
-SubsetHistogram(h, maxbreak=70)
-MergeBuckets(h, adj.buckets=2)
+          breaks=seq(from=0,to=200,by=5))
+plot(TrimHistogram(h))
+plot(SubsetHistogram(h, maxbreak=70))
+plot(MergeBuckets(h, adj.buckets=2))
 @
 
 <<echo=FALSE, print=FALSE, eval=TRUE>>=
@@ -73,18 +74,20 @@ h <- hist(runif(100, 0, 100),
 @
 
 <<exhist,fig=TRUE,echo=FALSE,include=FALSE>>=
+# top, left, bottom, right
+old.mar <- par(mar=c(3,4,1,1))
 par(mfrow=c(2,2))
 plot(h, main="Histogram h")
 plot(TrimHistogram(h), main="TrimHistogram(h)")
 plot(SubsetHistogram(h, max=70), main="SubsetHistogram(h, max=70)")
 plot(MergeBuckets(h, 4), main="MergeBuckets(h, 4)")
-@
-
+par(mar=old.mar)
+@ 
 \vspace{-.3cm}
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[width=4in,height=4in]{HistogramTools-quickref-exhist}
+\includegraphics[width=3.4in,height=3.4in]{HistogramTools-quickref-exhist}
 \end{center}
 \label{fig:exhist}
 \end{figure}
@@ -171,10 +174,9 @@ if(require(RProtoBuf)) {
 \hline
 \multicolumn{2}{l}{Binned CDF Distance Measures}\\
 \hline
-\texttt{PlotKSDCC}  & Plot ECDF of hist with annotation at point of KS
+\texttt{PlotKSDCC}  & Plot ECDF with annotation at point of KS
 distance of the cumulative curves\\
-\texttt{PlotEMDCC}  & Plot ECDF of hist with annotation showing earth
-mover's distance of the cumulative curves\\
+\texttt{PlotEMDCC}  & Plot ECDF with annotation showing EMD of the cumulative curves\\
 \texttt{KSDCC}  & Return the Kolmogorov-Smirnov distance of the cumulative
 curves (btwn 0 and 1)\\
 \texttt{EMDCC}  & Return the Earth Mover's distance of the cumulative
