@@ -1,3 +1,8 @@
+2014-08-19  Murray Stokely  <mstokely@google.com>
+
+	* DESCRIPTION (Maintainer): Add Copyright and Authors@R fields.
+	  Increment version to 0.3.1.
+
 2013-12-11  Murray Stokely  <mstokely@google.com>
 
 	* DESCRIPTION (Version): Increment to 3.0.
