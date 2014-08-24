@@ -1,3 +1,7 @@
+2014-08-24  Murray Stokely  <mstokely@google.com>
+
+	* inst/NEWS.Rd: update for 0.3.1.
+
 2014-08-19  Murray Stokely  <mstokely@google.com>
 
 	* DESCRIPTION (Maintainer): Add Copyright and Authors@R fields.

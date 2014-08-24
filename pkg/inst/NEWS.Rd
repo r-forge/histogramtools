@@ -2,6 +2,11 @@
 \title{News for Package \pkg{HistogramTools}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in HistogramTools version 0.3.1 (2014-08-24)}{
+  \itemize{
+    \item Add Copyright and Authors@R fields to DESCRIPTION.
+  }
+}
 \section{Changes in HistogramTools version 0.3 (2013-12-11)}{
   \itemize{
     \item Moved 'Hmisc' from Depends to Imports.
