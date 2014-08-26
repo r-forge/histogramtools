@@ -57,7 +57,7 @@ PlotLog2ByteEcdf <- function(x,
        ...
        )
   if (require(gdata)) {
-    labs <- humanReadable(power.of.two.breaks)
+    labs <- gdata::humanReadable(power.of.two.breaks)
   } else {
     labs <- power.of.two.breaks
   }

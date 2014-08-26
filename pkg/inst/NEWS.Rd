@@ -2,9 +2,11 @@
 \title{News for Package \pkg{HistogramTools}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
-\section{Changes in HistogramTools version 0.3.1 (2014-08-24)}{
+\section{Changes in HistogramTools version 0.3.1 (2014-08-26)}{
   \itemize{
     \item Add Copyright and Authors@R fields to DESCRIPTION.
+    \item Add fully qualified reference to gdata function to silence
+  CHECK warnings.
   }
 }
 \section{Changes in HistogramTools version 0.3 (2013-12-11)}{

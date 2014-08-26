@@ -2,7 +2,7 @@ Package: HistogramTools
 Type: Package
 Title: Utility Functions for R Histograms
 Version: 0.3.1
-Date: 2014-08-24
+Date: 2014-08-26
 Maintainer: Murray Stokely <mstokely@google.com>
 Authors@R: c(person("Murray", "Stokely", role = c("aut", "cre"),
 	            email = "mstokely@google.com"),

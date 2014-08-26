@@ -1,3 +1,9 @@
+2014-08-26  Murray Stokely  <mstokely@google.com>
+
+	* R/plot.R (PlotLog2ByteEcdf): Add fully qualified reference to
+	  gdata::humanReadable if gdata is conditionally available to
+	  appease R CMD CHECK on latest r-devel.
+
 2014-08-24  Murray Stokely  <mstokely@google.com>
 
 	* inst/NEWS.Rd: update for 0.3.1.
