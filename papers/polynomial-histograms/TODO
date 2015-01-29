@@ -1,0 +1,10 @@
+1. Copy the latest sources into this directory.
+
+2. Find a venue to
+submit it to.  Murray prefers either an applied statistics journal of
+some kind, or a very quantitative computer science systems conference
+(like SIGMETRICS, but the work isn't yet strong enough for SIGMETRICS).
+
+3. Submit Tim's latest proofs.
+
+4. Implement the R code for higher order moment EMDCC plots and calculations.
