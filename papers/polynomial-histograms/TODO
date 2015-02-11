@@ -1,4 +1,6 @@
 1. Copy the latest sources into this directory.
+(Mostly done. Some rename. I created a figures/ directory, need to make
+sure tex runs with that.)
 
 2. Find a venue to
 submit it to.  Murray prefers either an applied statistics journal of
