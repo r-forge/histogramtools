@@ -1,3 +1,11 @@
+2015-07-29  Murray Stokely  <murray@stokely.org>
+
+	* NAMESPACE: Add importFrom statements for some common packages.
+	* DESCRIPTION (Description): Remove redundant package reference.
+	* R/histogram.R: Use requireNamespace instead of
+          require(RProtoBuf) and use RProtoBuf::new explicitly to reference
+          the new method in RProtoBuf for constructing message S4 objects.
+
 2015-07-28  Murray Stokely  <murray@stokely.org>
 
 	* DESCRIPTION (Maintainer): Update maintainer email address,

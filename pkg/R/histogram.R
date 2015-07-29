@@ -169,7 +169,9 @@ as.Message.histogram <- function(x) {
   # This catches NAs
   stopifnot(!is.null(x$breaks))
   stopifnot(is.numeric(x$breaks))
-  stopifnot(require(RProtoBuf))
+  if (!requireNamespace("RProtoBuf", quietly = TRUE)) {
+      stop("RProtoBuf required to convert Histograms to Protocol Buffer Messages.")
+  }
 
   # We can't conditionally require RProtoBuf and do this in onload()
   if (("RProtoBuf:DescriptorPool" %in% search()) &&
@@ -179,7 +181,9 @@ as.Message.histogram <- function(x) {
   }
 
   hist.class <- RProtoBuf::P("HistogramTools.HistogramState")
-  hist.msg <- new(hist.class)
+  # new is made generic in RProtoBuf, and we are not importing new in the
+  # namespace so reference it explicitly here.
+  hist.msg <- RProtoBuf::new(hist.class)
 
   hist.msg$counts <- x$counts
   hist.msg$breaks <- x$breaks
