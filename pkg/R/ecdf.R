@@ -20,8 +20,8 @@ HistToEcdf <- function(h, method="constant", f=0, inverse=FALSE) {
   # Args:
   #   h:  An S3 histogram object.
   #   method: specifies the interpolation method to be used in call to
-  #      approxfun().  Choices are ‘"linear"’ or ‘"constant"’.
-  #   f: for ‘method="constant"’ a number between 0 and 1 inclusive,
+  #      approxfun().  Choices are "linear" or "constant".
+  #   f: for method="constant" a number between 0 and 1 inclusive,
   #      indicating a compromise between left- and right-continuous
   #      step functions.  See ?approxfun
   #   inverse: If TRUE, return the inverse function.

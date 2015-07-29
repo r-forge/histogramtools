@@ -1,3 +1,8 @@
+2015-07-28  Murray Stokely  <murray@stokely.org>
+
+	* DESCRIPTION (Maintainer): Update maintainer email address,
+	  increment version.
+
 2014-08-26  Murray Stokely  <mstokely@google.com>
 
 	* R/plot.R (PlotLog2ByteEcdf): Add fully qualified reference to

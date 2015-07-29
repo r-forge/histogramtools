@@ -1,11 +1,11 @@
 Package: HistogramTools
 Type: Package
 Title: Utility Functions for R Histograms
-Version: 0.3.1
-Date: 2014-08-26
-Maintainer: Murray Stokely <mstokely@google.com>
+Version: 0.3.2
+Date: 2015-07-28
+Maintainer: Murray Stokely <murray@stokely.org>
 Authors@R: c(person("Murray", "Stokely", role = c("aut", "cre"),
-	            email = "mstokely@google.com"),
+	            email = "murray@stokely.org"),
              person("Tim", "Hesterberg", role = "ctb", email = "rocket@google.com"))
 Copyright: Copyright 2011 Google, Inc.
 Imports: Hmisc, ash, stringr
